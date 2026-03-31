@@ -6,7 +6,12 @@
 
 + (void)userDefaultSetObject:(id)value forKey:(NSString *)key {
     if (key) {
-        [[NSUserDefaults standardUserDefaults] setObject:value forKey:key];
+        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+        if (value) {
+            [defaults setObject:value forKey:key];
+        } else {
+            [defaults removeObjectForKey:key];
+        }
         [[NSUserDefaults standardUserDefaults] synchronize];
     }
 }
@@ -18,30 +23,24 @@
     return nil;
 }
 
-+ (void)setUpConfigWithAppKey:(NSString * _Nullable * _Nonnull)appKey
-                    appSecret:(NSString * _Nullable * _Nonnull)appSecret
-                 appRsaSecret:(NSString * _Nullable * _Nonnull)appRsaSecret
-                    functions:(NSArray * _Nullable * _Nonnull)functions {
-    if ([*appKey isEqualToString:@"请替换您的appKey"]) {
-        *appKey = (NSString *)[EAPMDemoConfigStore userDefaultGet:kAppKey];
-    }
++ (nullable NSString *)normalizedValue:(nullable NSString *)value {
+    NSString *trimmedValue = [value stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+    return trimmedValue.length > 0 ? trimmedValue : nil;
+}
 
-    if ([*appSecret isEqualToString:@"请替换您的appSecret"]) {
-        *appSecret = (NSString *)[EAPMDemoConfigStore userDefaultGet:kAppSecret];
-    }
++ (nullable NSString *)storedUserId {
+    NSString *userId = (NSString *)[self userDefaultGet:kDemoUserId];
+    return [self normalizedValue:userId];
+}
 
-    if ([*appRsaSecret isEqualToString:@"请替换您的appRsaSecret"]) {
-        *appRsaSecret = (NSString *)[EAPMDemoConfigStore userDefaultGet:kAppRsaSecret];
-    }
++ (nullable NSString *)storedUserNick {
+    NSString *userNick = (NSString *)[self userDefaultGet:kDemoUserNick];
+    return [self normalizedValue:userNick];
+}
 
-    NSArray *localFunctions = (NSArray *)[EAPMDemoConfigStore userDefaultGet:kFunctions];
-    if (localFunctions && localFunctions.count >= 0) {
-        NSMutableArray *functionsClass = [NSMutableArray array];
-        for (NSString *function in localFunctions) {
-            [functionsClass addObject:NSClassFromString(function)];
-        }
-        *functions = functionsClass;
-    }
++ (void)saveUserId:(nullable NSString *)userId userNick:(nullable NSString *)userNick {
+    [self userDefaultSetObject:[self normalizedValue:userId] forKey:kDemoUserId];
+    [self userDefaultSetObject:[self normalizedValue:userNick] forKey:kDemoUserNick];
 }
 
 @end

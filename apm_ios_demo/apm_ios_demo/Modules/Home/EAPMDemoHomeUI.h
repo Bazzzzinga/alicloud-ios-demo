@@ -28,7 +28,7 @@ typedef void (^EAPMDemoHomeActionHandler)(void);
 
 @interface EAPMDemoHeroHeaderView : UIView
 
-- (void)configureWithInfoText:(NSString *)text;
+- (void)configureWithInfoText:(NSString *)text settingsHandler:(nullable EAPMDemoHomeActionHandler)settingsHandler;
 
 @end
 

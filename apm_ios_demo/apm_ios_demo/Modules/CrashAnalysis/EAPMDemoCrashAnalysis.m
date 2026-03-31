@@ -1,7 +1,7 @@
 #import "EAPMDemoCrashAnalysis.h"
 
 #import "EAPMDemoHomeUI.h"
-#import "EAPMDemoSDKImports.h"
+#import <AlicloudApmCrashAnalysis/AlicloudApmCrashAnalysis.h>
 
 static void EAPMDemoPresentAlert(UIViewController *presenter, NSString *message) {
     if (!presenter || presenter.presentedViewController) {

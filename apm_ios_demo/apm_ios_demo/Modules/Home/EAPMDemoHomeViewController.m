@@ -1,5 +1,6 @@
 #import "EAPMDemoHomeViewController.h"
 
+#import "EAPMDemoSettingsViewController.h"
 #import "EAPMDemoHomeUI.h"
 #import "EAPMDemoCrashAnalysis.h"
 #import "EAPMDemoMemory.h"
@@ -12,7 +13,7 @@ static NSString * const EAPMDemoSectionHeaderReuseIdentifier = @"EAPMDemoSection
 
 @interface EAPMDemoHeroHeaderCell : UICollectionViewCell
 
-- (void)configureWithInfoText:(NSString *)text;
+- (void)configureWithInfoText:(NSString *)text settingsHandler:(nullable EAPMDemoHomeActionHandler)settingsHandler;
 
 @end
 
@@ -42,7 +43,6 @@ static NSString * const EAPMDemoSectionHeaderReuseIdentifier = @"EAPMDemoSection
 - (void)viewDidLoad {
     [super viewDidLoad];
 
-    self.title = @"";
     self.view.backgroundColor = [UIColor colorWithRed:0xF3 / 255.0 green:0xF4 / 255.0 blue:0xF8 / 255.0 alpha:1.0];
 
     [self buildData];
@@ -129,6 +129,12 @@ static NSString * const EAPMDemoSectionHeaderReuseIdentifier = @"EAPMDemoSection
     ]];
 }
 
+- (void)handleSettingsButtonTapped {
+    [self.navigationController setNavigationBarHidden:NO animated:YES];
+    EAPMDemoSettingsViewController *settingsViewController = [[EAPMDemoSettingsViewController alloc] init];
+    [self.navigationController pushViewController:settingsViewController animated:YES];
+}
+
 - (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView {
     return self.sections.count + 1;
 }
@@ -143,7 +149,10 @@ static NSString * const EAPMDemoSectionHeaderReuseIdentifier = @"EAPMDemoSection
 - (__kindof UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
     if (indexPath.section == 0) {
         EAPMDemoHeroHeaderCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:EAPMDemoHeroCellReuseIdentifier forIndexPath:indexPath];
-        [cell configureWithInfoText:self.infoBannerText];
+        __weak typeof(self) weakSelf = self;
+        [cell configureWithInfoText:self.infoBannerText settingsHandler:^{
+            [weakSelf handleSettingsButtonTapped];
+        }];
         return cell;
     }
 
@@ -210,8 +219,8 @@ static NSString * const EAPMDemoSectionHeaderReuseIdentifier = @"EAPMDemoSection
     return self;
 }
 
-- (void)configureWithInfoText:(NSString *)text {
-    [self.heroHeaderView configureWithInfoText:text];
+- (void)configureWithInfoText:(NSString *)text settingsHandler:(nullable EAPMDemoHomeActionHandler)settingsHandler {
+    [self.heroHeaderView configureWithInfoText:text settingsHandler:settingsHandler];
 }
 
 @end

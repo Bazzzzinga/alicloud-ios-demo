@@ -1,7 +1,7 @@
 #import "EAPMDemoRemoteLog.h"
 
 #import "EAPMDemoHomeUI.h"
-#import "EAPMDemoSDKImports.h"
+#import <AlicloudApmRemoteLog/AlicloudApmRemoteLog.h>
 
 static void EAPMDemoPresentRemoteLogAlert(UIViewController *presenter, NSString *message) {
     if (!presenter || presenter.presentedViewController) {

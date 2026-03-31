@@ -91,6 +91,8 @@ static UIColor *EAPMDemoColorHex(NSUInteger hexValue, CGFloat alpha) {
 @property (nonatomic, strong) UIView *bottomGradientView;
 @property (nonatomic, strong) UILabel *titleLabel;
 @property (nonatomic, strong) UILabel *subtitleLabel;
+@property (nonatomic, strong) UIButton *settingsButton;
+@property (nonatomic, copy) EAPMDemoHomeActionHandler settingsHandler;
 
 @end
 
@@ -123,18 +125,35 @@ static UIColor *EAPMDemoColorHex(NSUInteger hexValue, CGFloat alpha) {
     _infoBannerView = [[EAPMDemoInfoBannerView alloc] init];
 
     _titleLabel = [[UILabel alloc] init];
-    _titleLabel.text = @"移动监控";
+    _titleLabel.text = @"移动监控 Demo";
     _titleLabel.textColor = EAPMDemoColorHex(0x4B4D52, 1.0);
     _titleLabel.font = [UIFont systemFontOfSize:21.0 weight:UIFontWeightSemibold];
     _titleLabel.numberOfLines = 1;
 
     _subtitleLabel = [[UILabel alloc] init];
-    _subtitleLabel.text = @"欢迎来到阿里云移动监控，开始你的调试吧~";
+    _subtitleLabel.text = @"欢迎来到阿里云移动监控 Demo，开始你的调试吧~";
     _subtitleLabel.textColor = EAPMDemoColorHex(0x607B9C, 1.0);
     _subtitleLabel.font = [UIFont systemFontOfSize:15.0 weight:UIFontWeightRegular];
     _subtitleLabel.numberOfLines = 2;
 
-    for (UIView *view in @[_heroImageView, _bottomGradientView, _infoBannerView, _titleLabel, _subtitleLabel]) {
+    _settingsButton = [UIButton buttonWithType:UIButtonTypeSystem];
+    _settingsButton.layer.cornerRadius = 18.0;
+    _settingsButton.backgroundColor = [UIColor colorWithWhite:1.0 alpha:0.72];
+    _settingsButton.layer.borderWidth = 1.0;
+    _settingsButton.layer.borderColor = EAPMDemoColorHex(0xD9E1F2, 1.0).CGColor;
+    if (@available(iOS 13.0, *)) {
+        UIImageSymbolConfiguration *configuration = [UIImageSymbolConfiguration configurationWithPointSize:18.0 weight:UIImageSymbolWeightSemibold];
+        UIImage *image = [UIImage systemImageNamed:@"gearshape" withConfiguration:configuration];
+        [_settingsButton setImage:image forState:UIControlStateNormal];
+        _settingsButton.tintColor = EAPMDemoColorHex(0x6B7380, 1.0);
+    } else {
+        [_settingsButton setTitle:@"设置" forState:UIControlStateNormal];
+        [_settingsButton setTitleColor:EAPMDemoColorHex(0x315CFC, 1.0) forState:UIControlStateNormal];
+        _settingsButton.titleLabel.font = [UIFont systemFontOfSize:14.0 weight:UIFontWeightMedium];
+    }
+    [_settingsButton addTarget:self action:@selector(handleSettingsTapped) forControlEvents:UIControlEventTouchUpInside];
+
+    for (UIView *view in @[_heroImageView, _bottomGradientView, _infoBannerView, _titleLabel, _subtitleLabel, _settingsButton]) {
         view.translatesAutoresizingMaskIntoConstraints = NO;
         [self addSubview:view];
     }
@@ -154,6 +173,11 @@ static UIColor *EAPMDemoColorHex(NSUInteger hexValue, CGFloat alpha) {
         [_subtitleLabel.leadingAnchor constraintEqualToAnchor:self.leadingAnchor constant:16.0],
         [_subtitleLabel.topAnchor constraintEqualToAnchor:_titleLabel.bottomAnchor constant:12.0],
         [_subtitleLabel.widthAnchor constraintEqualToConstant:208.0],
+
+        [_settingsButton.trailingAnchor constraintEqualToAnchor:self.trailingAnchor constant:-16.0],
+        [_settingsButton.topAnchor constraintEqualToAnchor:self.safeAreaLayoutGuide.topAnchor constant:10.0],
+        [_settingsButton.widthAnchor constraintEqualToConstant:36.0],
+        [_settingsButton.heightAnchor constraintEqualToConstant:36.0],
 
         [_infoBannerView.leadingAnchor constraintEqualToAnchor:self.leadingAnchor constant:16.0],
         [_infoBannerView.trailingAnchor constraintEqualToAnchor:self.trailingAnchor constant:-16.0],
@@ -175,8 +199,15 @@ static UIColor *EAPMDemoColorHex(NSUInteger hexValue, CGFloat alpha) {
     layer.frame = self.bottomGradientView.bounds;
 }
 
-- (void)configureWithInfoText:(NSString *)text {
+- (void)configureWithInfoText:(NSString *)text settingsHandler:(nullable EAPMDemoHomeActionHandler)settingsHandler {
+    self.settingsHandler = settingsHandler;
     [self.infoBannerView configureWithText:text];
+}
+
+- (void)handleSettingsTapped {
+    if (self.settingsHandler) {
+        self.settingsHandler();
+    }
 }
 
 @end

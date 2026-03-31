@@ -6,10 +6,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (void)userDefaultSetObject:(id)value forKey:(NSString *)key;
 + (id)userDefaultGet:(NSString *)key;
-+ (void)setUpConfigWithAppKey:(NSString * _Nullable * _Nonnull)appKey
-                    appSecret:(NSString * _Nullable * _Nonnull)appSecret
-                 appRsaSecret:(NSString * _Nullable * _Nonnull)appRsaSecret
-                    functions:(NSArray * _Nullable * _Nonnull)functions;
++ (nullable NSString *)storedUserId;
++ (nullable NSString *)storedUserNick;
++ (void)saveUserId:(nullable NSString *)userId userNick:(nullable NSString *)userNick;
 
 @end
 
