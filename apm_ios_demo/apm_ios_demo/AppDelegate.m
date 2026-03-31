@@ -8,11 +8,9 @@
 
 #import "AppDelegate.h"
 
-#import <AlicloudApmCore/AlicloudApmCore.h>
-#import <AlicloudApmCrashAnalysis/AlicloudApmCrashAnalysis.h>
-#import <AlicloudApmPerformance/AlicloudApmPerformance.h>
-#import <AlicloudApmRemoteLog/AlicloudApmRemoteLog.h>
+#import "EAPMSDKImports.h"
 #import "CommonTools.h"
+#import "EAPMHomeViewController.h"
 
 @interface AppDelegate ()
 
@@ -22,9 +20,14 @@
 
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    // Override point for customization after application launch.
-    
     [self initSDK];
+
+    self.window = [[UIWindow alloc] initWithFrame:UIScreen.mainScreen.bounds];
+    EAPMHomeViewController *homeViewController = [[EAPMHomeViewController alloc] init];
+    UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:homeViewController];
+    navigationController.navigationBar.prefersLargeTitles = NO;
+    self.window.rootViewController = navigationController;
+    [self.window makeKeyAndVisible];
 
     return YES;
 }

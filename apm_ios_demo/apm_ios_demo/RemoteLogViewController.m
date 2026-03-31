@@ -7,7 +7,7 @@
 //
 
 #import "RemoteLogViewController.h"
-#import <AlicloudApmRemoteLog/AlicloudApmRemoteLog.h>
+#import "EAPMSDKImports.h"
 
 @interface RemoteLogViewController ()
 

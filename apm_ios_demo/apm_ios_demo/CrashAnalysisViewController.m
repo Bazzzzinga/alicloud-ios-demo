@@ -7,7 +7,7 @@
 //
 
 #import "CrashAnalysisViewController.h"
-#import <AlicloudApmCrashAnalysis/AlicloudApmCrashAnalysis.h>
+#import "EAPMSDKImports.h"
 
 @interface CrashAnalysisViewController ()
 
