@@ -12,6 +12,7 @@ typedef NS_ENUM(NSInteger, EAPMHomeActionType) {
     EAPMHomeActionTypeNetworkRequest,
     EAPMHomeActionTypeCreateLog,
     EAPMHomeActionTypeUpdateNickname,
+    EAPMHomeActionTypePlaceholder,
 };
 
 @interface EAPMHomeActionItem : NSObject
@@ -29,13 +30,19 @@ typedef NS_ENUM(NSInteger, EAPMHomeActionType) {
 
 @interface EAPMHeroHeaderView : UIView
 
+- (void)configureWithInfoText:(NSString *)text;
+
 @end
 
 @interface EAPMSectionHeaderView : UIView
 
-@property (nonatomic, copy, nullable) dispatch_block_t accessoryTapHandler;
+- (void)configureWithTitle:(NSString *)title;
 
-- (void)configureWithTitle:(NSString *)title accessoryTitle:(nullable NSString *)accessoryTitle;
+@end
+
+@interface EAPMInfoBannerView : UIView
+
+- (void)configureWithText:(NSString *)text;
 
 @end
 
@@ -43,12 +50,6 @@ typedef NS_ENUM(NSInteger, EAPMHomeActionType) {
 
 - (void)configureWithTitle:(NSString *)title;
 - (void)setCardHighlighted:(BOOL)highlighted;
-
-@end
-
-@interface EAPMInfoLinkView : UIControl
-
-- (void)configureWithTitle:(NSString *)title;
 
 @end
 

@@ -1,11 +1,11 @@
 {
   "images" : [
     {
-      "filename" : "eapm_orb_large_purple.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
+      "filename" : "eapm_home_hero.png",
       "idiom" : "universal",
       "scale" : "2x"
     },

@@ -4,7 +4,6 @@
 #import "../../EAPMSDKImports.h"
 #import "EAPMPerformanceLoadDemoViewController.h"
 #import "EAPMPerformanceScrollDemoViewController.h"
-#import "EAPMTestStepsViewController.h"
 
 static NSString * const EAPMHeroCellReuseIdentifier = @"EAPMHeroCell";
 static NSString * const EAPMActionCellReuseIdentifier = @"EAPMActionCell";
@@ -14,6 +13,7 @@ typedef NS_ENUM(NSInteger, EAPMHomeSectionType) {
     EAPMHomeSectionTypeHero,
     EAPMHomeSectionTypeCrash,
     EAPMHomeSectionTypePerformance,
+    EAPMHomeSectionTypeMemory,
     EAPMHomeSectionTypeRemoteLog,
 };
 
@@ -23,6 +23,8 @@ static NSString *EAPMSectionTitle(EAPMHomeSectionType sectionType) {
             return @"崩溃分析";
         case EAPMHomeSectionTypePerformance:
             return @"性能分析";
+        case EAPMHomeSectionTypeMemory:
+            return @"内存分析";
         case EAPMHomeSectionTypeRemoteLog:
             return @"远程日志";
         default:
@@ -32,7 +34,7 @@ static NSString *EAPMSectionTitle(EAPMHomeSectionType sectionType) {
 
 @interface EAPMHeroHeaderCell : UICollectionViewCell
 
-- (void)configure;
+- (void)configureWithInfoText:(NSString *)text;
 
 @end
 
@@ -45,9 +47,7 @@ static NSString *EAPMSectionTitle(EAPMHomeSectionType sectionType) {
 
 @interface EAPMSectionHeaderReusableView : UICollectionReusableView
 
-@property (nonatomic, copy, nullable) dispatch_block_t accessoryTapHandler;
-
-- (void)configureWithTitle:(NSString *)title showsAccessory:(BOOL)showsAccessory;
+- (void)configureWithTitle:(NSString *)title;
 
 @end
 
@@ -56,6 +56,7 @@ static NSString *EAPMSectionTitle(EAPMHomeSectionType sectionType) {
 @property (nonatomic, strong) UICollectionView *collectionView;
 @property (nonatomic, strong) NSArray<NSNumber *> *sections;
 @property (nonatomic, strong) NSDictionary<NSNumber *, NSArray<EAPMHomeActionItem *> *> *sectionItems;
+@property (nonatomic, copy) NSString *infoBannerText;
 @property (nonatomic, strong) EAPMRemoteLog *remoteLogger;
 
 @end
@@ -83,8 +84,10 @@ static NSString *EAPMSectionTitle(EAPMHomeSectionType sectionType) {
         @(EAPMHomeSectionTypeHero),
         @(EAPMHomeSectionTypeCrash),
         @(EAPMHomeSectionTypePerformance),
+        @(EAPMHomeSectionTypeMemory),
         @(EAPMHomeSectionTypeRemoteLog),
     ];
+    self.infoBannerText = @"触发相关事件，并在 EMAS 控制台 查看上报数据";
 
     self.sectionItems = @{
         @(EAPMHomeSectionTypeCrash): @[
@@ -98,9 +101,14 @@ static NSString *EAPMSectionTitle(EAPMHomeSectionType sectionType) {
             [EAPMHomeActionItem itemWithTitle:@"测页面滑动" actionType:EAPMHomeActionTypePageScroll],
             [EAPMHomeActionItem itemWithTitle:@"网络请求" actionType:EAPMHomeActionTypeNetworkRequest],
         ],
+        @(EAPMHomeSectionTypeMemory): @[
+            [EAPMHomeActionItem itemWithTitle:@"OOM" actionType:EAPMHomeActionTypePlaceholder],
+            [EAPMHomeActionItem itemWithTitle:@"内存泄漏" actionType:EAPMHomeActionTypePlaceholder],
+            [EAPMHomeActionItem itemWithTitle:@"大对象" actionType:EAPMHomeActionTypePlaceholder],
+        ],
         @(EAPMHomeSectionTypeRemoteLog): @[
-            [EAPMHomeActionItem itemWithTitle:@"打日志" actionType:EAPMHomeActionTypeCreateLog],
-            [EAPMHomeActionItem itemWithTitle:@"更新昵称" actionType:EAPMHomeActionTypeUpdateNickname],
+            [EAPMHomeActionItem itemWithTitle:@"日志回捞" actionType:EAPMHomeActionTypePlaceholder],
+            [EAPMHomeActionItem itemWithTitle:@"主动上报" actionType:EAPMHomeActionTypeCreateLog],
         ],
     };
 }
@@ -114,33 +122,33 @@ static NSString *EAPMSectionTitle(EAPMHomeSectionType sectionType) {
         EAPMHomeSectionType sectionType = self.sections[sectionIndex].integerValue;
         if (sectionType == EAPMHomeSectionTypeHero) {
             NSCollectionLayoutSize *itemSize = [NSCollectionLayoutSize sizeWithWidthDimension:[NSCollectionLayoutDimension fractionalWidthDimension:1.0]
-                                                                              heightDimension:[NSCollectionLayoutDimension absoluteDimension:324.0]];
+                                                                              heightDimension:[NSCollectionLayoutDimension absoluteDimension:316.0]];
             NSCollectionLayoutItem *item = [NSCollectionLayoutItem itemWithLayoutSize:itemSize];
             NSCollectionLayoutGroup *group = [NSCollectionLayoutGroup horizontalGroupWithLayoutSize:itemSize subitems:@[item]];
             NSCollectionLayoutSection *section = [NSCollectionLayoutSection sectionWithGroup:group];
-            section.contentInsets = NSDirectionalEdgeInsetsMake(0.0, 0.0, 12.0, 0.0);
+            section.contentInsets = NSDirectionalEdgeInsetsMake(0.0, 0.0, 18.0, 0.0);
             return section;
         }
 
         NSCollectionLayoutSize *itemSize = [NSCollectionLayoutSize sizeWithWidthDimension:[NSCollectionLayoutDimension fractionalWidthDimension:0.5]
-                                                                          heightDimension:[NSCollectionLayoutDimension absoluteDimension:56.0]];
+                                                                          heightDimension:[NSCollectionLayoutDimension absoluteDimension:48.0]];
         NSCollectionLayoutItem *item = [NSCollectionLayoutItem itemWithLayoutSize:itemSize];
         item.contentInsets = NSDirectionalEdgeInsetsMake(0.0, 0.0, 0.0, 0.0);
 
         NSCollectionLayoutSize *groupSize = [NSCollectionLayoutSize sizeWithWidthDimension:[NSCollectionLayoutDimension fractionalWidthDimension:1.0]
-                                                                           heightDimension:[NSCollectionLayoutDimension absoluteDimension:56.0]];
+                                                                           heightDimension:[NSCollectionLayoutDimension absoluteDimension:48.0]];
         NSCollectionLayoutGroup *group = [NSCollectionLayoutGroup horizontalGroupWithLayoutSize:groupSize subitem:item count:2];
-        group.interItemSpacing = [NSCollectionLayoutSpacing fixedSpacing:12.0];
+        group.interItemSpacing = [NSCollectionLayoutSpacing fixedSpacing:6.0];
 
         NSCollectionLayoutSection *section = [NSCollectionLayoutSection sectionWithGroup:group];
-        section.contentInsets = NSDirectionalEdgeInsetsMake(0.0, 16.0, 0.0, 16.0);
-        section.interGroupSpacing = 12.0;
+        section.contentInsets = NSDirectionalEdgeInsetsMake(0.0, 16.0, 12.0, 16.0);
+        section.interGroupSpacing = 6.0;
 
         NSCollectionLayoutBoundarySupplementaryItem *header = [NSCollectionLayoutBoundarySupplementaryItem boundarySupplementaryItemWithLayoutSize:[NSCollectionLayoutSize sizeWithWidthDimension:[NSCollectionLayoutDimension fractionalWidthDimension:1.0]
                                                                                                                                  heightDimension:[NSCollectionLayoutDimension absoluteDimension:28.0]]
                                                                                                                                       elementKind:UICollectionElementKindSectionHeader
                                                                                                                                            alignment:NSRectAlignmentTop];
-        header.contentInsets = NSDirectionalEdgeInsetsMake(0.0, 0.0, 12.0, 0.0);
+        header.contentInsets = NSDirectionalEdgeInsetsMake(0.0, 0.0, 6.0, 0.0);
         section.boundarySupplementaryItems = @[header];
 
         return section;
@@ -190,7 +198,7 @@ static NSString *EAPMSectionTitle(EAPMHomeSectionType sectionType) {
     EAPMHomeSectionType sectionType = self.sections[indexPath.section].integerValue;
     if (sectionType == EAPMHomeSectionTypeHero) {
         EAPMHeroHeaderCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:EAPMHeroCellReuseIdentifier forIndexPath:indexPath];
-        [cell configure];
+        [cell configureWithInfoText:self.infoBannerText];
         return cell;
     }
 
@@ -203,12 +211,7 @@ static NSString *EAPMSectionTitle(EAPMHomeSectionType sectionType) {
 - (UICollectionReusableView *)collectionView:(UICollectionView *)collectionView viewForSupplementaryElementOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath {
     EAPMSectionHeaderReusableView *view = [collectionView dequeueReusableSupplementaryViewOfKind:kind withReuseIdentifier:EAPMSectionHeaderReuseIdentifier forIndexPath:indexPath];
     EAPMHomeSectionType sectionType = self.sections[indexPath.section].integerValue;
-    BOOL showsAccessory = sectionType == EAPMHomeSectionTypeRemoteLog;
-    [view configureWithTitle:EAPMSectionTitle(sectionType) showsAccessory:showsAccessory];
-    __weak typeof(self) weakSelf = self;
-    view.accessoryTapHandler = ^{
-        [weakSelf showTestSteps];
-    };
+    [view configureWithTitle:EAPMSectionTitle(sectionType)];
     return view;
 }
 
@@ -284,12 +287,10 @@ static NSString *EAPMSectionTitle(EAPMHomeSectionType sectionType) {
             [self showAlertWithMessage:[NSString stringWithFormat:@"已更新昵称: %@", nickName]];
             break;
         }
+        case EAPMHomeActionTypePlaceholder:
+            [self showAlertWithMessage:@"功能建设中，暂未接入触发动作"];
+            break;
     }
-}
-
-- (void)showTestSteps {
-    EAPMTestStepsViewController *viewController = [[EAPMTestStepsViewController alloc] init];
-    [self.navigationController pushViewController:viewController animated:YES];
 }
 
 - (void)triggerNetworkRequests {
@@ -364,7 +365,8 @@ static NSString *EAPMSectionTitle(EAPMHomeSectionType sectionType) {
     return self;
 }
 
-- (void)configure {
+- (void)configureWithInfoText:(NSString *)text {
+    [self.heroHeaderView configureWithInfoText:text];
 }
 
 @end
@@ -426,8 +428,8 @@ static NSString *EAPMSectionTitle(EAPMHomeSectionType sectionType) {
         [self addSubview:_headerView];
 
         [NSLayoutConstraint activateConstraints:@[
-            [_headerView.leadingAnchor constraintEqualToAnchor:self.leadingAnchor constant:16.0],
-            [_headerView.trailingAnchor constraintEqualToAnchor:self.trailingAnchor constant:-16.0],
+            [_headerView.leadingAnchor constraintEqualToAnchor:self.leadingAnchor],
+            [_headerView.trailingAnchor constraintEqualToAnchor:self.trailingAnchor],
             [_headerView.topAnchor constraintEqualToAnchor:self.topAnchor],
             [_headerView.bottomAnchor constraintEqualToAnchor:self.bottomAnchor],
         ]];
@@ -435,14 +437,8 @@ static NSString *EAPMSectionTitle(EAPMHomeSectionType sectionType) {
     return self;
 }
 
-- (void)configureWithTitle:(NSString *)title showsAccessory:(BOOL)showsAccessory {
-    [self.headerView configureWithTitle:title accessoryTitle:showsAccessory ? @"测试步骤" : nil];
-    self.headerView.accessoryTapHandler = self.accessoryTapHandler;
-}
-
-- (void)setAccessoryTapHandler:(dispatch_block_t)accessoryTapHandler {
-    _accessoryTapHandler = [accessoryTapHandler copy];
-    self.headerView.accessoryTapHandler = _accessoryTapHandler;
+- (void)configureWithTitle:(NSString *)title {
+    [self.headerView configureWithTitle:title];
 }
 
 @end
