@@ -1,10 +1,10 @@
-#import "EAPMPerformanceLoadDemoViewController.h"
+#import "EAPMDemoPerformanceLoadViewController.h"
 
-@interface EAPMPerformanceLoadDemoViewController ()
+@interface EAPMDemoPerformanceLoadViewController ()
 
 @end
 
-@implementation EAPMPerformanceLoadDemoViewController
+@implementation EAPMDemoPerformanceLoadViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];

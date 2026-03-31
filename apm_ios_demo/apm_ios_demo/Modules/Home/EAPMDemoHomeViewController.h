@@ -2,7 +2,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface EAPMHomeViewController : UIViewController
+@interface EAPMDemoHomeViewController : UIViewController
 
 @end
 

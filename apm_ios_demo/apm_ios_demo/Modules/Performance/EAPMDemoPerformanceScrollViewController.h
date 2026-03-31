@@ -2,7 +2,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface EAPMPerformanceScrollDemoViewController : UIViewController
+@interface EAPMDemoPerformanceScrollViewController : UIViewController
 
 @end
 

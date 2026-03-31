@@ -1,15 +1,8 @@
-//
-//  CommonTools.m
-//  apm_ios_demo
-//
-//  Created by Miracle on 2025/4/16.
-//  Copyright © 2025 aliyun. All rights reserved.
-//
+#import "EAPMDemoConfigStore.h"
 
-#import "CommonTools.h"
-#import "Macros.h"
+#import "EAPMDemoConstants.h"
 
-@implementation CommonTools
+@implementation EAPMDemoConfigStore
 
 + (void)userDefaultSetObject:(id)value forKey:(NSString *)key {
     if (key) {
@@ -25,20 +18,23 @@
     return nil;
 }
 
-+ (void)setUpConfigWithAppKey:(NSString **)appKey appSecret:(NSString **)appSecret appRsaSecret:(NSString **)appRsaSecret functions:(NSArray **)functions {
++ (void)setUpConfigWithAppKey:(NSString * _Nullable * _Nonnull)appKey
+                    appSecret:(NSString * _Nullable * _Nonnull)appSecret
+                 appRsaSecret:(NSString * _Nullable * _Nonnull)appRsaSecret
+                    functions:(NSArray * _Nullable * _Nonnull)functions {
     if ([*appKey isEqualToString:@"请替换您的appKey"]) {
-        *appKey = (NSString *)[CommonTools userDefaultGet:kAppKey];
+        *appKey = (NSString *)[EAPMDemoConfigStore userDefaultGet:kAppKey];
     }
 
     if ([*appSecret isEqualToString:@"请替换您的appSecret"]) {
-        *appSecret = (NSString *)[CommonTools userDefaultGet:kAppSecret];
+        *appSecret = (NSString *)[EAPMDemoConfigStore userDefaultGet:kAppSecret];
     }
 
     if ([*appRsaSecret isEqualToString:@"请替换您的appRsaSecret"]) {
-        *appRsaSecret = (NSString *)[CommonTools userDefaultGet:kAppRsaSecret];
+        *appRsaSecret = (NSString *)[EAPMDemoConfigStore userDefaultGet:kAppRsaSecret];
     }
 
-    NSArray *localFunctions = (NSArray *)[CommonTools userDefaultGet:kFunctions];
+    NSArray *localFunctions = (NSArray *)[EAPMDemoConfigStore userDefaultGet:kFunctions];
     if (localFunctions && localFunctions.count >= 0) {
         NSMutableArray *functionsClass = [NSMutableArray array];
         for (NSString *function in localFunctions) {

@@ -2,7 +2,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface EAPMPerformanceLoadDemoViewController : UIViewController
+@interface EAPMDemoPerformanceLoadViewController : UIViewController
 
 @end
 

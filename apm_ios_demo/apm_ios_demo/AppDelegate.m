@@ -8,9 +8,9 @@
 
 #import "AppDelegate.h"
 
-#import "EAPMSDKImports.h"
-#import "CommonTools.h"
-#import "EAPMHomeViewController.h"
+#import "EAPMDemoConfigStore.h"
+#import "EAPMDemoHomeViewController.h"
+#import "EAPMDemoSDKImports.h"
 
 @interface AppDelegate ()
 
@@ -23,7 +23,7 @@
     [self initSDK];
 
     self.window = [[UIWindow alloc] initWithFrame:UIScreen.mainScreen.bounds];
-    EAPMHomeViewController *homeViewController = [[EAPMHomeViewController alloc] init];
+    EAPMDemoHomeViewController *homeViewController = [[EAPMDemoHomeViewController alloc] init];
     UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:homeViewController];
     navigationController.navigationBar.prefersLargeTitles = NO;
     self.window.rootViewController = navigationController;
@@ -41,7 +41,7 @@
     NSArray *functions = @[[EAPMCrashAnalysis class], [EAPMPerformance class], [EAPMRemoteLog class]];
 
     // 仅用于demo页面配置AppKey场景，非应用接入合理使用场景
-    [CommonTools setUpConfigWithAppKey:&appKey appSecret:&appSecret appRsaSecret:&appRsaSecret functions:&functions];
+    [EAPMDemoConfigStore setUpConfigWithAppKey:&appKey appSecret:&appSecret appRsaSecret:&appRsaSecret functions:&functions];
 
     if (!appKey || !appSecret || !appRsaSecret || !functions) {
         NSLog(@"****初始化失败，请检查所有必需的配置参数****");

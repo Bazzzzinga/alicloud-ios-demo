@@ -1,12 +1,12 @@
-#import "EAPMPerformanceScrollDemoViewController.h"
+#import "EAPMDemoPerformanceScrollViewController.h"
 
-@interface EAPMPerformanceScrollDemoViewController () <UITableViewDataSource, UITableViewDelegate>
+@interface EAPMDemoPerformanceScrollViewController () <UITableViewDataSource, UITableViewDelegate>
 
 @property (nonatomic, strong) UITableView *tableView;
 
 @end
 
-@implementation EAPMPerformanceScrollDemoViewController
+@implementation EAPMDemoPerformanceScrollViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];

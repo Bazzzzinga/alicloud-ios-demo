@@ -1,42 +1,66 @@
-#import "EAPMHomeUI.h"
+#import "EAPMDemoHomeUI.h"
 
-static UIColor *EAPMColorHex(NSUInteger hexValue, CGFloat alpha) {
+static UIColor *EAPMDemoColorHex(NSUInteger hexValue, CGFloat alpha) {
     return [UIColor colorWithRed:((hexValue >> 16) & 0xFF) / 255.0
                            green:((hexValue >> 8) & 0xFF) / 255.0
                             blue:(hexValue & 0xFF) / 255.0
                            alpha:alpha];
 }
 
-@interface EAPMHomeActionItem ()
+@interface EAPMDemoHomeActionItem ()
 
 @property (nonatomic, copy, readwrite) NSString *title;
-@property (nonatomic, assign, readwrite) EAPMHomeActionType actionType;
+@property (nonatomic, copy, readwrite) EAPMDemoHomeActionHandler actionHandler;
 
 @end
 
-@implementation EAPMHomeActionItem
+@implementation EAPMDemoHomeActionItem
 
-+ (instancetype)itemWithTitle:(NSString *)title actionType:(EAPMHomeActionType)actionType {
-    EAPMHomeActionItem *item = [[self alloc] init];
++ (instancetype)itemWithTitle:(NSString *)title actionHandler:(EAPMDemoHomeActionHandler)actionHandler {
+    EAPMDemoHomeActionItem *item = [[self alloc] init];
     item.title = title;
-    item.actionType = actionType;
+    item.actionHandler = actionHandler;
     return item;
+}
+
+- (void)performAction {
+    if (self.actionHandler) {
+        self.actionHandler();
+    }
 }
 
 @end
 
-@interface EAPMGradientBackgroundView ()
+@interface EAPMDemoHomeSectionModel ()
+
+@property (nonatomic, copy, readwrite) NSString *title;
+@property (nonatomic, copy, readwrite) NSArray<EAPMDemoHomeActionItem *> *items;
+
+@end
+
+@implementation EAPMDemoHomeSectionModel
+
++ (instancetype)sectionWithTitle:(NSString *)title items:(NSArray<EAPMDemoHomeActionItem *> *)items {
+    EAPMDemoHomeSectionModel *section = [[self alloc] init];
+    section.title = title;
+    section.items = items;
+    return section;
+}
+
+@end
+
+@interface EAPMDemoGradientBackgroundView ()
 
 @property (nonatomic, strong) UIImageView *backgroundImageView;
 
 @end
 
-@implementation EAPMGradientBackgroundView
+@implementation EAPMDemoGradientBackgroundView
 
 - (instancetype)initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
     if (self) {
-        self.backgroundColor = EAPMColorHex(0xF3F4F8, 1.0);
+        self.backgroundColor = EAPMDemoColorHex(0xF3F4F8, 1.0);
         self.clipsToBounds = YES;
 
         _backgroundImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"eapm_home_bg"]];
@@ -59,18 +83,18 @@ static UIColor *EAPMColorHex(NSUInteger hexValue, CGFloat alpha) {
 
 @end
 
-@interface EAPMHeroHeaderView ()
+@interface EAPMDemoHeroHeaderView ()
 
 @property (nonatomic, strong) UIImageView *heroImageView;
 @property (nonatomic, strong) NSLayoutConstraint *heroImageHeightConstraint;
-@property (nonatomic, strong) EAPMInfoBannerView *infoBannerView;
+@property (nonatomic, strong) EAPMDemoInfoBannerView *infoBannerView;
 @property (nonatomic, strong) UIView *bottomGradientView;
 @property (nonatomic, strong) UILabel *titleLabel;
 @property (nonatomic, strong) UILabel *subtitleLabel;
 
 @end
 
-@implementation EAPMHeroHeaderView
+@implementation EAPMDemoHeroHeaderView
 
 - (instancetype)initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
@@ -90,23 +114,23 @@ static UIColor *EAPMColorHex(NSUInteger hexValue, CGFloat alpha) {
     CAGradientLayer *bottomLayer = [CAGradientLayer layer];
     bottomLayer.colors = @[
         (__bridge id)[UIColor colorWithWhite:1 alpha:0.0].CGColor,
-        (__bridge id)EAPMColorHex(0xF3F4F8, 1.0).CGColor,
+        (__bridge id)EAPMDemoColorHex(0xF3F4F8, 1.0).CGColor,
     ];
     bottomLayer.startPoint = CGPointMake(0.5, 0.0);
     bottomLayer.endPoint = CGPointMake(0.5, 1.0);
     [_bottomGradientView.layer addSublayer:bottomLayer];
 
-    _infoBannerView = [[EAPMInfoBannerView alloc] init];
+    _infoBannerView = [[EAPMDemoInfoBannerView alloc] init];
 
     _titleLabel = [[UILabel alloc] init];
-    _titleLabel.text = @"移动监控Demo";
-    _titleLabel.textColor = EAPMColorHex(0x4B4D52, 1.0);
+    _titleLabel.text = @"移动监控";
+    _titleLabel.textColor = EAPMDemoColorHex(0x4B4D52, 1.0);
     _titleLabel.font = [UIFont systemFontOfSize:21.0 weight:UIFontWeightSemibold];
     _titleLabel.numberOfLines = 1;
 
     _subtitleLabel = [[UILabel alloc] init];
-    _subtitleLabel.text = @"欢迎来到阿里云移动监控Demo,开始你的调试吧~";
-    _subtitleLabel.textColor = EAPMColorHex(0x607B9C, 1.0);
+    _subtitleLabel.text = @"欢迎来到阿里云移动监控，开始你的调试吧~";
+    _subtitleLabel.textColor = EAPMDemoColorHex(0x607B9C, 1.0);
     _subtitleLabel.font = [UIFont systemFontOfSize:15.0 weight:UIFontWeightRegular];
     _subtitleLabel.numberOfLines = 2;
 
@@ -157,25 +181,25 @@ static UIColor *EAPMColorHex(NSUInteger hexValue, CGFloat alpha) {
 
 @end
 
-@interface EAPMSectionHeaderView ()
+@interface EAPMDemoSectionHeaderView ()
 
 @property (nonatomic, strong) UIView *accentView;
 @property (nonatomic, strong) UILabel *titleLabel;
 
 @end
 
-@implementation EAPMSectionHeaderView
+@implementation EAPMDemoSectionHeaderView
 
 - (instancetype)initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
     if (self) {
         _accentView = [[UIView alloc] init];
-        _accentView.backgroundColor = EAPMColorHex(0x315CFC, 1.0);
+        _accentView.backgroundColor = EAPMDemoColorHex(0x315CFC, 1.0);
         _accentView.layer.cornerRadius = 3.0;
 
         _titleLabel = [[UILabel alloc] init];
         _titleLabel.font = [UIFont systemFontOfSize:18.0 weight:UIFontWeightMedium];
-        _titleLabel.textColor = EAPMColorHex(0x4B4D52, 1.0);
+        _titleLabel.textColor = EAPMDemoColorHex(0x4B4D52, 1.0);
 
         for (UIView *view in @[_accentView, _titleLabel]) {
             view.translatesAutoresizingMaskIntoConstraints = NO;
@@ -201,24 +225,24 @@ static UIColor *EAPMColorHex(NSUInteger hexValue, CGFloat alpha) {
 
 @end
 
-@interface EAPMInfoBannerView ()
+@interface EAPMDemoInfoBannerView ()
 
 @property (nonatomic, strong) UILabel *textLabel;
 
 @end
 
-@implementation EAPMInfoBannerView
+@implementation EAPMDemoInfoBannerView
 
 - (instancetype)initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
     if (self) {
-        self.backgroundColor = EAPMColorHex(0xE2EBFF, 0.96);
+        self.backgroundColor = EAPMDemoColorHex(0xE2EBFF, 0.96);
         self.layer.cornerRadius = 6.0;
         self.layer.borderWidth = 1.0;
-        self.layer.borderColor = EAPMColorHex(0xD5E0F7, 1.0).CGColor;
+        self.layer.borderColor = EAPMDemoColorHex(0xD5E0F7, 1.0).CGColor;
 
         _textLabel = [[UILabel alloc] init];
-        _textLabel.textColor = EAPMColorHex(0x767D89, 1.0);
+        _textLabel.textColor = EAPMDemoColorHex(0x767D89, 1.0);
         _textLabel.font = [UIFont systemFontOfSize:15.0 weight:UIFontWeightRegular];
         _textLabel.numberOfLines = 0;
         _textLabel.translatesAutoresizingMaskIntoConstraints = NO;
@@ -237,13 +261,13 @@ static UIColor *EAPMColorHex(NSUInteger hexValue, CGFloat alpha) {
 - (void)configureWithText:(NSString *)text {
     NSMutableAttributedString *attributedText = [[NSMutableAttributedString alloc] initWithString:text attributes:@{
         NSFontAttributeName: [UIFont systemFontOfSize:15.0 weight:UIFontWeightRegular],
-        NSForegroundColorAttributeName: EAPMColorHex(0x767D89, 1.0),
+        NSForegroundColorAttributeName: EAPMDemoColorHex(0x767D89, 1.0),
     }];
     NSRange highlightRange = [text rangeOfString:@"EMAS 控制台"];
     if (highlightRange.location != NSNotFound) {
         [attributedText addAttributes:@{
             NSFontAttributeName: [UIFont systemFontOfSize:15.0 weight:UIFontWeightSemibold],
-            NSForegroundColorAttributeName: EAPMColorHex(0x767D89, 1.0),
+            NSForegroundColorAttributeName: EAPMDemoColorHex(0x767D89, 1.0),
         } range:highlightRange];
     }
     self.textLabel.attributedText = attributedText;
@@ -251,13 +275,13 @@ static UIColor *EAPMColorHex(NSUInteger hexValue, CGFloat alpha) {
 
 @end
 
-@interface EAPMActionCardView ()
+@interface EAPMDemoActionCardView ()
 
 @property (nonatomic, strong) UILabel *titleLabel;
 
 @end
 
-@implementation EAPMActionCardView
+@implementation EAPMDemoActionCardView
 
 - (instancetype)initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
@@ -265,11 +289,11 @@ static UIColor *EAPMColorHex(NSUInteger hexValue, CGFloat alpha) {
         self.backgroundColor = UIColor.whiteColor;
         self.layer.cornerRadius = 6.0;
         self.layer.borderWidth = 2.0;
-        self.layer.borderColor = EAPMColorHex(0xE6E8EB, 1.0).CGColor;
+        self.layer.borderColor = EAPMDemoColorHex(0xE6E8EB, 1.0).CGColor;
         self.layer.shadowOpacity = 0.0;
 
         _titleLabel = [[UILabel alloc] init];
-        _titleLabel.textColor = EAPMColorHex(0x1F2024, 1.0);
+        _titleLabel.textColor = EAPMDemoColorHex(0x1F2024, 1.0);
         _titleLabel.font = [UIFont fontWithName:@"PingFangSC-Regular" size:16.0] ?: [UIFont systemFontOfSize:16.0 weight:UIFontWeightRegular];
         _titleLabel.textAlignment = NSTextAlignmentCenter;
         _titleLabel.numberOfLines = 2;
@@ -293,7 +317,7 @@ static UIColor *EAPMColorHex(NSUInteger hexValue, CGFloat alpha) {
 
     self.titleLabel.attributedText = [[NSAttributedString alloc] initWithString:title attributes:@{
         NSFontAttributeName: self.titleLabel.font,
-        NSForegroundColorAttributeName: EAPMColorHex(0x1F2024, 1.0),
+        NSForegroundColorAttributeName: EAPMDemoColorHex(0x1F2024, 1.0),
         NSParagraphStyleAttributeName: paragraphStyle,
     }];
 }
