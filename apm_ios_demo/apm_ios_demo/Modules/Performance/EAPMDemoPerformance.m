@@ -19,15 +19,15 @@ static void EAPMDemoPresentPerformanceAlert(UIViewController *presenter, NSStrin
 + (EAPMDemoHomeSectionModel *)sectionWithPresenter:(UIViewController *)presenter {
     __weak UIViewController *weakPresenter = presenter;
     return [EAPMDemoHomeSectionModel sectionWithTitle:@"性能分析" items:@[
-        [EAPMDemoHomeActionItem itemWithTitle:@"测页面加载" actionHandler:^{
+        [EAPMDemoHomeActionItem itemWithTitle:@"启动分析" actionHandler:^{
             EAPMDemoPerformanceLoadViewController *viewController = [[EAPMDemoPerformanceLoadViewController alloc] init];
             [weakPresenter.navigationController pushViewController:viewController animated:YES];
         }],
-        [EAPMDemoHomeActionItem itemWithTitle:@"测页面滑动" actionHandler:^{
+        [EAPMDemoHomeActionItem itemWithTitle:@"页面分析" actionHandler:^{
             EAPMDemoPerformanceScrollViewController *viewController = [[EAPMDemoPerformanceScrollViewController alloc] init];
             [weakPresenter.navigationController pushViewController:viewController animated:YES];
         }],
-        [EAPMDemoHomeActionItem itemWithTitle:@"网络请求" actionHandler:^{
+        [EAPMDemoHomeActionItem itemWithTitle:@"网络分析" actionHandler:^{
             NSString *urlString = @"https://www.baidu.com/";
             __block BOOL hasPresented = NO;
             for (NSInteger index = 0; index < 10; index++) {

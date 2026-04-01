@@ -78,7 +78,7 @@ static UIColor *EAPMDemoSettingsHexColor(NSUInteger hexValue, CGFloat alpha) {
     NSMutableAttributedString *titleText = [[NSMutableAttributedString alloc] initWithString:@"设置" attributes:@{
         NSFontAttributeName: pageTitleFont,
         NSForegroundColorAttributeName: EAPMDemoSettingsHexColor(0x4B4D52, 1.0),
-        NSKernAttributeName: @(4.56),
+        NSKernAttributeName: @(1.6),
     }];
     pageTitleLabel.attributedText = titleText;
     [_headerView addSubview:pageTitleLabel];

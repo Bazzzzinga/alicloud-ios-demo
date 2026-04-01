@@ -11,7 +11,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
 
-    self.title = @"测页面滑动";
+    self.title = @"页面分析";
     self.view.backgroundColor = [UIColor colorWithRed:0xF3 / 255.0 green:0xF4 / 255.0 blue:0xF8 / 255.0 alpha:1.0];
 
     _tableView = [[UITableView alloc] initWithFrame:CGRectZero style:UITableViewStyleInsetGrouped];

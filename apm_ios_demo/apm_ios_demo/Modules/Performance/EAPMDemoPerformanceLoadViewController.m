@@ -9,7 +9,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
 
-    self.title = @"测页面加载";
+    self.title = @"启动分析";
     self.view.backgroundColor = [UIColor colorWithRed:0xF3 / 255.0 green:0xF4 / 255.0 blue:0xF8 / 255.0 alpha:1.0];
 
     UIScrollView *scrollView = [[UIScrollView alloc] init];
@@ -23,14 +23,14 @@
 
     UILabel *titleLabel = [[UILabel alloc] init];
     titleLabel.translatesAutoresizingMaskIntoConstraints = NO;
-    titleLabel.text = @"页面加载示例";
+    titleLabel.text = @"启动分析示例";
     titleLabel.font = [UIFont systemFontOfSize:30 weight:UIFontWeightSemibold];
     titleLabel.textColor = [UIColor colorWithRed:0x4B / 255.0 green:0x4D / 255.0 blue:0x52 / 255.0 alpha:1.0];
     [contentView addSubview:titleLabel];
 
     UILabel *descLabel = [[UILabel alloc] init];
     descLabel.translatesAutoresizingMaskIntoConstraints = NO;
-    descLabel.text = @"这个页面用于承接首页“测页面加载”，首屏包含多组卡片和说明内容，用于模拟真实业务页的首屏渲染。";
+    descLabel.text = @"这个页面用于承接首页“启动分析”，首屏包含多组卡片和说明内容，用于模拟真实业务页的首屏渲染。";
     descLabel.numberOfLines = 0;
     descLabel.font = [UIFont systemFontOfSize:16 weight:UIFontWeightRegular];
     descLabel.textColor = [UIColor colorWithRed:0x60 / 255.0 green:0x7B / 255.0 blue:0x9C / 255.0 alpha:1.0];
