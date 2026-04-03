@@ -1,73 +1,46 @@
 PODS:
-  - AlicloudAPM (1.3.1):
-    - AliCloudNetworkMonitor (~> 2.0.4)
-    - AlicloudUTDID
-    - AliHACore (~> 11.0.8)
-    - AliHAPerformanceMonitor (~> 11.0.5)
-  - AlicloudApmAll/AlicloudApmMemAlloc (2.1.8):
-    - AlicloudApmCrashAnalysis (~> 2.3.7)
-    - AlicloudApmPerformance (~> 2.2.1)
-  - AlicloudApmAll/AlicloudApmMemLeak (2.1.8):
-    - AlicloudApmCrashAnalysis (~> 2.3.7)
-    - AlicloudApmPerformance (~> 2.2.1)
-  - AlicloudApmAll/AlicloudApmRemoteLog (2.1.8):
-    - AlicloudApmCore (~> 1.3.11)
-    - AlicloudApmCrashAnalysis (~> 2.3.7)
-    - AlicloudApmPerformance (~> 2.2.1)
+  - AlicloudApmAll/AlicloudApmMemAlloc (2.2.0):
+    - AlicloudApmCore (~> 1.4.0)
+    - AlicloudApmCrashAnalysis (~> 2.3.8)
+  - AlicloudApmAll/AlicloudApmMemLeak (2.2.0):
+    - AlicloudApmCore (~> 1.4.0)
+    - AlicloudApmCrashAnalysis (~> 2.3.8)
+  - AlicloudApmAll/AlicloudApmPerformance (2.2.0):
+    - AlicloudApmCore (~> 1.4.0)
+    - AlicloudApmCrashAnalysis (~> 2.3.8)
+  - AlicloudApmAll/AlicloudApmRemoteLog (2.2.0):
+    - AlicloudApmCore (~> 1.4.0)
+    - AlicloudApmCrashAnalysis (~> 2.3.8)
     - SSZipArchive
-  - AlicloudApmCore (1.3.11):
+  - AlicloudApmCore (1.4.0):
     - AlicloudUTDID (= 1.6.1)
-    - AliHACore (~> 11.0.9)
-  - AlicloudApmCrashAnalysis (2.3.7):
-    - AlicloudApmCore (~> 1.3.10)
-  - AlicloudApmPerformance (2.2.1):
-    - AlicloudAPM (~> 1.3.1)
-    - AlicloudApmCore (~> 1.3.7)
-  - AliCloudNetworkMonitor (2.0.4):
-    - AlicloudUTDID
-    - AliHACore (~> 11.0.8)
-    - EMASRest
+  - AlicloudApmCrashAnalysis (2.3.8):
+    - AlicloudApmCore (~> 1.4.0)
   - AlicloudUTDID (1.6.1)
-  - AliHACore (11.0.9):
-    - AlicloudUTDID
-  - AliHAPerformanceMonitor (11.0.5):
-    - AliHACore (~> 11.0.6)
-  - EMASRest (11.2.1)
   - SSZipArchive (2.4.3)
 
 DEPENDENCIES:
-  - AlicloudApmAll/AlicloudApmMemAlloc (= 2.1.8)
-  - AlicloudApmAll/AlicloudApmMemLeak (= 2.1.8)
-  - AlicloudApmAll/AlicloudApmRemoteLog (= 2.1.8)
+  - AlicloudApmAll/AlicloudApmMemAlloc (= 2.2.0)
+  - AlicloudApmAll/AlicloudApmMemLeak (= 2.2.0)
+  - AlicloudApmAll/AlicloudApmPerformance (= 2.2.0)
+  - AlicloudApmAll/AlicloudApmRemoteLog (= 2.2.0)
 
 SPEC REPOS:
   https://github.com/aliyun/aliyun-specs.git:
-    - AlicloudAPM
     - AlicloudApmAll
     - AlicloudApmCore
     - AlicloudApmCrashAnalysis
-    - AlicloudApmPerformance
-    - AliCloudNetworkMonitor
     - AlicloudUTDID
-    - AliHACore
-    - AliHAPerformanceMonitor
-    - EMASRest
   https://github.com/CocoaPods/Specs.git:
     - SSZipArchive
 
 SPEC CHECKSUMS:
-  AlicloudAPM: 275bda21402401d82c56ec7c1a04ff083ee878db
-  AlicloudApmAll: 6cac122b844e04e7b64f82dc1c67898ff325403d
-  AlicloudApmCore: aeb9598f19b8f0935911aafa65fd94ad19902462
-  AlicloudApmCrashAnalysis: 1eba8dfab2ca6eaed14bbbe6d565b866589f1e8a
-  AlicloudApmPerformance: 21306c22890d386b62d9a484574947b040f1b421
-  AliCloudNetworkMonitor: 6f5d9dc9bd4c840cdbd3e4bb871d609cd28efe6f
+  AlicloudApmAll: c7823631f22b329b05526d0011ab8d709db76e3a
+  AlicloudApmCore: f7a5685464ea576cd0565bdf9f2b925d6c148582
+  AlicloudApmCrashAnalysis: a7c0f6953aede5fb60b722ed0e3246a74d863558
   AlicloudUTDID: 5d2f22d50e11eecd38f30bc7a48c71925ea90976
-  AliHACore: 6f5f6fc23fd5f537a697a538f6fc795cc0496e53
-  AliHAPerformanceMonitor: 456a00278acb44378489c08ea905ed5f571117f6
-  EMASRest: 81c0a69a00b064dd1bfd8816cd6ec3f4e7476a35
   SSZipArchive: fe6a26b2a54d5a0890f2567b5cc6de5caa600aef
 
-PODFILE CHECKSUM: 0ff4d31b7213700a81892175e26f585324c03762
+PODFILE CHECKSUM: 046f9f0c5a5dbc17cebc2ea0e6b757ed4f84df86
 
 COCOAPODS: 1.16.2

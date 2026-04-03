@@ -1,7 +1,7 @@
 #import "EAPMDemoSettingsViewController.h"
 
 #import "EAPMDemoConfigStore.h"
-#import <UTDID/UTDevice.h>
+#import <AlicloudApmCore/AlicloudApmCore.h>
 
 static UIColor *EAPMDemoSettingsHexColor(NSUInteger hexValue, CGFloat alpha) {
     return [UIColor colorWithRed:((hexValue >> 16) & 0xFF) / 255.0
@@ -210,7 +210,7 @@ static UIColor *EAPMDemoSettingsHexColor(NSUInteger hexValue, CGFloat alpha) {
     self.userIdInputView.textField.text = [EAPMDemoConfigStore storedUserId] ?: @"";
     self.userNickInputView.textField.text = [EAPMDemoConfigStore storedUserNick] ?: @"";
 
-    NSString *utdid = [UTDevice utdid];
+    NSString *utdid = [EAPMApm utdid];
     self.utdidInputView.textField.text = utdid.length > 0 ? utdid : @"获取失败";
 }
 

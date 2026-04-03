@@ -14,6 +14,8 @@
 #import <AlicloudApmCrashAnalysis/AlicloudApmCrashAnalysis.h>
 #import <AlicloudApmPerformance/AlicloudApmPerformance.h>
 #import <AlicloudApmRemoteLog/AlicloudApmRemoteLog.h>
+#import <AlicloudApmMemAlloc/AlicloudApmMemAlloc.h>
+#import <AlicloudApmMemLeak/AlicloudApmMemLeak.h>
 
 static NSString * const EAPMDemoPlaceholderAppKey = @"请替换您的appKey";
 static NSString * const EAPMDemoPlaceholderAppSecret = @"请替换您的appSecret";
@@ -30,10 +32,10 @@ static NSString * const EAPMDemoPlaceholderAppRsaSecret = @"请替换您的appRs
     self.window = [[UIWindow alloc] initWithFrame:UIScreen.mainScreen.bounds];
     UIViewController *launchViewController = [self installLaunchViewController];
 
-    if (![self canStartApmSDK]) {
-        [self presentInvalidConfigAlertOnPresenter:launchViewController];
-        return YES;
-    }
+//    if (![self canStartApmSDK]) {
+//        [self presentInvalidConfigAlertOnPresenter:launchViewController];
+//        return YES;
+//    }
 
     // 启动 Alicloud APM SDK
     [self startApmSDK];
@@ -72,9 +74,11 @@ static NSString * const EAPMDemoPlaceholderAppRsaSecret = @"请替换您的appRs
     NSString *appKey = EAPMDemoPlaceholderAppKey;
     NSString *appSecret = EAPMDemoPlaceholderAppSecret;
     NSString *appRsaSecret = EAPMDemoPlaceholderAppRsaSecret;
-    NSArray *functions = @[[EAPMCrashAnalysis class], [EAPMPerformance class], [EAPMRemoteLog class]];
-
-    [[EAPMConfiguration sharedInstance] setLoggerLevel:EAPMLoggerLevelDebug];
+    NSArray *functions = @[[EAPMCrashAnalysis class],
+                           [EAPMPerformance class],
+                           [EAPMRemoteLog class],
+                           [EAPMMemAlloc class],
+                           [EAPMMemLeak class]];
 
     EAPMOptions *options = [[EAPMOptions alloc] initWithAppKey:appKey
                                                      appSecret:appSecret];
@@ -94,7 +98,7 @@ static NSString * const EAPMDemoPlaceholderAppRsaSecret = @"请替换您的appRs
 }
 
 - (void)presentInvalidConfigAlertOnPresenter:(UIViewController *)presenter {
-    NSString *message = @"当前缺少 appKey、appSecret 或 appRsaSecret 配置。\n请前往 EMAS 控制台获取应用配置，并修改 AppDelegate.m 中的显式常量后重新启动应用。";
+    NSString *message = @"当前缺少 appKey 等应用配置。\n请前往 EMAS 控制台获取应用配置，并修改 AppDelegate.m 中的对应常量后重新启动应用。";
     UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"应用配置缺失"
                                                                              message:message
                                                                       preferredStyle:UIAlertControllerStyleAlert];
