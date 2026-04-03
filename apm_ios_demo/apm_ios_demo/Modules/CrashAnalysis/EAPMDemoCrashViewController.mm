@@ -1,7 +1,10 @@
 #import "EAPMDemoCrashViewController.h"
 
+#import "EAPMDemoHomeUI.h"
 #import <signal.h>
 #import <stdlib.h>
+#import <string.h>
+#import <TargetConditionals.h>
 #import <stdexcept>
 #import <unistd.h>
 
@@ -20,7 +23,6 @@ typedef NS_ENUM(NSInteger, EAPMDemoCrashTriggerType) {
     EAPMDemoCrashTriggerTypeHang,
     EAPMDemoCrashTriggerTypeOOM,
     EAPMDemoCrashTriggerTypeAsyncException,
-    EAPMDemoCrashTriggerTypeDeadlock,
 };
 
 @interface EAPMDemoCrashViewController ()
@@ -28,7 +30,7 @@ typedef NS_ENUM(NSInteger, EAPMDemoCrashTriggerType) {
 @property (nonatomic, strong) UIView *headerView;
 @property (nonatomic, strong) UIScrollView *scrollView;
 @property (nonatomic, strong) UIView *contentView;
-@property (nonatomic, strong) NSMutableArray<NSMutableData *> *oomBuffers;
+@property (nonatomic, strong) NSMutableArray<NSValue *> *oomPointers;
 
 @end
 
@@ -39,8 +41,8 @@ typedef NS_ENUM(NSInteger, EAPMDemoCrashTriggerType) {
 
     self.title = @"";
     self.navigationItem.hidesBackButton = YES;
-    self.view.backgroundColor = EAPMDemoCrashHexColor(0xF3F4F8, 1.0);
-    self.oomBuffers = [NSMutableArray array];
+    self.view.backgroundColor = UIColor.whiteColor;
+    self.oomPointers = [NSMutableArray array];
 
     [self buildViews];
 }
@@ -58,7 +60,7 @@ typedef NS_ENUM(NSInteger, EAPMDemoCrashTriggerType) {
     UIButton *backButton = [UIButton buttonWithType:UIButtonTypeSystem];
     backButton.translatesAutoresizingMaskIntoConstraints = NO;
     if (@available(iOS 13.0, *)) {
-        UIImageSymbolConfiguration *configuration = [UIImageSymbolConfiguration configurationWithPointSize:14.0 weight:UIImageSymbolWeightMedium];
+        UIImageSymbolConfiguration *configuration = [UIImageSymbolConfiguration configurationWithPointSize:12.0 weight:UIImageSymbolWeightMedium];
         UIImage *image = [UIImage systemImageNamed:@"chevron.left" withConfiguration:configuration];
         [backButton setImage:image forState:UIControlStateNormal];
     } else {
@@ -73,17 +75,12 @@ typedef NS_ENUM(NSInteger, EAPMDemoCrashTriggerType) {
     titleLabel.translatesAutoresizingMaskIntoConstraints = NO;
     titleLabel.numberOfLines = 1;
     UIFont *titleFont = [UIFont fontWithName:@"PingFangSC-Medium" size:22.0] ?: [UIFont systemFontOfSize:22.0 weight:UIFontWeightMedium];
-    titleLabel.attributedText = [[NSAttributedString alloc] initWithString:@"其它类型错误" attributes:@{
+    titleLabel.attributedText = [[NSAttributedString alloc] initWithString:@"其它类型崩溃" attributes:@{
         NSFontAttributeName: titleFont,
         NSForegroundColorAttributeName: EAPMDemoCrashHexColor(0x4B4D52, 1.0),
-        NSKernAttributeName: @(1.6),
+        NSKernAttributeName: @(0.8),
     }];
     [_headerView addSubview:titleLabel];
-
-    UIView *separatorView = [[UIView alloc] init];
-    separatorView.translatesAutoresizingMaskIntoConstraints = NO;
-    separatorView.backgroundColor = EAPMDemoCrashHexColor(0xE6E8EB, 1.0);
-    [_headerView addSubview:separatorView];
 
     _scrollView = [[UIScrollView alloc] init];
     _scrollView.translatesAutoresizingMaskIntoConstraints = NO;
@@ -94,13 +91,43 @@ typedef NS_ENUM(NSInteger, EAPMDemoCrashTriggerType) {
     _contentView.translatesAutoresizingMaskIntoConstraints = NO;
     [_scrollView addSubview:_contentView];
 
+    UIView *tipCardView = [[UIView alloc] init];
+    tipCardView.translatesAutoresizingMaskIntoConstraints = NO;
+    tipCardView.backgroundColor = EAPMDemoCrashHexColor(0xEEF3FF, 1.0);
+    tipCardView.layer.cornerRadius = 10.0;
+    tipCardView.layer.masksToBounds = YES;
+    [_contentView addSubview:tipCardView];
+
     UILabel *descLabel = [[UILabel alloc] init];
     descLabel.translatesAutoresizingMaskIntoConstraints = NO;
     descLabel.numberOfLines = 0;
     descLabel.text = @"更多崩溃和错误类型，点击按钮触发对应类型的异常。触发后请前往 EMAS 控制台查看崩溃详情和堆栈信息。";
-    descLabel.font = [UIFont systemFontOfSize:14.0 weight:UIFontWeightRegular];
-    descLabel.textColor = EAPMDemoCrashHexColor(0x6B7380, 1.0);
-    [_contentView addSubview:descLabel];
+    descLabel.font = [UIFont fontWithName:@"PingFangSC-Regular" size:16.0] ?: [UIFont systemFontOfSize:16.0 weight:UIFontWeightRegular];
+    descLabel.textColor = EAPMDemoCrashHexColor(0x7A8FB8, 1.0);
+    NSMutableParagraphStyle *descParagraphStyle = [[NSMutableParagraphStyle alloc] init];
+    descParagraphStyle.alignment = NSTextAlignmentLeft;
+    descParagraphStyle.minimumLineHeight = 20.0;
+    descParagraphStyle.maximumLineHeight = 20.0;
+    descLabel.attributedText = [[NSAttributedString alloc] initWithString:descLabel.text attributes:@{
+        NSFontAttributeName: descLabel.font,
+        NSForegroundColorAttributeName: EAPMDemoCrashHexColor(0x7A8FB8, 1.0),
+        NSParagraphStyleAttributeName: descParagraphStyle,
+        NSKernAttributeName: @(0.4),
+    }];
+    [tipCardView addSubview:descLabel];
+
+    UIView *sectionIndicator = [[UIView alloc] init];
+    sectionIndicator.translatesAutoresizingMaskIntoConstraints = NO;
+    sectionIndicator.backgroundColor = EAPMDemoCrashHexColor(0x315CFC, 1.0);
+    sectionIndicator.layer.cornerRadius = 3.0;
+    [_contentView addSubview:sectionIndicator];
+
+    UILabel *sectionTitleLabel = [[UILabel alloc] init];
+    sectionTitleLabel.translatesAutoresizingMaskIntoConstraints = NO;
+    sectionTitleLabel.text = @"崩溃列表";
+    sectionTitleLabel.textColor = EAPMDemoCrashHexColor(0x4B4D52, 1.0);
+    sectionTitleLabel.font = [UIFont systemFontOfSize:18.0 weight:UIFontWeightMedium];
+    [_contentView addSubview:sectionTitleLabel];
 
     NSArray<NSDictionary<NSString *, id> *> *items = @[
         @{@"title": @"NSException", @"type": @(EAPMDemoCrashTriggerTypeNSException)},
@@ -108,9 +135,8 @@ typedef NS_ENUM(NSInteger, EAPMDemoCrashTriggerType) {
         @{@"title": @"Mach 异常", @"type": @(EAPMDemoCrashTriggerTypeMach)},
         @{@"title": @"SIGNAL 崩溃", @"type": @(EAPMDemoCrashTriggerTypeSignal)},
         @{@"title": @"卡死", @"type": @(EAPMDemoCrashTriggerTypeHang)},
-        @{@"title": @"Out-Of-Memory", @"type": @(EAPMDemoCrashTriggerTypeOOM)},
+        @{@"title": @"OOM", @"type": @(EAPMDemoCrashTriggerTypeOOM)},
         @{@"title": @"AsyncException", @"type": @(EAPMDemoCrashTriggerTypeAsyncException)},
-        @{@"title": @"Deadlock", @"type": @(EAPMDemoCrashTriggerTypeDeadlock)},
     ];
 
     UIStackView *gridStackView = [[UIStackView alloc] init];
@@ -142,29 +168,25 @@ typedef NS_ENUM(NSInteger, EAPMDemoCrashTriggerType) {
         [rowStackView.heightAnchor constraintEqualToConstant:48.0].active = YES;
     }
 
+    UILayoutGuide *safeArea = self.view.safeAreaLayoutGuide;
     [NSLayoutConstraint activateConstraints:@[
         [_headerView.leadingAnchor constraintEqualToAnchor:self.view.leadingAnchor],
         [_headerView.trailingAnchor constraintEqualToAnchor:self.view.trailingAnchor],
-        [_headerView.topAnchor constraintEqualToAnchor:self.view.safeAreaLayoutGuide.topAnchor],
+        [_headerView.topAnchor constraintEqualToAnchor:safeArea.topAnchor],
 
-        [backButton.leadingAnchor constraintEqualToAnchor:self.view.leadingAnchor constant:14.0],
-        [backButton.topAnchor constraintEqualToAnchor:_headerView.topAnchor constant:8.0],
-        [backButton.widthAnchor constraintEqualToConstant:22.0],
-        [backButton.heightAnchor constraintEqualToConstant:22.0],
+        [backButton.leadingAnchor constraintEqualToAnchor:self.view.leadingAnchor constant:16.0],
+        [backButton.topAnchor constraintEqualToAnchor:_headerView.topAnchor constant:10.0],
+        [backButton.widthAnchor constraintEqualToConstant:20.0],
+        [backButton.heightAnchor constraintEqualToConstant:20.0],
 
-        [titleLabel.leadingAnchor constraintEqualToAnchor:backButton.trailingAnchor constant:10.0],
+        [titleLabel.leadingAnchor constraintEqualToAnchor:backButton.trailingAnchor constant:6.0],
         [titleLabel.centerYAnchor constraintEqualToAnchor:backButton.centerYAnchor constant:-1.0],
 
-        [separatorView.leadingAnchor constraintEqualToAnchor:_headerView.leadingAnchor],
-        [separatorView.trailingAnchor constraintEqualToAnchor:_headerView.trailingAnchor],
-        [separatorView.bottomAnchor constraintEqualToAnchor:_headerView.bottomAnchor],
-        [separatorView.heightAnchor constraintEqualToConstant:0.5],
-
-        [_headerView.bottomAnchor constraintEqualToAnchor:titleLabel.bottomAnchor constant:10.0],
+        [_headerView.bottomAnchor constraintEqualToAnchor:titleLabel.bottomAnchor constant:24.0],
 
         [_scrollView.leadingAnchor constraintEqualToAnchor:self.view.leadingAnchor],
         [_scrollView.trailingAnchor constraintEqualToAnchor:self.view.trailingAnchor],
-        [_scrollView.topAnchor constraintEqualToAnchor:_headerView.bottomAnchor constant:8.0],
+        [_scrollView.topAnchor constraintEqualToAnchor:_headerView.bottomAnchor],
         [_scrollView.bottomAnchor constraintEqualToAnchor:self.view.bottomAnchor],
 
         [_contentView.leadingAnchor constraintEqualToAnchor:_scrollView.contentLayoutGuide.leadingAnchor],
@@ -173,14 +195,27 @@ typedef NS_ENUM(NSInteger, EAPMDemoCrashTriggerType) {
         [_contentView.bottomAnchor constraintEqualToAnchor:_scrollView.contentLayoutGuide.bottomAnchor],
         [_contentView.widthAnchor constraintEqualToAnchor:_scrollView.frameLayoutGuide.widthAnchor],
 
-        [descLabel.leadingAnchor constraintEqualToAnchor:_contentView.leadingAnchor constant:16.0],
-        [descLabel.trailingAnchor constraintEqualToAnchor:_contentView.trailingAnchor constant:-16.0],
-        [descLabel.topAnchor constraintEqualToAnchor:_contentView.topAnchor constant:34.0],
+        [tipCardView.leadingAnchor constraintEqualToAnchor:_contentView.leadingAnchor constant:16.0],
+        [tipCardView.trailingAnchor constraintEqualToAnchor:_contentView.trailingAnchor constant:-16.0],
+        [tipCardView.topAnchor constraintEqualToAnchor:_contentView.topAnchor constant:-4.0],
+
+        [descLabel.leadingAnchor constraintEqualToAnchor:tipCardView.leadingAnchor constant:16.0],
+        [descLabel.trailingAnchor constraintEqualToAnchor:tipCardView.trailingAnchor constant:-16.0],
+        [descLabel.topAnchor constraintEqualToAnchor:tipCardView.topAnchor constant:14.0],
+        [descLabel.bottomAnchor constraintEqualToAnchor:tipCardView.bottomAnchor constant:-14.0],
+
+        [sectionIndicator.leadingAnchor constraintEqualToAnchor:_contentView.leadingAnchor constant:16.0],
+        [sectionIndicator.topAnchor constraintEqualToAnchor:tipCardView.bottomAnchor constant:20.0],
+        [sectionIndicator.widthAnchor constraintEqualToConstant:4.0],
+        [sectionIndicator.heightAnchor constraintEqualToConstant:20.0],
+
+        [sectionTitleLabel.leadingAnchor constraintEqualToAnchor:sectionIndicator.trailingAnchor constant:12.0],
+        [sectionTitleLabel.centerYAnchor constraintEqualToAnchor:sectionIndicator.centerYAnchor],
 
         [gridStackView.leadingAnchor constraintEqualToAnchor:_contentView.leadingAnchor constant:16.0],
         [gridStackView.trailingAnchor constraintEqualToAnchor:_contentView.trailingAnchor constant:-16.0],
-        [gridStackView.topAnchor constraintEqualToAnchor:descLabel.bottomAnchor constant:34.0],
-        [gridStackView.bottomAnchor constraintEqualToAnchor:_contentView.bottomAnchor constant:-26.0],
+        [gridStackView.topAnchor constraintEqualToAnchor:sectionIndicator.bottomAnchor constant:14.0],
+        [gridStackView.bottomAnchor constraintEqualToAnchor:_contentView.bottomAnchor constant:-32.0],
     ]];
 }
 
@@ -188,7 +223,7 @@ typedef NS_ENUM(NSInteger, EAPMDemoCrashTriggerType) {
     UIButton *button = [UIButton buttonWithType:UIButtonTypeSystem];
     button.tag = type;
     button.backgroundColor = UIColor.whiteColor;
-    button.layer.cornerRadius = 6.0;
+    button.layer.cornerRadius = 8.0;
     button.layer.borderWidth = 2.0;
     button.layer.borderColor = EAPMDemoCrashHexColor(0xE6E8EB, 1.0).CGColor;
     button.titleLabel.numberOfLines = 2;
@@ -217,37 +252,42 @@ typedef NS_ENUM(NSInteger, EAPMDemoCrashTriggerType) {
 
 - (void)handleTriggerButtonTapped:(UIButton *)sender {
     switch ((EAPMDemoCrashTriggerType)sender.tag) {
-        case EAPMDemoCrashTriggerTypeNSException:
+        case EAPMDemoCrashTriggerTypeNSException: {
             [self presentCrashConfirmAlertWithTitle:@"NSException" confirmAction:^{
                 @throw [NSException exceptionWithName:@"DemoNSException"
                                                reason:@"Trigger NSException in demo page."
                                              userInfo:nil];
             }];
             break;
-        case EAPMDemoCrashTriggerTypeCpp:
+        }
+        case EAPMDemoCrashTriggerTypeCpp: {
             [self presentCrashConfirmAlertWithTitle:@"C++ 异常" confirmAction:^{
                 throw std::runtime_error("Trigger C++ crash in demo page.");
             }];
             break;
-        case EAPMDemoCrashTriggerTypeMach:
+        }
+        case EAPMDemoCrashTriggerTypeMach: {
             [self presentCrashConfirmAlertWithTitle:@"Mach 异常" confirmAction:^{
                 __builtin_trap();
             }];
             break;
-        case EAPMDemoCrashTriggerTypeSignal:
+        }
+        case EAPMDemoCrashTriggerTypeSignal: {
             [self presentCrashConfirmAlertWithTitle:@"SIGNAL 崩溃" confirmAction:^{
                 raise(SIGSEGV);
             }];
             break;
-        case EAPMDemoCrashTriggerTypeHang:
+        }
+        case EAPMDemoCrashTriggerTypeHang: {
             [self presentCrashConfirmAlertWithTitle:@"卡死" confirmAction:^{
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    [NSThread sleepForTimeInterval:30.0];
+                    [NSThread sleepForTimeInterval:60.0];
                 });
             }];
             break;
+        }
         case EAPMDemoCrashTriggerTypeOOM: {
-            [self presentCrashConfirmAlertWithTitle:@"Out-Of-Memory" confirmAction:^{
+            [self presentCrashConfirmAlertWithTitle:@"OOM" confirmAction:^{
                 [self triggerOOM];
             }];
             break;
@@ -262,58 +302,58 @@ typedef NS_ENUM(NSInteger, EAPMDemoCrashTriggerType) {
             }];
             break;
         }
-        case EAPMDemoCrashTriggerTypeDeadlock: {
-            [self presentCrashConfirmAlertWithTitle:@"Deadlock" confirmAction:^{
-                dispatch_queue_t serialQueue = dispatch_queue_create("com.aliyun.emas.demo.deadlock", DISPATCH_QUEUE_SERIAL);
-                dispatch_async(serialQueue, ^{
-                    NSLog(@"Task 1");
-                    dispatch_barrier_sync(serialQueue, ^{
-                        NSLog(@"Barrier Task");
-                    });
-                    NSLog(@"This will never be printed because of the deadlock");
-                });
-                NSLog(@"Code after dispatch_async");
-            }];
-            break;
-        }
     }
 }
 
 - (void)triggerOOM {
-    [self.oomBuffers removeAllObjects];
+    [self.oomPointers removeAllObjects];
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        const size_t chunkSize =
+#if TARGET_OS_SIMULATOR
+            32 * 1024 * 1024;
+#else
+            8 * 1024 * 1024;
+#endif
+
         while (YES) {
             @autoreleasepool {
-                NSMutableData *chunk = [NSMutableData dataWithLength:10 * 1024 * 1024];
-                [self.oomBuffers addObject:chunk];
-                usleep(100000);
+                void *chunk = malloc(chunkSize);
+                if (!chunk) {
+                    abort();
+                }
+
+                // Touch the full block so the allocator commits real resident memory.
+                memset(chunk, 0xA5, chunkSize);
+                [self.oomPointers addObject:[NSValue valueWithPointer:chunk]];
+                usleep(80000);
             }
         }
     });
 }
 
 - (void)presentCrashConfirmAlertWithTitle:(NSString *)title confirmAction:(dispatch_block_t)confirmAction {
-    NSString *message = [NSString stringWithFormat:@"即将触发【%@】崩溃，App将闪退，稍后可在 EMAS 控制台看到崩溃信息。", title];
-    [self presentConfirmAlertWithTitle:title message:message confirmAction:confirmAction];
+    NSString *message = [NSString stringWithFormat:@"即将触发「%@」，App将闪退，稍后可在 EMAS 控制台看到崩溃信息。", title];
+    [self presentHomeStyleAlertWithTitle:title message:message confirmAction:confirmAction];
 }
 
-- (void)presentConfirmAlertWithTitle:(NSString *)title
-                             message:(NSString *)message
-                       confirmAction:(dispatch_block_t)confirmAction {
+- (void)presentHomeStyleAlertWithTitle:(NSString *)title
+                               message:(NSString *)message
+                         confirmAction:(dispatch_block_t)confirmAction {
     if (self.presentedViewController) {
         return;
     }
 
-    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:title
-                                                                             message:message
-                                                                      preferredStyle:UIAlertControllerStyleAlert];
-    [alertController addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil]];
-    [alertController addAction:[UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(__unused UIAlertAction * _Nonnull action) {
-        if (confirmAction) {
-            confirmAction();
-        }
-    }]];
-    [self presentViewController:alertController animated:YES completion:nil];
+    [EAPMDemoHomeAlertPresenter presentAlertFrom:self
+                                           title:title
+                                         message:message
+                                         actions:@[
+        [EAPMDemoHomeAlertAction actionWithTitle:@"取消"
+                                           style:EAPMDemoHomeAlertActionStyleSecondary
+                                         handler:nil],
+        [EAPMDemoHomeAlertAction actionWithTitle:@"确定"
+                                           style:EAPMDemoHomeAlertActionStylePrimary
+                                         handler:confirmAction],
+    ]];
 }
 
 @end

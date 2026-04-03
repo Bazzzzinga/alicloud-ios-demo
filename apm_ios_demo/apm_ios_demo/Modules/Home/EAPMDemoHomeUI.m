@@ -603,7 +603,7 @@ static UIColor *EAPMDemoColorHex(NSUInteger hexValue, CGFloat alpha) {
         NSParagraphStyleAttributeName: paragraphStyle,
         NSKernAttributeName: @(0.4),
     }];
-    NSRange highlightRange = [text rangeOfString:@"EMAS控制台"];
+    NSRange highlightRange = [text rangeOfString:@"EMAS 控制台"];
     if (highlightRange.location != NSNotFound) {
         [attributedText addAttributes:@{
             NSFontAttributeName: [UIFont systemFontOfSize:15.0 weight:UIFontWeightSemibold],
