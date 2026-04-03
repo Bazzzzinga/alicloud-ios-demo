@@ -7,9 +7,14 @@ static void EAPMDemoPresentMemoryAlert(UIViewController *presenter) {
         return;
     }
 
-    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"提示" message:@"功能建设中，暂未接入触发动作" preferredStyle:UIAlertControllerStyleAlert];
-    [alertController addAction:[UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleCancel handler:nil]];
-    [presenter presentViewController:alertController animated:YES completion:nil];
+    [EAPMDemoHomeAlertPresenter presentAlertFrom:presenter
+                                           title:@"提示"
+                                         message:@"功能建设中，暂未接入触发动作"
+                                         actions:@[
+        [EAPMDemoHomeAlertAction actionWithTitle:@"知道了"
+                                           style:EAPMDemoHomeAlertActionStylePrimary
+                                         handler:nil],
+    ]];
 }
 
 @implementation EAPMDemoMemory

@@ -8,9 +8,14 @@ static void EAPMDemoPresentRemoteLogAlert(UIViewController *presenter, NSString 
         return;
     }
 
-    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"提示" message:message preferredStyle:UIAlertControllerStyleAlert];
-    [alertController addAction:[UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleCancel handler:nil]];
-    [presenter presentViewController:alertController animated:YES completion:nil];
+    [EAPMDemoHomeAlertPresenter presentAlertFrom:presenter
+                                           title:@"提示"
+                                         message:message
+                                         actions:@[
+        [EAPMDemoHomeAlertAction actionWithTitle:@"知道了"
+                                           style:EAPMDemoHomeAlertActionStylePrimary
+                                         handler:nil],
+    ]];
 }
 
 @implementation EAPMDemoRemoteLog
