@@ -92,6 +92,8 @@ static UIColor *EAPMDemoColorHex(NSUInteger hexValue, CGFloat alpha) {
 @property (nonatomic, strong) UILabel *titleLabel;
 @property (nonatomic, strong) UILabel *subtitleLabel;
 @property (nonatomic, strong) UIButton *settingsButton;
+@property (nonatomic, strong) UILabel *settingsLabel;
+@property (nonatomic, strong) UIButton *settingsTapButton;
 @property (nonatomic, copy) EAPMDemoHomeActionHandler settingsHandler;
 
 @end
@@ -137,26 +139,39 @@ static UIColor *EAPMDemoColorHex(NSUInteger hexValue, CGFloat alpha) {
     _subtitleLabel.numberOfLines = 2;
 
     _settingsButton = [UIButton buttonWithType:UIButtonTypeSystem];
-    _settingsButton.layer.cornerRadius = 18.0;
-    _settingsButton.backgroundColor = [UIColor colorWithWhite:1.0 alpha:0.72];
-    _settingsButton.layer.borderWidth = 1.0;
-    _settingsButton.layer.borderColor = EAPMDemoColorHex(0xD9E1F2, 1.0).CGColor;
+    _settingsButton.backgroundColor = UIColor.clearColor;
+    _settingsButton.contentHorizontalAlignment = UIControlContentHorizontalAlignmentRight;
     if (@available(iOS 13.0, *)) {
-        UIImageSymbolConfiguration *configuration = [UIImageSymbolConfiguration configurationWithPointSize:18.0 weight:UIImageSymbolWeightSemibold];
+        UIImageSymbolConfiguration *configuration = [UIImageSymbolConfiguration configurationWithPointSize:15.0 weight:UIImageSymbolWeightRegular];
         UIImage *image = [UIImage systemImageNamed:@"gearshape" withConfiguration:configuration];
         [_settingsButton setImage:image forState:UIControlStateNormal];
-        _settingsButton.tintColor = EAPMDemoColorHex(0x6B7380, 1.0);
+        _settingsButton.tintColor = EAPMDemoColorHex(0x5D6573, 1.0);
     } else {
-        [_settingsButton setTitle:@"设置" forState:UIControlStateNormal];
-        [_settingsButton setTitleColor:EAPMDemoColorHex(0x315CFC, 1.0) forState:UIControlStateNormal];
-        _settingsButton.titleLabel.font = [UIFont systemFontOfSize:14.0 weight:UIFontWeightMedium];
+        [_settingsButton setTitle:@"⚙︎" forState:UIControlStateNormal];
+        [_settingsButton setTitleColor:EAPMDemoColorHex(0x5D6573, 1.0) forState:UIControlStateNormal];
+        _settingsButton.titleLabel.font = [UIFont systemFontOfSize:15.0 weight:UIFontWeightRegular];
     }
-    [_settingsButton addTarget:self action:@selector(handleSettingsTapped) forControlEvents:UIControlEventTouchUpInside];
+    _settingsLabel = [[UILabel alloc] init];
+    _settingsLabel.textColor = EAPMDemoColorHex(0x394153, 1.0);
+    _settingsLabel.font = [UIFont fontWithName:@"PingFangSC-Regular" size:15.0] ?: [UIFont systemFontOfSize:15.0 weight:UIFontWeightRegular];
+    NSMutableAttributedString *settingsText = [[NSMutableAttributedString alloc] initWithString:@"设置" attributes:@{
+        NSFontAttributeName: _settingsLabel.font,
+        NSForegroundColorAttributeName: EAPMDemoColorHex(0x394153, 1.0),
+        NSKernAttributeName: @(1.2),
+    }];
+    _settingsLabel.attributedText = settingsText;
 
-    for (UIView *view in @[_heroImageView, _bottomGradientView, _infoBannerView, _titleLabel, _subtitleLabel, _settingsButton]) {
+    _settingsTapButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    _settingsTapButton.backgroundColor = UIColor.clearColor;
+    [_settingsTapButton addTarget:self action:@selector(handleSettingsTapped) forControlEvents:UIControlEventTouchUpInside];
+
+    for (UIView *view in @[_heroImageView, _bottomGradientView, _infoBannerView, _titleLabel, _subtitleLabel, _settingsButton, _settingsLabel, _settingsTapButton]) {
         view.translatesAutoresizingMaskIntoConstraints = NO;
         [self addSubview:view];
     }
+    [self bringSubviewToFront:_settingsButton];
+    [self bringSubviewToFront:_settingsLabel];
+    [self bringSubviewToFront:_settingsTapButton];
 
     _heroImageHeightConstraint = [_heroImageView.heightAnchor constraintEqualToConstant:266.0];
 
@@ -174,10 +189,18 @@ static UIColor *EAPMDemoColorHex(NSUInteger hexValue, CGFloat alpha) {
         [_subtitleLabel.topAnchor constraintEqualToAnchor:_titleLabel.bottomAnchor constant:12.0],
         [_subtitleLabel.widthAnchor constraintEqualToConstant:208.0],
 
-        [_settingsButton.trailingAnchor constraintEqualToAnchor:self.trailingAnchor constant:-16.0],
-        [_settingsButton.topAnchor constraintEqualToAnchor:self.safeAreaLayoutGuide.topAnchor constant:10.0],
-        [_settingsButton.widthAnchor constraintEqualToConstant:36.0],
-        [_settingsButton.heightAnchor constraintEqualToConstant:36.0],
+        [_settingsButton.trailingAnchor constraintEqualToAnchor:_settingsLabel.leadingAnchor constant:-3.0],
+        [_settingsButton.centerYAnchor constraintEqualToAnchor:_settingsLabel.centerYAnchor],
+        [_settingsButton.widthAnchor constraintEqualToConstant:18.0],
+        [_settingsButton.heightAnchor constraintEqualToConstant:18.0],
+
+        [_settingsLabel.trailingAnchor constraintEqualToAnchor:self.trailingAnchor constant:-16.0],
+        [_settingsLabel.topAnchor constraintEqualToAnchor:self.safeAreaLayoutGuide.topAnchor constant:-4.0],
+
+        [_settingsTapButton.leadingAnchor constraintEqualToAnchor:_settingsButton.leadingAnchor constant:-6.0],
+        [_settingsTapButton.trailingAnchor constraintEqualToAnchor:_settingsLabel.trailingAnchor constant:6.0],
+        [_settingsTapButton.topAnchor constraintEqualToAnchor:_settingsLabel.topAnchor constant:-6.0],
+        [_settingsTapButton.bottomAnchor constraintEqualToAnchor:_settingsLabel.bottomAnchor constant:6.0],
 
         [_infoBannerView.leadingAnchor constraintEqualToAnchor:self.leadingAnchor constant:16.0],
         [_infoBannerView.trailingAnchor constraintEqualToAnchor:self.trailingAnchor constant:-16.0],
@@ -202,6 +225,7 @@ static UIColor *EAPMDemoColorHex(NSUInteger hexValue, CGFloat alpha) {
 - (void)configureWithInfoText:(NSString *)text settingsHandler:(nullable EAPMDemoHomeActionHandler)settingsHandler {
     self.settingsHandler = settingsHandler;
     [self.infoBannerView configureWithText:text];
+    self.settingsTapButton.enabled = (settingsHandler != nil);
 }
 
 - (void)handleSettingsTapped {
@@ -267,38 +291,46 @@ static UIColor *EAPMDemoColorHex(NSUInteger hexValue, CGFloat alpha) {
 - (instancetype)initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
     if (self) {
-        self.backgroundColor = EAPMDemoColorHex(0xE2EBFF, 0.96);
-        self.layer.cornerRadius = 6.0;
+        self.backgroundColor = EAPMDemoColorHex(0xEBF0FF, 1.0);
+        self.layer.cornerRadius = 8.0;
         self.layer.borderWidth = 1.0;
-        self.layer.borderColor = EAPMDemoColorHex(0xD5E0F7, 1.0).CGColor;
+        self.layer.borderColor = EAPMDemoColorHex(0xD9E4FB, 1.0).CGColor;
 
         _textLabel = [[UILabel alloc] init];
-        _textLabel.textColor = EAPMDemoColorHex(0x767D89, 1.0);
-        _textLabel.font = [UIFont systemFontOfSize:15.0 weight:UIFontWeightRegular];
-        _textLabel.numberOfLines = 0;
+        _textLabel.textColor = EAPMDemoColorHex(0x7087AD, 1.0);
+        _textLabel.font = [UIFont fontWithName:@"PingFangSC-Regular" size:15.0] ?: [UIFont systemFontOfSize:15.0 weight:UIFontWeightRegular];
+        _textLabel.numberOfLines = 1;
         _textLabel.translatesAutoresizingMaskIntoConstraints = NO;
         [self addSubview:_textLabel];
 
         [NSLayoutConstraint activateConstraints:@[
             [_textLabel.leadingAnchor constraintEqualToAnchor:self.leadingAnchor constant:16.0],
             [_textLabel.trailingAnchor constraintEqualToAnchor:self.trailingAnchor constant:-16.0],
-            [_textLabel.topAnchor constraintEqualToAnchor:self.topAnchor constant:10.0],
-            [_textLabel.bottomAnchor constraintEqualToAnchor:self.bottomAnchor constant:-10.0],
+            [_textLabel.topAnchor constraintEqualToAnchor:self.topAnchor constant:14.0],
+            [_textLabel.bottomAnchor constraintEqualToAnchor:self.bottomAnchor constant:-14.0],
+            [self.heightAnchor constraintEqualToConstant:48.0],
         ]];
     }
     return self;
 }
 
 - (void)configureWithText:(NSString *)text {
+    NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
+    paragraphStyle.alignment = NSTextAlignmentLeft;
+    paragraphStyle.minimumLineHeight = 20.0;
+    paragraphStyle.maximumLineHeight = 20.0;
+
     NSMutableAttributedString *attributedText = [[NSMutableAttributedString alloc] initWithString:text attributes:@{
-        NSFontAttributeName: [UIFont systemFontOfSize:15.0 weight:UIFontWeightRegular],
-        NSForegroundColorAttributeName: EAPMDemoColorHex(0x767D89, 1.0),
+        NSFontAttributeName: self.textLabel.font,
+        NSForegroundColorAttributeName: EAPMDemoColorHex(0x7087AD, 1.0),
+        NSParagraphStyleAttributeName: paragraphStyle,
+        NSKernAttributeName: @(0.4),
     }];
-    NSRange highlightRange = [text rangeOfString:@"EMAS 控制台"];
+    NSRange highlightRange = [text rangeOfString:@"EMAS控制台"];
     if (highlightRange.location != NSNotFound) {
         [attributedText addAttributes:@{
             NSFontAttributeName: [UIFont systemFontOfSize:15.0 weight:UIFontWeightSemibold],
-            NSForegroundColorAttributeName: EAPMDemoColorHex(0x767D89, 1.0),
+            NSForegroundColorAttributeName: EAPMDemoColorHex(0x374254, 1.0),
         } range:highlightRange];
     }
     self.textLabel.attributedText = attributedText;
@@ -318,7 +350,7 @@ static UIColor *EAPMDemoColorHex(NSUInteger hexValue, CGFloat alpha) {
     self = [super initWithFrame:frame];
     if (self) {
         self.backgroundColor = UIColor.whiteColor;
-        self.layer.cornerRadius = 6.0;
+        self.layer.cornerRadius = 8.0;
         self.layer.borderWidth = 2.0;
         self.layer.borderColor = EAPMDemoColorHex(0xE6E8EB, 1.0).CGColor;
         self.layer.shadowOpacity = 0.0;

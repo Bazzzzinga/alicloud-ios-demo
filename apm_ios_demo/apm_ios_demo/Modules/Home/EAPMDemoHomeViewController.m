@@ -55,7 +55,7 @@ static NSString * const EAPMDemoSectionHeaderReuseIdentifier = @"EAPMDemoSection
 }
 
 - (void)buildData {
-    self.infoBannerText = @"触发相关事件，并在 EMAS 控制台 查看上报数据";
+    self.infoBannerText = @"触发相关事件，并在 EMAS控制台 查看上报数据";
     self.sections = @[
         [EAPMDemoCrashAnalysis sectionWithPresenter:self],
         [EAPMDemoPerformance sectionWithPresenter:self],
@@ -72,7 +72,7 @@ static NSString * const EAPMDemoSectionHeaderReuseIdentifier = @"EAPMDemoSection
     UICollectionViewCompositionalLayout *layout = [[UICollectionViewCompositionalLayout alloc] initWithSectionProvider:^NSCollectionLayoutSection * _Nullable(NSInteger sectionIndex, id<NSCollectionLayoutEnvironment>  _Nonnull environment) {
         if (sectionIndex == 0) {
             NSCollectionLayoutSize *itemSize = [NSCollectionLayoutSize sizeWithWidthDimension:[NSCollectionLayoutDimension fractionalWidthDimension:1.0]
-                                                                              heightDimension:[NSCollectionLayoutDimension absoluteDimension:316.0]];
+                                                                              heightDimension:[NSCollectionLayoutDimension absoluteDimension:332.0]];
             NSCollectionLayoutItem *item = [NSCollectionLayoutItem itemWithLayoutSize:itemSize];
             NSCollectionLayoutGroup *group = [NSCollectionLayoutGroup horizontalGroupWithLayoutSize:itemSize subitems:@[item]];
             NSCollectionLayoutSection *section = [NSCollectionLayoutSection sectionWithGroup:group];
