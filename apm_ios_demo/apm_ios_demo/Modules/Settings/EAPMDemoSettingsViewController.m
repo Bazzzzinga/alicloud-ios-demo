@@ -18,6 +18,9 @@ static UIColor *EAPMDemoSettingsHexColor(NSUInteger hexValue, CGFloat alpha) {
 
 @end
 
+@interface EAPMDemoSettingsGradientButton : UIButton
+@end
+
 @interface EAPMDemoSettingsViewController () <UITextFieldDelegate>
 
 @property (nonatomic, strong) UIView *headerView;
@@ -37,7 +40,7 @@ static UIColor *EAPMDemoSettingsHexColor(NSUInteger hexValue, CGFloat alpha) {
 
     self.title = @"";
     self.navigationItem.hidesBackButton = YES;
-    self.view.backgroundColor = EAPMDemoSettingsHexColor(0xF3F4F8, 1.0);
+    self.view.backgroundColor = UIColor.whiteColor;
 
     [self buildViews];
     [self reloadValues];
@@ -60,7 +63,7 @@ static UIColor *EAPMDemoSettingsHexColor(NSUInteger hexValue, CGFloat alpha) {
     UIButton *backButton = [UIButton buttonWithType:UIButtonTypeSystem];
     backButton.translatesAutoresizingMaskIntoConstraints = NO;
     if (@available(iOS 13.0, *)) {
-        UIImageSymbolConfiguration *configuration = [UIImageSymbolConfiguration configurationWithPointSize:14.0 weight:UIImageSymbolWeightMedium];
+        UIImageSymbolConfiguration *configuration = [UIImageSymbolConfiguration configurationWithPointSize:12.0 weight:UIImageSymbolWeightMedium];
         UIImage *image = [UIImage systemImageNamed:@"chevron.left" withConfiguration:configuration];
         [backButton setImage:image forState:UIControlStateNormal];
     } else {
@@ -75,12 +78,11 @@ static UIColor *EAPMDemoSettingsHexColor(NSUInteger hexValue, CGFloat alpha) {
     pageTitleLabel.translatesAutoresizingMaskIntoConstraints = NO;
     pageTitleLabel.numberOfLines = 1;
     UIFont *pageTitleFont = [UIFont fontWithName:@"PingFangSC-Medium" size:22.0] ?: [UIFont systemFontOfSize:22.0 weight:UIFontWeightMedium];
-    NSMutableAttributedString *titleText = [[NSMutableAttributedString alloc] initWithString:@"设置" attributes:@{
+    pageTitleLabel.attributedText = [[NSAttributedString alloc] initWithString:@"设置" attributes:@{
         NSFontAttributeName: pageTitleFont,
         NSForegroundColorAttributeName: EAPMDemoSettingsHexColor(0x4B4D52, 1.0),
-        NSKernAttributeName: @(1.6),
+        NSKernAttributeName: @(0.8),
     }];
-    pageTitleLabel.attributedText = titleText;
     [_headerView addSubview:pageTitleLabel];
 
     _scrollView = [[UIScrollView alloc] init];
@@ -93,73 +95,48 @@ static UIColor *EAPMDemoSettingsHexColor(NSUInteger hexValue, CGFloat alpha) {
     _contentView.translatesAutoresizingMaskIntoConstraints = NO;
     [_scrollView addSubview:_contentView];
 
-    UIView *sectionHeaderView = [[UIView alloc] init];
-    sectionHeaderView.translatesAutoresizingMaskIntoConstraints = NO;
-    [_contentView addSubview:sectionHeaderView];
-
-    UIView *accentView = [[UIView alloc] init];
-    accentView.translatesAutoresizingMaskIntoConstraints = NO;
-    accentView.backgroundColor = EAPMDemoSettingsHexColor(0x315CFC, 1.0);
-    accentView.layer.cornerRadius = 3.0;
-    [sectionHeaderView addSubview:accentView];
-
-    UILabel *sectionTitleLabel = [[UILabel alloc] init];
-    sectionTitleLabel.translatesAutoresizingMaskIntoConstraints = NO;
-    sectionTitleLabel.text = @"用户信息";
-    sectionTitleLabel.font = [UIFont systemFontOfSize:18.0 weight:UIFontWeightMedium];
-    sectionTitleLabel.textColor = EAPMDemoSettingsHexColor(0x4B4D52, 1.0);
-    [sectionHeaderView addSubview:sectionTitleLabel];
-
-    UIView *cardView = [[UIView alloc] init];
-    cardView.translatesAutoresizingMaskIntoConstraints = NO;
-    cardView.backgroundColor = UIColor.whiteColor;
-    cardView.layer.cornerRadius = 18.0;
-    cardView.layer.borderWidth = 1.0;
-    cardView.layer.borderColor = EAPMDemoSettingsHexColor(0xE6E8EB, 1.0).CGColor;
-    [_contentView addSubview:cardView];
-
     _userIdInputView = [[EAPMDemoSettingsInputView alloc] initWithTitle:@"UserID" placeholder:@"请输入 UserID" editable:YES];
-    _userNickInputView = [[EAPMDemoSettingsInputView alloc] initWithTitle:@"用户昵称" placeholder:@"请输入 用户昵称" editable:YES];
+    _userNickInputView = [[EAPMDemoSettingsInputView alloc] initWithTitle:@"用户昵称" placeholder:@"请输入用户昵称" editable:YES];
     _utdidInputView = [[EAPMDemoSettingsInputView alloc] initWithTitle:@"UTDID" placeholder:@"" editable:NO];
 
     for (EAPMDemoSettingsInputView *inputView in @[_userIdInputView, _userNickInputView, _utdidInputView]) {
         inputView.translatesAutoresizingMaskIntoConstraints = NO;
-        [cardView addSubview:inputView];
+        [_contentView addSubview:inputView];
     }
 
     _userIdInputView.textField.delegate = self;
     _userNickInputView.textField.delegate = self;
     _userNickInputView.textField.returnKeyType = UIReturnKeyDone;
 
-    UIButton *saveButton = [UIButton buttonWithType:UIButtonTypeSystem];
+    EAPMDemoSettingsGradientButton *saveButton = [EAPMDemoSettingsGradientButton buttonWithType:UIButtonTypeCustom];
     saveButton.translatesAutoresizingMaskIntoConstraints = NO;
-    saveButton.backgroundColor = EAPMDemoSettingsHexColor(0x315CFC, 1.0);
-    saveButton.layer.cornerRadius = 10.0;
-    saveButton.titleLabel.font = [UIFont systemFontOfSize:16.0 weight:UIFontWeightSemibold];
+    saveButton.layer.cornerRadius = 8.0;
+    saveButton.clipsToBounds = YES;
+    saveButton.titleLabel.font = [UIFont fontWithName:@"PingFangSC-Medium" size:18.0] ?: [UIFont systemFontOfSize:18.0 weight:UIFontWeightSemibold];
     [saveButton setTitle:@"保存设置" forState:UIControlStateNormal];
     [saveButton setTitleColor:UIColor.whiteColor forState:UIControlStateNormal];
     [saveButton addTarget:self action:@selector(handleSaveButtonTapped) forControlEvents:UIControlEventTouchUpInside];
     [_contentView addSubview:saveButton];
 
-    UILayoutGuide *margins = self.view.layoutMarginsGuide;
+    UILayoutGuide *safeArea = self.view.safeAreaLayoutGuide;
     [NSLayoutConstraint activateConstraints:@[
         [_headerView.leadingAnchor constraintEqualToAnchor:self.view.leadingAnchor],
         [_headerView.trailingAnchor constraintEqualToAnchor:self.view.trailingAnchor],
-        [_headerView.topAnchor constraintEqualToAnchor:self.view.safeAreaLayoutGuide.topAnchor],
+        [_headerView.topAnchor constraintEqualToAnchor:safeArea.topAnchor],
 
-        [backButton.leadingAnchor constraintEqualToAnchor:self.view.leadingAnchor constant:14.0],
-        [backButton.topAnchor constraintEqualToAnchor:_headerView.topAnchor constant:8.0],
-        [backButton.widthAnchor constraintEqualToConstant:22.0],
-        [backButton.heightAnchor constraintEqualToConstant:22.0],
+        [backButton.leadingAnchor constraintEqualToAnchor:self.view.leadingAnchor constant:16.0],
+        [backButton.topAnchor constraintEqualToAnchor:_headerView.topAnchor constant:10.0],
+        [backButton.widthAnchor constraintEqualToConstant:20.0],
+        [backButton.heightAnchor constraintEqualToConstant:20.0],
 
-        [pageTitleLabel.leadingAnchor constraintEqualToAnchor:backButton.trailingAnchor constant:10.0],
+        [pageTitleLabel.leadingAnchor constraintEqualToAnchor:backButton.trailingAnchor constant:6.0],
         [pageTitleLabel.centerYAnchor constraintEqualToAnchor:backButton.centerYAnchor constant:-1.0],
 
-        [_headerView.bottomAnchor constraintEqualToAnchor:pageTitleLabel.bottomAnchor constant:10.0],
+        [_headerView.bottomAnchor constraintEqualToAnchor:pageTitleLabel.bottomAnchor constant:24.0],
 
         [_scrollView.leadingAnchor constraintEqualToAnchor:self.view.leadingAnchor],
         [_scrollView.trailingAnchor constraintEqualToAnchor:self.view.trailingAnchor],
-        [_scrollView.topAnchor constraintEqualToAnchor:_headerView.bottomAnchor constant:8.0],
+        [_scrollView.topAnchor constraintEqualToAnchor:_headerView.bottomAnchor constant:0.0],
         [_scrollView.bottomAnchor constraintEqualToAnchor:self.view.bottomAnchor],
 
         [_contentView.leadingAnchor constraintEqualToAnchor:_scrollView.contentLayoutGuide.leadingAnchor],
@@ -168,40 +145,22 @@ static UIColor *EAPMDemoSettingsHexColor(NSUInteger hexValue, CGFloat alpha) {
         [_contentView.bottomAnchor constraintEqualToAnchor:_scrollView.contentLayoutGuide.bottomAnchor],
         [_contentView.widthAnchor constraintEqualToAnchor:_scrollView.frameLayoutGuide.widthAnchor],
 
-        [sectionHeaderView.leadingAnchor constraintEqualToAnchor:margins.leadingAnchor],
-        [sectionHeaderView.trailingAnchor constraintEqualToAnchor:margins.trailingAnchor],
-        [sectionHeaderView.topAnchor constraintEqualToAnchor:_contentView.topAnchor constant:18.0],
-        [sectionHeaderView.heightAnchor constraintEqualToConstant:28.0],
+        [_userIdInputView.leadingAnchor constraintEqualToAnchor:self.view.leadingAnchor constant:16.0],
+        [_userIdInputView.trailingAnchor constraintEqualToAnchor:self.view.trailingAnchor constant:-16.0],
+        [_userIdInputView.topAnchor constraintEqualToAnchor:_contentView.topAnchor constant:8.0],
 
-        [accentView.leadingAnchor constraintEqualToAnchor:sectionHeaderView.leadingAnchor],
-        [accentView.centerYAnchor constraintEqualToAnchor:sectionHeaderView.centerYAnchor],
-        [accentView.widthAnchor constraintEqualToConstant:4.0],
-        [accentView.heightAnchor constraintEqualToConstant:20.0],
+        [_userNickInputView.leadingAnchor constraintEqualToAnchor:_userIdInputView.leadingAnchor],
+        [_userNickInputView.trailingAnchor constraintEqualToAnchor:_userIdInputView.trailingAnchor],
+        [_userNickInputView.topAnchor constraintEqualToAnchor:_userIdInputView.bottomAnchor constant:12.0],
 
-        [sectionTitleLabel.leadingAnchor constraintEqualToAnchor:accentView.trailingAnchor constant:14.0],
-        [sectionTitleLabel.centerYAnchor constraintEqualToAnchor:accentView.centerYAnchor],
+        [_utdidInputView.leadingAnchor constraintEqualToAnchor:_userIdInputView.leadingAnchor],
+        [_utdidInputView.trailingAnchor constraintEqualToAnchor:_userIdInputView.trailingAnchor],
+        [_utdidInputView.topAnchor constraintEqualToAnchor:_userNickInputView.bottomAnchor constant:12.0],
 
-        [cardView.leadingAnchor constraintEqualToAnchor:margins.leadingAnchor],
-        [cardView.trailingAnchor constraintEqualToAnchor:margins.trailingAnchor],
-        [cardView.topAnchor constraintEqualToAnchor:sectionHeaderView.bottomAnchor constant:18.0],
-
-        [_userIdInputView.leadingAnchor constraintEqualToAnchor:cardView.leadingAnchor constant:18.0],
-        [_userIdInputView.trailingAnchor constraintEqualToAnchor:cardView.trailingAnchor constant:-18.0],
-        [_userIdInputView.topAnchor constraintEqualToAnchor:cardView.topAnchor constant:22.0],
-
-        [_userNickInputView.leadingAnchor constraintEqualToAnchor:cardView.leadingAnchor constant:18.0],
-        [_userNickInputView.trailingAnchor constraintEqualToAnchor:cardView.trailingAnchor constant:-18.0],
-        [_userNickInputView.topAnchor constraintEqualToAnchor:_userIdInputView.bottomAnchor constant:22.0],
-
-        [_utdidInputView.leadingAnchor constraintEqualToAnchor:cardView.leadingAnchor constant:18.0],
-        [_utdidInputView.trailingAnchor constraintEqualToAnchor:cardView.trailingAnchor constant:-18.0],
-        [_utdidInputView.topAnchor constraintEqualToAnchor:_userNickInputView.bottomAnchor constant:22.0],
-        [_utdidInputView.bottomAnchor constraintEqualToAnchor:cardView.bottomAnchor constant:-22.0],
-
-        [saveButton.leadingAnchor constraintEqualToAnchor:margins.leadingAnchor],
-        [saveButton.trailingAnchor constraintEqualToAnchor:margins.trailingAnchor],
-        [saveButton.topAnchor constraintEqualToAnchor:cardView.bottomAnchor constant:22.0],
-        [saveButton.heightAnchor constraintEqualToConstant:52.0],
+        [saveButton.leadingAnchor constraintEqualToAnchor:_userIdInputView.leadingAnchor],
+        [saveButton.trailingAnchor constraintEqualToAnchor:_userIdInputView.trailingAnchor],
+        [saveButton.topAnchor constraintEqualToAnchor:_utdidInputView.bottomAnchor constant:18.0],
+        [saveButton.heightAnchor constraintEqualToConstant:60.0],
         [saveButton.bottomAnchor constraintEqualToAnchor:_contentView.bottomAnchor constant:-30.0],
     ]];
 }
@@ -286,9 +245,39 @@ static UIColor *EAPMDemoSettingsHexColor(NSUInteger hexValue, CGFloat alpha) {
 
 @end
 
+@implementation EAPMDemoSettingsGradientButton {
+    CAGradientLayer *_gradientLayer;
+}
+
+- (instancetype)initWithFrame:(CGRect)frame {
+    self = [super initWithFrame:frame];
+    if (self) {
+        _gradientLayer = [CAGradientLayer layer];
+        _gradientLayer.colors = @[
+            (__bridge id)EAPMDemoSettingsHexColor(0x4250F7, 1.0).CGColor,
+            (__bridge id)EAPMDemoSettingsHexColor(0x435FF9, 1.0).CGColor
+        ];
+        _gradientLayer.locations = @[@0, @1];
+        _gradientLayer.startPoint = CGPointMake(1.0, 0.0);
+        _gradientLayer.endPoint = CGPointMake(0.1, 1.0);
+        [self.layer insertSublayer:_gradientLayer atIndex:0];
+    }
+    return self;
+}
+
+- (void)layoutSubviews {
+    [super layoutSubviews];
+    _gradientLayer.frame = self.bounds;
+    _gradientLayer.cornerRadius = self.layer.cornerRadius;
+}
+
+@end
+
 @interface EAPMDemoSettingsInputView ()
 
 @property (nonatomic, strong, readwrite) UITextField *textField;
+@property (nonatomic, strong) UIView *inputContainerView;
+@property (nonatomic, assign) BOOL editable;
 
 @end
 
@@ -297,49 +286,66 @@ static UIColor *EAPMDemoSettingsHexColor(NSUInteger hexValue, CGFloat alpha) {
 - (instancetype)initWithTitle:(NSString *)title placeholder:(NSString *)placeholder editable:(BOOL)editable {
     self = [super initWithFrame:CGRectZero];
     if (self) {
+        _editable = editable;
+
         UILabel *titleLabel = [[UILabel alloc] init];
         titleLabel.translatesAutoresizingMaskIntoConstraints = NO;
-        titleLabel.text = title;
-        titleLabel.font = [UIFont systemFontOfSize:15.0 weight:UIFontWeightMedium];
-        titleLabel.textColor = EAPMDemoSettingsHexColor(0x5E6066, 1.0);
+        titleLabel.numberOfLines = 1;
+        UIFont *titleFont = [UIFont fontWithName:@"PingFangSC-Regular" size:18.0] ?: [UIFont systemFontOfSize:18.0 weight:UIFontWeightRegular];
+        NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
+        paragraphStyle.minimumLineHeight = 24.0;
+        paragraphStyle.maximumLineHeight = 24.0;
+        titleLabel.attributedText = [[NSAttributedString alloc] initWithString:title attributes:@{
+            NSFontAttributeName: titleFont,
+            NSForegroundColorAttributeName: EAPMDemoSettingsHexColor(0x9A9EA8, 1.0),
+            NSKernAttributeName: @(0.2),
+            NSParagraphStyleAttributeName: paragraphStyle,
+        }];
         [self addSubview:titleLabel];
 
-        UIView *inputContainerView = [[UIView alloc] init];
-        inputContainerView.translatesAutoresizingMaskIntoConstraints = NO;
-        inputContainerView.backgroundColor = editable ? EAPMDemoSettingsHexColor(0xFBFCFE, 1.0) : EAPMDemoSettingsHexColor(0xF0F3F8, 1.0);
-        inputContainerView.layer.cornerRadius = 14.0;
-        inputContainerView.layer.borderWidth = 1.0;
-        inputContainerView.layer.borderColor = EAPMDemoSettingsHexColor(0xE1E5EE, 1.0).CGColor;
-        [self addSubview:inputContainerView];
+        _inputContainerView = [[UIView alloc] init];
+        _inputContainerView.translatesAutoresizingMaskIntoConstraints = NO;
+        _inputContainerView.backgroundColor = editable ? EAPMDemoSettingsHexColor(0xF0F2F5, 1.0) : EAPMDemoSettingsHexColor(0xE1E5EB, 1.0);
+        _inputContainerView.layer.cornerRadius = 8.0;
+        [self addSubview:_inputContainerView];
 
         _textField = [[UITextField alloc] init];
         _textField.translatesAutoresizingMaskIntoConstraints = NO;
-        _textField.font = [UIFont systemFontOfSize:16.0 weight:UIFontWeightRegular];
-        _textField.textColor = editable ? EAPMDemoSettingsHexColor(0x1F2024, 1.0) : EAPMDemoSettingsHexColor(0x9AA3B2, 1.0);
-        _textField.placeholder = placeholder;
+        UIFont *textFont = [UIFont fontWithName:@"PingFangSC-Regular" size:18.0] ?: [UIFont systemFontOfSize:18.0 weight:UIFontWeightRegular];
+        _textField.font = textFont;
+        _textField.textColor = editable ? EAPMDemoSettingsHexColor(0x4B4D52, 1.0) : EAPMDemoSettingsHexColor(0x95A4C2, 1.0);
+        _textField.attributedPlaceholder = [[NSAttributedString alloc] initWithString:placeholder ?: @"" attributes:@{
+            NSFontAttributeName: textFont,
+            NSForegroundColorAttributeName: EAPMDemoSettingsHexColor(0xC8D0DD, 1.0),
+        }];
         _textField.enabled = editable;
         _textField.returnKeyType = editable ? UIReturnKeyNext : UIReturnKeyDone;
         _textField.clearButtonMode = editable ? UITextFieldViewModeWhileEditing : UITextFieldViewModeNever;
-        [inputContainerView addSubview:_textField];
+        [_inputContainerView addSubview:_textField];
 
         [NSLayoutConstraint activateConstraints:@[
             [titleLabel.leadingAnchor constraintEqualToAnchor:self.leadingAnchor],
             [titleLabel.trailingAnchor constraintEqualToAnchor:self.trailingAnchor],
             [titleLabel.topAnchor constraintEqualToAnchor:self.topAnchor],
 
-            [inputContainerView.leadingAnchor constraintEqualToAnchor:self.leadingAnchor],
-            [inputContainerView.trailingAnchor constraintEqualToAnchor:self.trailingAnchor],
-            [inputContainerView.topAnchor constraintEqualToAnchor:titleLabel.bottomAnchor constant:12.0],
-            [inputContainerView.heightAnchor constraintEqualToConstant:56.0],
-            [inputContainerView.bottomAnchor constraintEqualToAnchor:self.bottomAnchor],
+            [_inputContainerView.leadingAnchor constraintEqualToAnchor:self.leadingAnchor],
+            [_inputContainerView.trailingAnchor constraintEqualToAnchor:self.trailingAnchor],
+            [_inputContainerView.topAnchor constraintEqualToAnchor:titleLabel.bottomAnchor constant:6.0],
+            [_inputContainerView.heightAnchor constraintEqualToConstant:52.0],
+            [_inputContainerView.bottomAnchor constraintEqualToAnchor:self.bottomAnchor],
 
-            [_textField.leadingAnchor constraintEqualToAnchor:inputContainerView.leadingAnchor constant:16.0],
-            [_textField.trailingAnchor constraintEqualToAnchor:inputContainerView.trailingAnchor constant:-16.0],
-            [_textField.topAnchor constraintEqualToAnchor:inputContainerView.topAnchor],
-            [_textField.bottomAnchor constraintEqualToAnchor:inputContainerView.bottomAnchor],
+            [_textField.leadingAnchor constraintEqualToAnchor:_inputContainerView.leadingAnchor constant:16.0],
+            [_textField.trailingAnchor constraintEqualToAnchor:_inputContainerView.trailingAnchor constant:-16.0],
+            [_textField.topAnchor constraintEqualToAnchor:_inputContainerView.topAnchor],
+            [_textField.bottomAnchor constraintEqualToAnchor:_inputContainerView.bottomAnchor],
         ]];
     }
     return self;
+}
+
+- (void)layoutSubviews {
+    [super layoutSubviews];
+    self.inputContainerView.backgroundColor = self.editable ? EAPMDemoSettingsHexColor(0xF0F2F5, 1.0) : EAPMDemoSettingsHexColor(0xE1E5EB, 1.0);
 }
 
 @end
