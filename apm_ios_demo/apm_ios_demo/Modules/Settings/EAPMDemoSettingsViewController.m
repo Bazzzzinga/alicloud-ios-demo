@@ -311,7 +311,7 @@ static UIColor *EAPMDemoSettingsHexColor(NSUInteger hexValue, CGFloat alpha) {
 
         _textField = [[UITextField alloc] init];
         _textField.translatesAutoresizingMaskIntoConstraints = NO;
-        UIFont *textFont = [UIFont fontWithName:@"PingFangSC-Regular" size:18.0] ?: [UIFont systemFontOfSize:18.0 weight:UIFontWeightRegular];
+        UIFont *textFont = [UIFont fontWithName:@"PingFangSC-Regular" size:16.0] ?: [UIFont systemFontOfSize:16.0 weight:UIFontWeightRegular];
         _textField.font = textFont;
         _textField.textColor = editable ? EAPMDemoSettingsHexColor(0x4B4D52, 1.0) : EAPMDemoSettingsHexColor(0x95A4C2, 1.0);
         _textField.attributedPlaceholder = [[NSAttributedString alloc] initWithString:placeholder ?: @"" attributes:@{
