@@ -11,8 +11,17 @@
 static UIColor *EAPMDemoCrashHexColor(NSUInteger hexValue, CGFloat alpha) {
     return [UIColor colorWithRed:((hexValue >> 16) & 0xFF) / 255.0
                            green:((hexValue >> 8) & 0xFF) / 255.0
-                            blue:(hexValue & 0xFF) / 255.0
+                           blue:(hexValue & 0xFF) / 255.0
                            alpha:alpha];
+}
+
+static NSMutableArray<NSValue *> *EAPMDemoOOMPointers(void) {
+    static NSMutableArray<NSValue *> *pointers = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        pointers = [NSMutableArray array];
+    });
+    return pointers;
 }
 
 typedef NS_ENUM(NSInteger, EAPMDemoCrashTriggerType) {
@@ -23,6 +32,7 @@ typedef NS_ENUM(NSInteger, EAPMDemoCrashTriggerType) {
     EAPMDemoCrashTriggerTypeHang,
     EAPMDemoCrashTriggerTypeOOM,
     EAPMDemoCrashTriggerTypeAsyncException,
+    EAPMDemoCrashTriggerTypeDeadlock,
 };
 
 @interface EAPMDemoCrashViewController ()
@@ -30,7 +40,6 @@ typedef NS_ENUM(NSInteger, EAPMDemoCrashTriggerType) {
 @property (nonatomic, strong) UIView *headerView;
 @property (nonatomic, strong) UIScrollView *scrollView;
 @property (nonatomic, strong) UIView *contentView;
-@property (nonatomic, strong) NSMutableArray<NSValue *> *oomPointers;
 
 @end
 
@@ -42,7 +51,6 @@ typedef NS_ENUM(NSInteger, EAPMDemoCrashTriggerType) {
     self.title = @"";
     self.navigationItem.hidesBackButton = YES;
     self.view.backgroundColor = UIColor.whiteColor;
-    self.oomPointers = [NSMutableArray array];
 
     [self buildViews];
 }
@@ -137,6 +145,7 @@ typedef NS_ENUM(NSInteger, EAPMDemoCrashTriggerType) {
         @{@"title": @"卡死", @"type": @(EAPMDemoCrashTriggerTypeHang)},
         @{@"title": @"OOM", @"type": @(EAPMDemoCrashTriggerTypeOOM)},
         @{@"title": @"AsyncException", @"type": @(EAPMDemoCrashTriggerTypeAsyncException)},
+        @{@"title": @"Deadlock", @"type": @(EAPMDemoCrashTriggerTypeDeadlock)},
     ];
 
     UIStackView *gridStackView = [[UIStackView alloc] init];
@@ -222,7 +231,7 @@ typedef NS_ENUM(NSInteger, EAPMDemoCrashTriggerType) {
 - (UIButton *)createCrashButtonWithTitle:(NSString *)title type:(EAPMDemoCrashTriggerType)type {
     UIButton *button = [UIButton buttonWithType:UIButtonTypeSystem];
     button.tag = type;
-    button.backgroundColor = UIColor.whiteColor;
+    button.backgroundColor = EAPMDemoCrashHexColor(0xF0F2F5, 1.0);
     button.layer.cornerRadius = 8.0;
     button.layer.borderWidth = 2.0;
     button.layer.borderColor = EAPMDemoCrashHexColor(0xE6E8EB, 1.0).CGColor;
@@ -287,9 +296,7 @@ typedef NS_ENUM(NSInteger, EAPMDemoCrashTriggerType) {
             break;
         }
         case EAPMDemoCrashTriggerTypeOOM: {
-            [self presentCrashConfirmAlertWithTitle:@"OOM" confirmAction:^{
-                [self triggerOOM];
-            }];
+            [[self class] presentOOMAlertFromViewController:self];
             break;
         }
         case EAPMDemoCrashTriggerTypeAsyncException: {
@@ -302,17 +309,52 @@ typedef NS_ENUM(NSInteger, EAPMDemoCrashTriggerType) {
             }];
             break;
         }
+        case EAPMDemoCrashTriggerTypeDeadlock: {
+            [self presentCrashConfirmAlertWithTitle:@"Deadlock" confirmAction:^{
+                dispatch_queue_t serialQueue = dispatch_queue_create("com.aliyun.emas.demo.deadlock", DISPATCH_QUEUE_SERIAL);
+                dispatch_async(serialQueue, ^{
+                    NSLog(@"Task 1");
+                    dispatch_barrier_sync(serialQueue, ^{
+                        NSLog(@"Barrier Task");
+                    });
+                    NSLog(@"This will never be printed because of the deadlock");
+                });
+                NSLog(@"Code after dispatch_async");
+            }];
+            break;
+        }
     }
 }
 
-- (void)triggerOOM {
-    [self.oomPointers removeAllObjects];
++ (void)presentOOMAlertFromViewController:(UIViewController *)viewController {
+    if (!viewController || viewController.presentedViewController) {
+        return;
+    }
+
+    [EAPMDemoHomeAlertPresenter presentAlertFrom:viewController
+                                           title:@"OOM"
+                                         message:@"即将触发「OOM」，App将闪退，稍后可在 EMAS 控制台看到崩溃信息。"
+                                         actions:@[
+        [EAPMDemoHomeAlertAction actionWithTitle:@"取消"
+                                           style:EAPMDemoHomeAlertActionStyleSecondary
+                                         handler:nil],
+        [EAPMDemoHomeAlertAction actionWithTitle:@"确定"
+                                           style:EAPMDemoHomeAlertActionStylePrimary
+                                         handler:^{
+            [self triggerOOM];
+        }],
+    ]];
+}
+
++ (void)triggerOOM {
+    NSMutableArray<NSValue *> *oomPointers = EAPMDemoOOMPointers();
+    [oomPointers removeAllObjects];
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         const size_t chunkSize =
 #if TARGET_OS_SIMULATOR
-            32 * 1024 * 1024;
+            64 * 1024 * 1024;
 #else
-            8 * 1024 * 1024;
+            16 * 1024 * 1024;
 #endif
 
         while (YES) {
@@ -324,8 +366,8 @@ typedef NS_ENUM(NSInteger, EAPMDemoCrashTriggerType) {
 
                 // Touch the full block so the allocator commits real resident memory.
                 memset(chunk, 0xA5, chunkSize);
-                [self.oomPointers addObject:[NSValue valueWithPointer:chunk]];
-                usleep(80000);
+                [oomPointers addObject:[NSValue valueWithPointer:chunk]];
+                usleep(20000);
             }
         }
     });

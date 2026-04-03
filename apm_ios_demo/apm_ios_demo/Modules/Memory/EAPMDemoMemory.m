@@ -1,5 +1,6 @@
 #import "EAPMDemoMemory.h"
 
+#import "EAPMDemoCrashViewController.h"
 #import "EAPMDemoHomeUI.h"
 
 static void EAPMDemoPresentMemoryAlert(UIViewController *presenter) {
@@ -23,7 +24,7 @@ static void EAPMDemoPresentMemoryAlert(UIViewController *presenter) {
     __weak UIViewController *weakPresenter = presenter;
     return [EAPMDemoHomeSectionModel sectionWithTitle:@"内存分析" items:@[
         [EAPMDemoHomeActionItem itemWithTitle:@"OOM" actionHandler:^{
-            EAPMDemoPresentMemoryAlert(weakPresenter);
+            [EAPMDemoCrashViewController presentOOMAlertFromViewController:weakPresenter];
         }],
         [EAPMDemoHomeActionItem itemWithTitle:@"内存泄漏" actionHandler:^{
             EAPMDemoPresentMemoryAlert(weakPresenter);

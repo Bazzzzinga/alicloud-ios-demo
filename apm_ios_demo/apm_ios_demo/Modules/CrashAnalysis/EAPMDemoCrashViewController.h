@@ -4,6 +4,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface EAPMDemoCrashViewController : UIViewController
 
++ (void)presentOOMAlertFromViewController:(UIViewController *)viewController;
+
 @end
 
 NS_ASSUME_NONNULL_END

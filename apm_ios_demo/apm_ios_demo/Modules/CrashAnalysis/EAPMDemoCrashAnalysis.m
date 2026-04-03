@@ -140,7 +140,7 @@ static void EAPMDemoPresentConfirmAlert(UIViewController *presenter, NSString *t
                                  @"自定义异常",
                                  @"已触发多条自定义异常，请在 EMAS 控制台查看自定义异常详情");
         }],
-        [EAPMDemoHomeActionItem itemWithTitle:@"其它崩溃类型" actionHandler:^{
+        [EAPMDemoHomeActionItem itemWithTitle:@"其它类型崩溃" actionHandler:^{
             if (!weakPresenter.navigationController) {
                 return;
             }
