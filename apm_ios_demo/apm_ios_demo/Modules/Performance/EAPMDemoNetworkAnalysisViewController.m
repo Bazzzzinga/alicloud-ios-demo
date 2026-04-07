@@ -100,7 +100,7 @@ static UIColor *EAPMDemoNetworkAnalysisHexColor(NSUInteger hexValue, CGFloat alp
     UILabel *tipLabel = [[UILabel alloc] init];
     tipLabel.translatesAutoresizingMaskIntoConstraints = NO;
     tipLabel.numberOfLines = 0;
-    tipLabel.text = @"请触发不同类型的网络请求。网络分析数据在App退至后台时统一上报，之后即可在 EMAS 控制台查看。";
+    tipLabel.text = @"请触发不同类型的网络请求。网络分析数据在App退至后台时统一上报，稍后可在 EMAS 控制台查看。";
     tipLabel.font = [UIFont fontWithName:@"PingFangSC-Regular" size:15.0] ?: [UIFont systemFontOfSize:15.0 weight:UIFontWeightRegular];
     NSMutableParagraphStyle *tipParagraphStyle = [[NSMutableParagraphStyle alloc] init];
     tipParagraphStyle.alignment = NSTextAlignmentLeft;
@@ -463,7 +463,8 @@ static UIColor *EAPMDemoNetworkAnalysisHexColor(NSUInteger hexValue, CGFloat alp
     [message appendAttributedString:[[NSAttributedString alloc] initWithString:@"Result: " attributes:bodyAttributes]];
     [message appendAttributedString:[[NSAttributedString alloc] initWithString:statusSymbol attributes:symbolAttributes]];
     [message appendAttributedString:[[NSAttributedString alloc] initWithString:[NSString stringWithFormat:@" %@\n", statusText] attributes:statusAttributes]];
-    [message appendAttributedString:[[NSAttributedString alloc] initWithString:[NSString stringWithFormat:@"Status Code: %@", statusCodeText] attributes:bodyAttributes]];
+    [message appendAttributedString:[[NSAttributedString alloc] initWithString:[NSString stringWithFormat:@"Status Code: %@\n\n", statusCodeText] attributes:bodyAttributes]];
+    [message appendAttributedString:[[NSAttributedString alloc] initWithString:@"请切换至后台触发上报，稍后可在 EMAS 控制台查看。" attributes:bodyAttributes]];
     return message;
 }
 

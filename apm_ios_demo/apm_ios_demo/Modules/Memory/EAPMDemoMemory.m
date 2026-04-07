@@ -150,7 +150,7 @@ static void EAPMDemoPresentMemoryLeakAlert(UIViewController *presenter) {
 
     [EAPMDemoHomeAlertPresenter presentAlertFrom:presenter
                                            title:@"内存泄漏"
-                                         message:@"已触发【内存泄漏】。请切换至后台触发上报，稍后即可在 EMAS 控制台查看。"
+                                         message:@"已构造「内存泄漏」场景。请连续两次切换后台，首次触发内存检测，第二次触发结果上报，稍后可在 EMAS 控制台查看。"
                                          actions:@[
         [EAPMDemoHomeAlertAction actionWithTitle:@"知道了"
                                            style:EAPMDemoHomeAlertActionStylePrimary
@@ -164,7 +164,7 @@ static void EAPMDemoPresentLargeObjectAlert(UIViewController *presenter, BOOL su
     }
 
     NSString *message = success
-        ? @"已开始触发【大对象】。请等待约 1 秒后切换至后台触发上报，稍后即可在 EMAS 控制台查看。"
+        ? @"已触发「大对象」分配场景。请切换至后台触发上报，稍后可在 EMAS 控制台查看。"
         : @"触发失败，请稍后重试。";
     [EAPMDemoHomeAlertPresenter presentAlertFrom:presenter
                                            title:@"大对象"

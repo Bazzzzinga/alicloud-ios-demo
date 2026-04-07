@@ -333,7 +333,7 @@ typedef NS_ENUM(NSInteger, EAPMDemoCrashTriggerType) {
 
     [EAPMDemoHomeAlertPresenter presentAlertFrom:viewController
                                            title:@"OOM"
-                                         message:@"即将触发「OOM」，App将闪退，稍后可在 EMAS 控制台看到崩溃信息。"
+                                         message:@"即将触发「OOM」，App将闪退，重启App之后可在 EMAS 控制台看到崩溃信息。"
                                          actions:@[
         [EAPMDemoHomeAlertAction actionWithTitle:@"取消"
                                            style:EAPMDemoHomeAlertActionStyleSecondary

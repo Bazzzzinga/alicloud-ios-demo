@@ -80,7 +80,7 @@ static UIColor *EAPMDemoPerformanceHexColor(NSUInteger hexValue, CGFloat alpha) 
     UILabel *bannerLabel = [[UILabel alloc] init];
     bannerLabel.translatesAutoresizingMaskIntoConstraints = NO;
     bannerLabel.numberOfLines = 0;
-    bannerLabel.text = @"请滑动页面。页面分析数据在App退至后台时统一上报，之后即可在 EMAS 控制台查看。";
+    bannerLabel.text = @"请滑动页面。页面分析数据在App退至后台时统一上报，稍后可在 EMAS 控制台查看。";
     bannerLabel.font = [UIFont fontWithName:@"PingFangSC-Regular" size:16.0] ?: [UIFont systemFontOfSize:16.0 weight:UIFontWeightRegular];
     bannerLabel.textColor = EAPMDemoPerformanceHexColor(0x7A8FB8, 1.0);
     bannerLabel.textAlignment = NSTextAlignmentLeft;

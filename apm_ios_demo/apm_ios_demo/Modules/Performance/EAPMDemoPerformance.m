@@ -16,7 +16,7 @@
     NSArray<NSArray<NSString *> *> *sections = @[
         @[@"冷启动", @"已在App启动时自动记录"],
         @[@"热启动", @"需将App进行前后台切换"],
-        @[@"查看数据", @"所有启动数据均在App退至后台时统一上报，之后即可在 EMAS 控制台查看"],
+        @[@"查看数据", @"所有启动数据均在App退至后台时统一上报，稍后可在 EMAS 控制台查看"],
     ];
 
     for (NSInteger index = 0; index < sections.count; index++) {

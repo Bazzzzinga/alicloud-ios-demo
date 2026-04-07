@@ -17,9 +17,10 @@
 #import <AlicloudApmMemAlloc/AlicloudApmMemAlloc.h>
 #import <AlicloudApmMemLeak/AlicloudApmMemLeak.h>
 
-static NSString * const EAPMDemoPlaceholderAppKey = @"请替换您的appKey";
-static NSString * const EAPMDemoPlaceholderAppSecret = @"请替换您的appSecret";
-static NSString * const EAPMDemoPlaceholderAppRsaSecret = @"请替换您的appRsaSecret";
+// 请前往 EMAS 控制台获取应用配置，在此替换。
+static NSString * const EAPMDemoAPMAppKey = @"";
+static NSString * const EAPMDemoAPMAppSecret = @"";
+static NSString * const EAPMDemoAPMAppRsaSecret = @"";
 
 @interface AppDelegate ()
 
@@ -32,10 +33,10 @@ static NSString * const EAPMDemoPlaceholderAppRsaSecret = @"请替换您的appRs
     self.window = [[UIWindow alloc] initWithFrame:UIScreen.mainScreen.bounds];
     UIViewController *launchViewController = [self installLaunchViewController];
 
-//    if (![self canStartApmSDK]) {
-//        [self presentInvalidConfigAlertOnPresenter:launchViewController];
-//        return YES;
-//    }
+    if (![self canStartApmSDK]) {
+        [self presentInvalidConfigAlertOnPresenter:launchViewController];
+        return YES;
+    }
 
     // 启动 Alicloud APM SDK
     [self startApmSDK];
@@ -61,19 +62,15 @@ static NSString * const EAPMDemoPlaceholderAppRsaSecret = @"请替换您的appRs
 }
 
 - (BOOL)canStartApmSDK {
-    NSString *appKey = EAPMDemoPlaceholderAppKey;
-    NSString *appSecret = EAPMDemoPlaceholderAppSecret;
-    NSString *appRsaSecret = EAPMDemoPlaceholderAppRsaSecret;
-
-    return [self isValidConfigValue:appKey placeholder:EAPMDemoPlaceholderAppKey] &&
-           [self isValidConfigValue:appSecret placeholder:EAPMDemoPlaceholderAppSecret] &&
-           [self isValidConfigValue:appRsaSecret placeholder:EAPMDemoPlaceholderAppRsaSecret];
+    return [self isConfiguredValue:EAPMDemoAPMAppKey] &&
+           [self isConfiguredValue:EAPMDemoAPMAppSecret] &&
+           [self isConfiguredValue:EAPMDemoAPMAppRsaSecret];
 }
 
 - (void)startApmSDK {
-    NSString *appKey = EAPMDemoPlaceholderAppKey;
-    NSString *appSecret = EAPMDemoPlaceholderAppSecret;
-    NSString *appRsaSecret = EAPMDemoPlaceholderAppRsaSecret;
+    NSString *appKey = [self normalizedConfigValue:EAPMDemoAPMAppKey];
+    NSString *appSecret = [self normalizedConfigValue:EAPMDemoAPMAppSecret];
+    NSString *appRsaSecret = [self normalizedConfigValue:EAPMDemoAPMAppRsaSecret];
     NSArray *functions = @[[EAPMCrashAnalysis class],
                            [EAPMPerformance class],
                            [EAPMRemoteLog class],
@@ -92,13 +89,17 @@ static NSString * const EAPMDemoPlaceholderAppRsaSecret = @"请替换您的appRs
     [EAPMApm startWithOptions:options];
 }
 
-- (BOOL)isValidConfigValue:(NSString *)value placeholder:(NSString *)placeholder {
+- (nullable NSString *)normalizedConfigValue:(nullable NSString *)value {
     NSString *trimmedValue = [value stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
-    return trimmedValue.length > 0 && ![trimmedValue isEqualToString:placeholder];
+    return trimmedValue.length > 0 ? trimmedValue : nil;
+}
+
+- (BOOL)isConfiguredValue:(nullable NSString *)value {
+    return [self normalizedConfigValue:value] != nil;
 }
 
 - (void)presentInvalidConfigAlertOnPresenter:(UIViewController *)presenter {
-    NSString *message = @"当前缺少 appKey 等应用配置。\n请前往 EMAS 控制台获取应用配置，并修改 AppDelegate.m 中的对应常量后重新启动应用。";
+    NSString *message = @"当前缺少 appKey 等应用配置。\n请前往 EMAS 控制台获取应用配置，并修改 AppDelegate 中的 APM 配置块后重新启动应用。";
     UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"应用配置缺失"
                                                                              message:message
                                                                       preferredStyle:UIAlertControllerStyleAlert];
