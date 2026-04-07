@@ -1,22 +1,8 @@
 #import "EAPMDemoPerformance.h"
 
 #import "EAPMDemoHomeUI.h"
+#import "EAPMDemoNetworkAnalysisViewController.h"
 #import "EAPMDemoPerformanceScrollViewController.h"
-
-static void EAPMDemoPresentPerformanceAlert(UIViewController *presenter, NSString *message) {
-    if (!presenter || presenter.presentedViewController) {
-        return;
-    }
-
-    [EAPMDemoHomeAlertPresenter presentAlertFrom:presenter
-                                           title:@"提示"
-                                         message:message
-                                         actions:@[
-        [EAPMDemoHomeAlertAction actionWithTitle:@"知道了"
-                                           style:EAPMDemoHomeAlertActionStylePrimary
-                                         handler:nil],
-    ]];
-}
 
 @implementation EAPMDemoPerformance
 
@@ -76,28 +62,8 @@ static void EAPMDemoPresentPerformanceAlert(UIViewController *presenter, NSStrin
             [weakPresenter.navigationController pushViewController:viewController animated:YES];
         }],
         [EAPMDemoHomeActionItem itemWithTitle:@"网络分析" actionHandler:^{
-            NSString *urlString = @"https://www.baidu.com/";
-            __block BOOL hasPresented = NO;
-            for (NSInteger index = 0; index < 10; index++) {
-                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-                    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:urlString]];
-                    NSURLSession *session = [NSURLSession sessionWithConfiguration:[NSURLSessionConfiguration ephemeralSessionConfiguration]
-                                                                          delegate:nil
-                                                                     delegateQueue:[NSOperationQueue mainQueue]];
-                    NSURLSessionTask *task = [session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
-                        if (hasPresented) {
-                            return;
-                        }
-                        hasPresented = YES;
-                        if (error) {
-                            EAPMDemoPresentPerformanceAlert(weakPresenter, [NSString stringWithFormat:@"触发:%@，error:%@", urlString, error.localizedDescription]);
-                        } else {
-                            EAPMDemoPresentPerformanceAlert(weakPresenter, [NSString stringWithFormat:@"触发:%@，success", urlString]);
-                        }
-                    }];
-                    [task resume];
-                });
-            }
+            EAPMDemoNetworkAnalysisViewController *viewController = [[EAPMDemoNetworkAnalysisViewController alloc] init];
+            [weakPresenter.navigationController pushViewController:viewController animated:YES];
         }],
     ]];
 }

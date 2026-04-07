@@ -21,6 +21,7 @@
 		A10000000000000000000002 /* EAPMDemoHomeUI.m in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000013 /* EAPMDemoHomeUI.m */; };
 		A10000000000000000000003 /* EAPMDemoPerformanceLoadViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000015 /* EAPMDemoPerformanceLoadViewController.m */; };
 		A10000000000000000000004 /* EAPMDemoPerformanceScrollViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000017 /* EAPMDemoPerformanceScrollViewController.m */; };
+		C30000000000000000000001 /* EAPMDemoNetworkAnalysisViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C30000000000000000000011 /* EAPMDemoNetworkAnalysisViewController.m */; };
 		B20000000000000000000001 /* EAPMDemoCrashViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = B20000000000000000000011 /* EAPMDemoCrashViewController.mm */; };
 		FEA34C68ED2E042C74A482DD /* Pods_apm_ios_demo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 94ADE4EBEB8CB88EB1639A09 /* Pods_apm_ios_demo.framework */; };
 /* End PBXBuildFile section */
@@ -55,6 +56,8 @@
 		A10000000000000000000015 /* EAPMDemoPerformanceLoadViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EAPMDemoPerformanceLoadViewController.m; sourceTree = "<group>"; };
 		A10000000000000000000016 /* EAPMDemoPerformanceScrollViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EAPMDemoPerformanceScrollViewController.h; sourceTree = "<group>"; };
 		A10000000000000000000017 /* EAPMDemoPerformanceScrollViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EAPMDemoPerformanceScrollViewController.m; sourceTree = "<group>"; };
+		C30000000000000000000010 /* EAPMDemoNetworkAnalysisViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EAPMDemoNetworkAnalysisViewController.h; sourceTree = "<group>"; };
+		C30000000000000000000011 /* EAPMDemoNetworkAnalysisViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EAPMDemoNetworkAnalysisViewController.m; sourceTree = "<group>"; };
 		B20000000000000000000010 /* EAPMDemoCrashViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EAPMDemoCrashViewController.h; sourceTree = "<group>"; };
 		B20000000000000000000011 /* EAPMDemoCrashViewController.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = EAPMDemoCrashViewController.mm; sourceTree = "<group>"; };
 		A416AF6F4BABBE512C7FBD28 /* Pods-apm_ios_demo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-apm_ios_demo.release.xcconfig"; path = "Pods/Target Support Files/Pods-apm_ios_demo/Pods-apm_ios_demo.release.xcconfig"; sourceTree = "<group>"; };
@@ -156,6 +159,8 @@
 				A10000000000000000000015 /* EAPMDemoPerformanceLoadViewController.m */,
 				A10000000000000000000016 /* EAPMDemoPerformanceScrollViewController.h */,
 				A10000000000000000000017 /* EAPMDemoPerformanceScrollViewController.m */,
+				C30000000000000000000010 /* EAPMDemoNetworkAnalysisViewController.h */,
+				C30000000000000000000011 /* EAPMDemoNetworkAnalysisViewController.m */,
 			);
 			path = Performance;
 			sourceTree = "<group>";
@@ -326,6 +331,7 @@
 				A10000000000000000000002 /* EAPMDemoHomeUI.m in Sources */,
 				A10000000000000000000001 /* EAPMDemoHomeViewController.m in Sources */,
 				A10000000000000000000004 /* EAPMDemoPerformanceScrollViewController.m in Sources */,
+				C30000000000000000000001 /* EAPMDemoNetworkAnalysisViewController.m in Sources */,
 				332B38DF23507411009831D0 /* EAPMDemoMemory.m in Sources */,
 				330B627523505591004ABFDA /* EAPMDemoPerformance.m in Sources */,
 				9A0000000000000000000001 /* EAPMDemoSettingsViewController.m in Sources */,
