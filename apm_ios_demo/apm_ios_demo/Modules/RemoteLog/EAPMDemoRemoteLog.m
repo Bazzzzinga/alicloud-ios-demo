@@ -320,6 +320,8 @@ static void EAPMDemoPresentRemoteLogGuide(UIViewController *presenter,
                                           ]);
         }],
         [EAPMDemoHomeActionItem itemWithTitle:@"主动上报" actionHandler:^{
+            EAPMRemoteLog *remoteLogger = [[EAPMRemoteLog alloc] initWithModuleName:@"YourModuleName"];
+            [remoteLogger error:@"主动上报日志内容"];
             [EAPMRemoteLog uploadTLog:@"主动上报bizComment"];
             EAPMDemoPresentRemoteLogGuide(weakPresenter,
                                           @"主动上报",

@@ -150,7 +150,7 @@ static void EAPMDemoPresentMemoryLeakAlert(UIViewController *presenter) {
 
     [EAPMDemoHomeAlertPresenter presentAlertFrom:presenter
                                            title:@"内存泄漏"
-                                         message:@"已构造「内存泄漏」场景。请连续两次切换后台，首次触发内存检测，第二次触发结果上报，稍后可在 EMAS 控制台查看。"
+                                         message:@"已构造「内存泄漏」场景。请连续两次将应用切换至后台：首次触发内存检测，第二次触发结果上报。相关结果可稍后在 EMAS 控制台查看。"
                                          actions:@[
         [EAPMDemoHomeAlertAction actionWithTitle:@"知道了"
                                            style:EAPMDemoHomeAlertActionStylePrimary
