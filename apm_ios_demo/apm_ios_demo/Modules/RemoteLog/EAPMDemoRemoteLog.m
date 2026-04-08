@@ -1,6 +1,7 @@
 #import "EAPMDemoRemoteLog.h"
 
 #import "EAPMDemoHomeUI.h"
+#import "../Shared/EAPMDemoUIStyleGuide.h"
 #import <AlicloudApmRemoteLog/AlicloudApmRemoteLog.h>
 
 static UIColor *EAPMDemoRemoteLogColorHex(NSUInteger hexValue, CGFloat alpha) {
@@ -107,7 +108,7 @@ static void EAPMDemoPresentRemoteLogGuide(UIViewController *presenter,
     self.statusBackgroundView = [[UIView alloc] init];
     self.statusBackgroundView.translatesAutoresizingMaskIntoConstraints = NO;
     self.statusBackgroundView.backgroundColor = EAPMDemoRemoteLogColorHex(0xDFF9DF, 1.0);
-    self.statusBackgroundView.layer.cornerRadius = 8.0;
+    self.statusBackgroundView.layer.cornerRadius = EAPMDemoUICornerRadius;
     self.statusBackgroundView.layer.masksToBounds = YES;
     self.statusGradientLayer = [CAGradientLayer layer];
     self.statusGradientLayer.colors = @[
@@ -154,9 +155,9 @@ static void EAPMDemoPresentRemoteLogGuide(UIViewController *presenter,
     self.confirmButton.translatesAutoresizingMaskIntoConstraints = NO;
     [self.confirmButton setTitle:@"我知道了" forState:UIControlStateNormal];
     [self.confirmButton setTitleColor:UIColor.whiteColor forState:UIControlStateNormal];
-    self.confirmButton.titleLabel.font = [UIFont fontWithName:@"PingFangSC-Semibold" size:18.0] ?: [UIFont systemFontOfSize:18.0 weight:UIFontWeightSemibold];
+    self.confirmButton.titleLabel.font = EAPMDemoUIFontSemibold(18.0);
     self.confirmButton.backgroundColor = EAPMDemoRemoteLogColorHex(0x4250F7, 1.0);
-    self.confirmButton.layer.cornerRadius = 8.0;
+    self.confirmButton.layer.cornerRadius = EAPMDemoUICornerRadius;
     self.confirmButton.layer.masksToBounds = YES;
     [self.confirmButton addTarget:self action:@selector(handleDismissTapped) forControlEvents:UIControlEventTouchUpInside];
     self.buttonGradientLayer = [CAGradientLayer layer];
@@ -218,7 +219,7 @@ static void EAPMDemoPresentRemoteLogGuide(UIViewController *presenter,
         [self.confirmButton.leadingAnchor constraintEqualToAnchor:self.panelView.leadingAnchor constant:16.0],
         [self.confirmButton.trailingAnchor constraintEqualToAnchor:self.panelView.trailingAnchor constant:-16.0],
         [self.confirmButton.topAnchor constraintGreaterThanOrEqualToAnchor:guideStackView.bottomAnchor constant:28.0],
-        [self.confirmButton.heightAnchor constraintEqualToConstant:60.0],
+        [self.confirmButton.heightAnchor constraintEqualToConstant:EAPMDemoUIPrimaryButtonHeight],
         self.confirmButtonBottomConstraint,
     ]];
 }
@@ -231,10 +232,10 @@ static void EAPMDemoPresentRemoteLogGuide(UIViewController *presenter,
     textLabel.translatesAutoresizingMaskIntoConstraints = NO;
     textLabel.numberOfLines = 0;
     textLabel.textColor = EAPMDemoRemoteLogColorHex(0x63728D, 1.0);
-    textLabel.font = [UIFont fontWithName:@"PingFangSC-Regular" size:17.0] ?: [UIFont systemFontOfSize:17.0 weight:UIFontWeightRegular];
+    textLabel.font = EAPMDemoUIFontRegular(16.0);
     NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
-    paragraphStyle.minimumLineHeight = 25.0;
-    paragraphStyle.maximumLineHeight = 25.0;
+    paragraphStyle.minimumLineHeight = 24.0;
+    paragraphStyle.maximumLineHeight = 24.0;
     textLabel.attributedText = [[NSAttributedString alloc] initWithString:text attributes:@{
         NSFontAttributeName: textLabel.font,
         NSForegroundColorAttributeName: textLabel.textColor,
@@ -248,7 +249,7 @@ static void EAPMDemoPresentRemoteLogGuide(UIViewController *presenter,
         indexLabel.text = [NSString stringWithFormat:@"%lu", (unsigned long)index];
         indexLabel.textAlignment = NSTextAlignmentCenter;
         indexLabel.textColor = UIColor.whiteColor;
-        indexLabel.font = [UIFont fontWithName:@"PingFangSC-Semibold" size:12.0] ?: [UIFont systemFontOfSize:12.0 weight:UIFontWeightSemibold];
+        indexLabel.font = EAPMDemoUIFontSemibold(12.0);
         indexLabel.backgroundColor = EAPMDemoRemoteLogColorHex(0x4D61FF, 1.0);
         indexLabel.layer.cornerRadius = 9.0;
         indexLabel.layer.masksToBounds = YES;

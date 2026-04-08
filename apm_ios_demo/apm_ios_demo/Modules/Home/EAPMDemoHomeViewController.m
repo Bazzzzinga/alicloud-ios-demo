@@ -2,6 +2,7 @@
 
 #import "EAPMDemoSettingsViewController.h"
 #import "EAPMDemoHomeUI.h"
+#import "../Shared/EAPMDemoUIStyleGuide.h"
 #import "EAPMDemoCrashAnalysis.h"
 #import "EAPMDemoMemory.h"
 #import "EAPMDemoPerformance.h"
@@ -81,16 +82,16 @@ static NSString * const EAPMDemoSectionHeaderReuseIdentifier = @"EAPMDemoSection
         }
 
         NSCollectionLayoutSize *itemSize = [NSCollectionLayoutSize sizeWithWidthDimension:[NSCollectionLayoutDimension fractionalWidthDimension:0.5]
-                                                                          heightDimension:[NSCollectionLayoutDimension absoluteDimension:48.0]];
+                                                                          heightDimension:[NSCollectionLayoutDimension absoluteDimension:EAPMDemoUISecondaryActionHeight]];
         NSCollectionLayoutItem *item = [NSCollectionLayoutItem itemWithLayoutSize:itemSize];
 
         NSCollectionLayoutSize *groupSize = [NSCollectionLayoutSize sizeWithWidthDimension:[NSCollectionLayoutDimension fractionalWidthDimension:1.0]
-                                                                           heightDimension:[NSCollectionLayoutDimension absoluteDimension:48.0]];
+                                                                           heightDimension:[NSCollectionLayoutDimension absoluteDimension:EAPMDemoUISecondaryActionHeight]];
         NSCollectionLayoutGroup *group = [NSCollectionLayoutGroup horizontalGroupWithLayoutSize:groupSize subitem:item count:2];
         group.interItemSpacing = [NSCollectionLayoutSpacing fixedSpacing:6.0];
 
         NSCollectionLayoutSection *section = [NSCollectionLayoutSection sectionWithGroup:group];
-        section.contentInsets = NSDirectionalEdgeInsetsMake(0.0, 16.0, 12.0, 16.0);
+        section.contentInsets = NSDirectionalEdgeInsetsMake(0.0, EAPMDemoUIHorizontalInset, 12.0, EAPMDemoUIHorizontalInset);
         section.interGroupSpacing = 6.0;
 
         NSCollectionLayoutBoundarySupplementaryItem *header = [NSCollectionLayoutBoundarySupplementaryItem boundarySupplementaryItemWithLayoutSize:[NSCollectionLayoutSize sizeWithWidthDimension:[NSCollectionLayoutDimension fractionalWidthDimension:1.0]

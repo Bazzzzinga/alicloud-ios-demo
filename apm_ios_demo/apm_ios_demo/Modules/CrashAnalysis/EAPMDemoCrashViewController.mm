@@ -1,6 +1,7 @@
 #import "EAPMDemoCrashViewController.h"
 
 #import "EAPMDemoHomeUI.h"
+#import "../Shared/EAPMDemoUIStyleGuide.h"
 #import <signal.h>
 #import <stdlib.h>
 #import <string.h>
@@ -82,12 +83,7 @@ typedef NS_ENUM(NSInteger, EAPMDemoCrashTriggerType) {
     UILabel *titleLabel = [[UILabel alloc] init];
     titleLabel.translatesAutoresizingMaskIntoConstraints = NO;
     titleLabel.numberOfLines = 1;
-    UIFont *titleFont = [UIFont fontWithName:@"PingFangSC-Medium" size:22.0] ?: [UIFont systemFontOfSize:22.0 weight:UIFontWeightMedium];
-    titleLabel.attributedText = [[NSAttributedString alloc] initWithString:@"其它类型崩溃" attributes:@{
-        NSFontAttributeName: titleFont,
-        NSForegroundColorAttributeName: EAPMDemoCrashHexColor(0x4B4D52, 1.0),
-        NSKernAttributeName: @(0.8),
-    }];
+    titleLabel.attributedText = EAPMDemoPageTitleAttributedString(@"其它类型崩溃", EAPMDemoCrashHexColor(0x4B4D52, 1.0));
     [_headerView addSubview:titleLabel];
 
     _scrollView = [[UIScrollView alloc] init];
@@ -101,40 +97,21 @@ typedef NS_ENUM(NSInteger, EAPMDemoCrashTriggerType) {
 
     UIView *tipCardView = [[UIView alloc] init];
     tipCardView.translatesAutoresizingMaskIntoConstraints = NO;
-    tipCardView.backgroundColor = EAPMDemoCrashHexColor(0xEEF3FF, 1.0);
-    tipCardView.layer.cornerRadius = 10.0;
-    tipCardView.layer.masksToBounds = YES;
+    EAPMDemoApplyTipCardStyle(tipCardView, EAPMDemoCrashHexColor(0xEEF3FF, 1.0));
     [_contentView addSubview:tipCardView];
 
     UILabel *descLabel = [[UILabel alloc] init];
     descLabel.translatesAutoresizingMaskIntoConstraints = NO;
     descLabel.numberOfLines = 0;
     descLabel.text = @"更多崩溃和错误类型，点击按钮触发对应类型的异常。触发后请前往 EMAS 控制台查看崩溃详情和堆栈信息。";
-    descLabel.font = [UIFont fontWithName:@"PingFangSC-Regular" size:16.0] ?: [UIFont systemFontOfSize:16.0 weight:UIFontWeightRegular];
-    descLabel.textColor = EAPMDemoCrashHexColor(0x7A8FB8, 1.0);
-    NSMutableParagraphStyle *descParagraphStyle = [[NSMutableParagraphStyle alloc] init];
-    descParagraphStyle.alignment = NSTextAlignmentLeft;
-    descParagraphStyle.minimumLineHeight = 20.0;
-    descParagraphStyle.maximumLineHeight = 20.0;
-    descLabel.attributedText = [[NSAttributedString alloc] initWithString:descLabel.text attributes:@{
-        NSFontAttributeName: descLabel.font,
-        NSForegroundColorAttributeName: EAPMDemoCrashHexColor(0x7A8FB8, 1.0),
-        NSParagraphStyleAttributeName: descParagraphStyle,
-        NSKernAttributeName: @(0.4),
-    }];
+    descLabel.attributedText = EAPMDemoInfoAttributedString(descLabel.text, EAPMDemoCrashHexColor(0x7A8FB8, 1.0));
     [tipCardView addSubview:descLabel];
 
-    UIView *sectionIndicator = [[UIView alloc] init];
-    sectionIndicator.translatesAutoresizingMaskIntoConstraints = NO;
-    sectionIndicator.backgroundColor = EAPMDemoCrashHexColor(0x315CFC, 1.0);
-    sectionIndicator.layer.cornerRadius = 3.0;
+    UIView *sectionIndicator = EAPMDemoCreateSectionIndicatorView(EAPMDemoCrashHexColor(0x315CFC, 1.0));
     [_contentView addSubview:sectionIndicator];
 
     UILabel *sectionTitleLabel = [[UILabel alloc] init];
-    sectionTitleLabel.translatesAutoresizingMaskIntoConstraints = NO;
-    sectionTitleLabel.text = @"崩溃列表";
-    sectionTitleLabel.textColor = EAPMDemoCrashHexColor(0x4B4D52, 1.0);
-    sectionTitleLabel.font = [UIFont systemFontOfSize:18.0 weight:UIFontWeightMedium];
+    EAPMDemoConfigureSectionTitleLabel(sectionTitleLabel, @"崩溃列表", EAPMDemoCrashHexColor(0x4B4D52, 1.0));
     [_contentView addSubview:sectionTitleLabel];
 
     NSArray<NSDictionary<NSString *, id> *> *items = @[
@@ -174,7 +151,7 @@ typedef NS_ENUM(NSInteger, EAPMDemoCrashTriggerType) {
         }
 
         [gridStackView addArrangedSubview:rowStackView];
-        [rowStackView.heightAnchor constraintEqualToConstant:48.0].active = YES;
+        [rowStackView.heightAnchor constraintEqualToConstant:EAPMDemoUISecondaryActionHeight].active = YES;
     }
 
     UILayoutGuide *safeArea = self.view.safeAreaLayoutGuide;
@@ -183,15 +160,15 @@ typedef NS_ENUM(NSInteger, EAPMDemoCrashTriggerType) {
         [_headerView.trailingAnchor constraintEqualToAnchor:self.view.trailingAnchor],
         [_headerView.topAnchor constraintEqualToAnchor:safeArea.topAnchor],
 
-        [backButton.leadingAnchor constraintEqualToAnchor:self.view.leadingAnchor constant:16.0],
-        [backButton.topAnchor constraintEqualToAnchor:_headerView.topAnchor constant:10.0],
+        [backButton.leadingAnchor constraintEqualToAnchor:self.view.leadingAnchor constant:EAPMDemoUIHorizontalInset],
+        [backButton.topAnchor constraintEqualToAnchor:_headerView.topAnchor constant:EAPMDemoUIHeaderTopPadding],
         [backButton.widthAnchor constraintEqualToConstant:20.0],
         [backButton.heightAnchor constraintEqualToConstant:20.0],
 
-        [titleLabel.leadingAnchor constraintEqualToAnchor:backButton.trailingAnchor constant:6.0],
-        [titleLabel.centerYAnchor constraintEqualToAnchor:backButton.centerYAnchor constant:-1.0],
+        [titleLabel.leadingAnchor constraintEqualToAnchor:backButton.trailingAnchor constant:EAPMDemoUIHeaderTitleSpacing],
+        [titleLabel.centerYAnchor constraintEqualToAnchor:backButton.centerYAnchor],
 
-        [_headerView.bottomAnchor constraintEqualToAnchor:titleLabel.bottomAnchor constant:24.0],
+        [_headerView.bottomAnchor constraintEqualToAnchor:titleLabel.bottomAnchor constant:EAPMDemoUIHeaderBottomPadding],
 
         [_scrollView.leadingAnchor constraintEqualToAnchor:self.view.leadingAnchor],
         [_scrollView.trailingAnchor constraintEqualToAnchor:self.view.trailingAnchor],
@@ -204,37 +181,36 @@ typedef NS_ENUM(NSInteger, EAPMDemoCrashTriggerType) {
         [_contentView.bottomAnchor constraintEqualToAnchor:_scrollView.contentLayoutGuide.bottomAnchor],
         [_contentView.widthAnchor constraintEqualToAnchor:_scrollView.frameLayoutGuide.widthAnchor],
 
-        [tipCardView.leadingAnchor constraintEqualToAnchor:_contentView.leadingAnchor constant:16.0],
-        [tipCardView.trailingAnchor constraintEqualToAnchor:_contentView.trailingAnchor constant:-16.0],
-        [tipCardView.topAnchor constraintEqualToAnchor:_contentView.topAnchor constant:-4.0],
+        [tipCardView.leadingAnchor constraintEqualToAnchor:_contentView.leadingAnchor constant:EAPMDemoUIHorizontalInset],
+        [tipCardView.trailingAnchor constraintEqualToAnchor:_contentView.trailingAnchor constant:-EAPMDemoUIHorizontalInset],
+        [tipCardView.topAnchor constraintEqualToAnchor:_contentView.topAnchor constant:EAPMDemoUIContentTopSpacing],
 
-        [descLabel.leadingAnchor constraintEqualToAnchor:tipCardView.leadingAnchor constant:16.0],
-        [descLabel.trailingAnchor constraintEqualToAnchor:tipCardView.trailingAnchor constant:-16.0],
-        [descLabel.topAnchor constraintEqualToAnchor:tipCardView.topAnchor constant:14.0],
-        [descLabel.bottomAnchor constraintEqualToAnchor:tipCardView.bottomAnchor constant:-14.0],
+        [descLabel.leadingAnchor constraintEqualToAnchor:tipCardView.leadingAnchor constant:EAPMDemoUIHorizontalInset],
+        [descLabel.trailingAnchor constraintEqualToAnchor:tipCardView.trailingAnchor constant:-EAPMDemoUIHorizontalInset],
+        [descLabel.topAnchor constraintEqualToAnchor:tipCardView.topAnchor constant:EAPMDemoUITipCardVerticalInset],
+        [descLabel.bottomAnchor constraintEqualToAnchor:tipCardView.bottomAnchor constant:-EAPMDemoUITipCardVerticalInset],
 
-        [sectionIndicator.leadingAnchor constraintEqualToAnchor:_contentView.leadingAnchor constant:16.0],
-        [sectionIndicator.topAnchor constraintEqualToAnchor:tipCardView.bottomAnchor constant:20.0],
+        [sectionIndicator.leadingAnchor constraintEqualToAnchor:_contentView.leadingAnchor constant:EAPMDemoUIHorizontalInset],
+        [sectionIndicator.topAnchor constraintEqualToAnchor:tipCardView.bottomAnchor constant:EAPMDemoUISectionTopSpacing],
         [sectionIndicator.widthAnchor constraintEqualToConstant:4.0],
         [sectionIndicator.heightAnchor constraintEqualToConstant:20.0],
 
         [sectionTitleLabel.leadingAnchor constraintEqualToAnchor:sectionIndicator.trailingAnchor constant:12.0],
         [sectionTitleLabel.centerYAnchor constraintEqualToAnchor:sectionIndicator.centerYAnchor],
 
-        [gridStackView.leadingAnchor constraintEqualToAnchor:_contentView.leadingAnchor constant:16.0],
-        [gridStackView.trailingAnchor constraintEqualToAnchor:_contentView.trailingAnchor constant:-16.0],
-        [gridStackView.topAnchor constraintEqualToAnchor:sectionIndicator.bottomAnchor constant:14.0],
-        [gridStackView.bottomAnchor constraintEqualToAnchor:_contentView.bottomAnchor constant:-32.0],
+        [gridStackView.leadingAnchor constraintEqualToAnchor:_contentView.leadingAnchor constant:EAPMDemoUIHorizontalInset],
+        [gridStackView.trailingAnchor constraintEqualToAnchor:_contentView.trailingAnchor constant:-EAPMDemoUIHorizontalInset],
+        [gridStackView.topAnchor constraintEqualToAnchor:sectionIndicator.bottomAnchor constant:EAPMDemoUISectionContentSpacing],
+        [gridStackView.bottomAnchor constraintEqualToAnchor:_contentView.bottomAnchor constant:-EAPMDemoUIContentBottomPadding],
     ]];
 }
 
 - (UIButton *)createCrashButtonWithTitle:(NSString *)title type:(EAPMDemoCrashTriggerType)type {
     UIButton *button = [UIButton buttonWithType:UIButtonTypeSystem];
     button.tag = type;
-    button.backgroundColor = EAPMDemoCrashHexColor(0xF0F2F5, 1.0);
-    button.layer.cornerRadius = 8.0;
-    button.layer.borderWidth = 2.0;
-    button.layer.borderColor = EAPMDemoCrashHexColor(0xE6E8EB, 1.0).CGColor;
+    EAPMDemoApplySecondaryCardStyle(button,
+                                    EAPMDemoCrashHexColor(0xF0F2F5, 1.0),
+                                    EAPMDemoCrashHexColor(0xE6E8EB, 1.0));
     button.titleLabel.numberOfLines = 2;
     button.titleLabel.textAlignment = NSTextAlignmentCenter;
     [button setAttributedTitle:[self crashButtonTitle:title] forState:UIControlStateNormal];
@@ -243,16 +219,7 @@ typedef NS_ENUM(NSInteger, EAPMDemoCrashTriggerType) {
 }
 
 - (NSAttributedString *)crashButtonTitle:(NSString *)title {
-    UIFont *font = [UIFont fontWithName:@"PingFangSC-Regular" size:16.0] ?: [UIFont systemFontOfSize:16.0 weight:UIFontWeightRegular];
-    NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
-    paragraphStyle.alignment = NSTextAlignmentCenter;
-    paragraphStyle.minimumLineHeight = 24.0;
-    paragraphStyle.maximumLineHeight = 24.0;
-    return [[NSAttributedString alloc] initWithString:title attributes:@{
-        NSFontAttributeName: font,
-        NSForegroundColorAttributeName: EAPMDemoCrashHexColor(0x1F2024, 1.0),
-        NSParagraphStyleAttributeName: paragraphStyle,
-    }];
+    return EAPMDemoCenteredActionAttributedString(title, EAPMDemoCrashHexColor(0x1F2024, 1.0));
 }
 
 - (void)handleBackButtonTapped {

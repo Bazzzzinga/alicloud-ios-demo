@@ -1,4 +1,5 @@
 #import "EAPMDemoPerformanceLoadViewController.h"
+#import "../Shared/EAPMDemoUIStyleGuide.h"
 
 @interface EAPMDemoPerformanceLoadViewController ()
 
@@ -24,7 +25,7 @@
     UILabel *titleLabel = [[UILabel alloc] init];
     titleLabel.translatesAutoresizingMaskIntoConstraints = NO;
     titleLabel.text = @"启动分析示例";
-    titleLabel.font = [UIFont systemFontOfSize:30 weight:UIFontWeightSemibold];
+    titleLabel.font = EAPMDemoUIFontSemibold(22.0);
     titleLabel.textColor = [UIColor colorWithRed:0x4B / 255.0 green:0x4D / 255.0 blue:0x52 / 255.0 alpha:1.0];
     [contentView addSubview:titleLabel];
 
@@ -32,8 +33,8 @@
     descLabel.translatesAutoresizingMaskIntoConstraints = NO;
     descLabel.text = @"这个页面用于承接首页“启动分析”，首屏包含多组卡片和说明内容，用于模拟真实业务页的首屏渲染。";
     descLabel.numberOfLines = 0;
-    descLabel.font = [UIFont systemFontOfSize:16 weight:UIFontWeightRegular];
-    descLabel.textColor = [UIColor colorWithRed:0x60 / 255.0 green:0x7B / 255.0 blue:0x9C / 255.0 alpha:1.0];
+    descLabel.attributedText = EAPMDemoBodyAttributedString(descLabel.text,
+                                                            EAPMDemoUIColor(0x607B9C, 1.0));
     [contentView addSubview:descLabel];
 
     UIView *previousCard = nil;
@@ -41,15 +42,15 @@
         UIView *cardView = [[UIView alloc] init];
         cardView.translatesAutoresizingMaskIntoConstraints = NO;
         cardView.backgroundColor = UIColor.whiteColor;
-        cardView.layer.cornerRadius = 18.0;
-        cardView.layer.borderWidth = 1.0;
+        cardView.layer.cornerRadius = EAPMDemoUICornerRadius;
+        cardView.layer.borderWidth = 2.0;
         cardView.layer.borderColor = [UIColor colorWithRed:0xE6 / 255.0 green:0xE8 / 255.0 blue:0xEB / 255.0 alpha:1.0].CGColor;
         [contentView addSubview:cardView];
 
         UILabel *cardTitle = [[UILabel alloc] init];
         cardTitle.translatesAutoresizingMaskIntoConstraints = NO;
         cardTitle.text = [NSString stringWithFormat:@"首屏模块 %ld", (long)index + 1];
-        cardTitle.font = [UIFont systemFontOfSize:18 weight:UIFontWeightMedium];
+        cardTitle.font = EAPMDemoUIFontMedium(18.0);
         cardTitle.textColor = [UIColor colorWithRed:0x1F / 255.0 green:0x20 / 255.0 blue:0x24 / 255.0 alpha:1.0];
         [cardView addSubview:cardTitle];
 
@@ -57,8 +58,8 @@
         cardBody.translatesAutoresizingMaskIntoConstraints = NO;
         cardBody.numberOfLines = 0;
         cardBody.text = @"用于模拟真实业务卡片布局，包含说明文案、边框、圆角和分隔间距。";
-        cardBody.font = [UIFont systemFontOfSize:15 weight:UIFontWeightRegular];
-        cardBody.textColor = [UIColor colorWithRed:0x60 / 255.0 green:0x7B / 255.0 blue:0x9C / 255.0 alpha:1.0];
+        cardBody.attributedText = EAPMDemoBodyAttributedString(cardBody.text,
+                                                               EAPMDemoUIColor(0x607B9C, 1.0));
         [cardView addSubview:cardBody];
 
         [NSLayoutConstraint activateConstraints:@[

@@ -1,6 +1,7 @@
 #import "EAPMDemoSettingsViewController.h"
 
 #import "EAPMDemoConfigStore.h"
+#import "../Shared/EAPMDemoUIStyleGuide.h"
 #import <AlicloudApmCore/AlicloudApmCore.h>
 
 static UIColor *EAPMDemoSettingsHexColor(NSUInteger hexValue, CGFloat alpha) {
@@ -77,12 +78,7 @@ static UIColor *EAPMDemoSettingsHexColor(NSUInteger hexValue, CGFloat alpha) {
     UILabel *pageTitleLabel = [[UILabel alloc] init];
     pageTitleLabel.translatesAutoresizingMaskIntoConstraints = NO;
     pageTitleLabel.numberOfLines = 1;
-    UIFont *pageTitleFont = [UIFont fontWithName:@"PingFangSC-Medium" size:22.0] ?: [UIFont systemFontOfSize:22.0 weight:UIFontWeightMedium];
-    pageTitleLabel.attributedText = [[NSAttributedString alloc] initWithString:@"设置" attributes:@{
-        NSFontAttributeName: pageTitleFont,
-        NSForegroundColorAttributeName: EAPMDemoSettingsHexColor(0x4B4D52, 1.0),
-        NSKernAttributeName: @(0.8),
-    }];
+    pageTitleLabel.attributedText = EAPMDemoPageTitleAttributedString(@"设置", EAPMDemoSettingsHexColor(0x4B4D52, 1.0));
     [_headerView addSubview:pageTitleLabel];
 
     _scrollView = [[UIScrollView alloc] init];
@@ -110,9 +106,9 @@ static UIColor *EAPMDemoSettingsHexColor(NSUInteger hexValue, CGFloat alpha) {
 
     EAPMDemoSettingsGradientButton *saveButton = [EAPMDemoSettingsGradientButton buttonWithType:UIButtonTypeCustom];
     saveButton.translatesAutoresizingMaskIntoConstraints = NO;
-    saveButton.layer.cornerRadius = 8.0;
+    saveButton.layer.cornerRadius = EAPMDemoUICornerRadius;
     saveButton.clipsToBounds = YES;
-    saveButton.titleLabel.font = [UIFont fontWithName:@"PingFangSC-Medium" size:18.0] ?: [UIFont systemFontOfSize:18.0 weight:UIFontWeightSemibold];
+    saveButton.titleLabel.font = EAPMDemoUIFontSemibold(18.0);
     [saveButton setTitle:@"保存设置" forState:UIControlStateNormal];
     [saveButton setTitleColor:UIColor.whiteColor forState:UIControlStateNormal];
     [saveButton addTarget:self action:@selector(handleSaveButtonTapped) forControlEvents:UIControlEventTouchUpInside];
@@ -124,15 +120,15 @@ static UIColor *EAPMDemoSettingsHexColor(NSUInteger hexValue, CGFloat alpha) {
         [_headerView.trailingAnchor constraintEqualToAnchor:self.view.trailingAnchor],
         [_headerView.topAnchor constraintEqualToAnchor:safeArea.topAnchor],
 
-        [backButton.leadingAnchor constraintEqualToAnchor:self.view.leadingAnchor constant:16.0],
-        [backButton.topAnchor constraintEqualToAnchor:_headerView.topAnchor constant:10.0],
+        [backButton.leadingAnchor constraintEqualToAnchor:self.view.leadingAnchor constant:EAPMDemoUIHorizontalInset],
+        [backButton.topAnchor constraintEqualToAnchor:_headerView.topAnchor constant:EAPMDemoUIHeaderTopPadding],
         [backButton.widthAnchor constraintEqualToConstant:20.0],
         [backButton.heightAnchor constraintEqualToConstant:20.0],
 
-        [pageTitleLabel.leadingAnchor constraintEqualToAnchor:backButton.trailingAnchor constant:6.0],
-        [pageTitleLabel.centerYAnchor constraintEqualToAnchor:backButton.centerYAnchor constant:-1.0],
+        [pageTitleLabel.leadingAnchor constraintEqualToAnchor:backButton.trailingAnchor constant:EAPMDemoUIHeaderTitleSpacing],
+        [pageTitleLabel.centerYAnchor constraintEqualToAnchor:backButton.centerYAnchor],
 
-        [_headerView.bottomAnchor constraintEqualToAnchor:pageTitleLabel.bottomAnchor constant:24.0],
+        [_headerView.bottomAnchor constraintEqualToAnchor:pageTitleLabel.bottomAnchor constant:EAPMDemoUIHeaderBottomPadding],
 
         [_scrollView.leadingAnchor constraintEqualToAnchor:self.view.leadingAnchor],
         [_scrollView.trailingAnchor constraintEqualToAnchor:self.view.trailingAnchor],
@@ -145,9 +141,9 @@ static UIColor *EAPMDemoSettingsHexColor(NSUInteger hexValue, CGFloat alpha) {
         [_contentView.bottomAnchor constraintEqualToAnchor:_scrollView.contentLayoutGuide.bottomAnchor],
         [_contentView.widthAnchor constraintEqualToAnchor:_scrollView.frameLayoutGuide.widthAnchor],
 
-        [_userIdInputView.leadingAnchor constraintEqualToAnchor:self.view.leadingAnchor constant:16.0],
-        [_userIdInputView.trailingAnchor constraintEqualToAnchor:self.view.trailingAnchor constant:-16.0],
-        [_userIdInputView.topAnchor constraintEqualToAnchor:_contentView.topAnchor constant:8.0],
+        [_userIdInputView.leadingAnchor constraintEqualToAnchor:self.view.leadingAnchor constant:EAPMDemoUIHorizontalInset],
+        [_userIdInputView.trailingAnchor constraintEqualToAnchor:self.view.trailingAnchor constant:-EAPMDemoUIHorizontalInset],
+        [_userIdInputView.topAnchor constraintEqualToAnchor:_contentView.topAnchor constant:EAPMDemoUIContentTopSpacing],
 
         [_userNickInputView.leadingAnchor constraintEqualToAnchor:_userIdInputView.leadingAnchor],
         [_userNickInputView.trailingAnchor constraintEqualToAnchor:_userIdInputView.trailingAnchor],
@@ -159,9 +155,9 @@ static UIColor *EAPMDemoSettingsHexColor(NSUInteger hexValue, CGFloat alpha) {
 
         [saveButton.leadingAnchor constraintEqualToAnchor:_userIdInputView.leadingAnchor],
         [saveButton.trailingAnchor constraintEqualToAnchor:_userIdInputView.trailingAnchor],
-        [saveButton.topAnchor constraintEqualToAnchor:_utdidInputView.bottomAnchor constant:18.0],
-        [saveButton.heightAnchor constraintEqualToConstant:60.0],
-        [saveButton.bottomAnchor constraintEqualToAnchor:_contentView.bottomAnchor constant:-30.0],
+        [saveButton.topAnchor constraintEqualToAnchor:_utdidInputView.bottomAnchor constant:20.0],
+        [saveButton.heightAnchor constraintEqualToConstant:EAPMDemoUIPrimaryButtonHeight],
+        [saveButton.bottomAnchor constraintEqualToAnchor:_contentView.bottomAnchor constant:-EAPMDemoUIContentBottomPadding],
     ]];
 }
 
@@ -201,15 +197,15 @@ static UIColor *EAPMDemoSettingsHexColor(NSUInteger hexValue, CGFloat alpha) {
 
     UIView *toastView = [[UIView alloc] init];
     toastView.translatesAutoresizingMaskIntoConstraints = NO;
-    toastView.backgroundColor = [UIColor colorWithWhite:0 alpha:0.72];
-    toastView.layer.cornerRadius = 10.0;
+    toastView.backgroundColor = EAPMDemoSettingsHexColor(0x1E2A44, 0.96);
+    toastView.layer.cornerRadius = 12.0;
     toastView.alpha = 0.0;
 
     UILabel *messageLabel = [[UILabel alloc] init];
     messageLabel.translatesAutoresizingMaskIntoConstraints = NO;
     messageLabel.text = @"设置已保存";
     messageLabel.textColor = UIColor.whiteColor;
-    messageLabel.font = [UIFont systemFontOfSize:15.0 weight:UIFontWeightMedium];
+    messageLabel.font = EAPMDemoUIFontMedium(15.0);
     messageLabel.textAlignment = NSTextAlignmentCenter;
     [toastView addSubview:messageLabel];
 
@@ -219,10 +215,10 @@ static UIColor *EAPMDemoSettingsHexColor(NSUInteger hexValue, CGFloat alpha) {
     [NSLayoutConstraint activateConstraints:@[
         [toastView.centerXAnchor constraintEqualToAnchor:self.view.centerXAnchor],
         [toastView.bottomAnchor constraintEqualToAnchor:self.view.safeAreaLayoutGuide.bottomAnchor constant:-28.0],
-        [toastView.heightAnchor constraintEqualToConstant:40.0],
         [messageLabel.leadingAnchor constraintEqualToAnchor:toastView.leadingAnchor constant:18.0],
         [messageLabel.trailingAnchor constraintEqualToAnchor:toastView.trailingAnchor constant:-18.0],
-        [messageLabel.centerYAnchor constraintEqualToAnchor:toastView.centerYAnchor],
+        [messageLabel.topAnchor constraintEqualToAnchor:toastView.topAnchor constant:12.0],
+        [messageLabel.bottomAnchor constraintEqualToAnchor:toastView.bottomAnchor constant:-12.0],
     ]];
 
     [self.view layoutIfNeeded];
@@ -291,27 +287,18 @@ static UIColor *EAPMDemoSettingsHexColor(NSUInteger hexValue, CGFloat alpha) {
         UILabel *titleLabel = [[UILabel alloc] init];
         titleLabel.translatesAutoresizingMaskIntoConstraints = NO;
         titleLabel.numberOfLines = 1;
-        UIFont *titleFont = [UIFont fontWithName:@"PingFangSC-Regular" size:18.0] ?: [UIFont systemFontOfSize:18.0 weight:UIFontWeightRegular];
-        NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
-        paragraphStyle.minimumLineHeight = 24.0;
-        paragraphStyle.maximumLineHeight = 24.0;
-        titleLabel.attributedText = [[NSAttributedString alloc] initWithString:title attributes:@{
-            NSFontAttributeName: titleFont,
-            NSForegroundColorAttributeName: EAPMDemoSettingsHexColor(0x9A9EA8, 1.0),
-            NSKernAttributeName: @(0.2),
-            NSParagraphStyleAttributeName: paragraphStyle,
-        }];
+        titleLabel.attributedText = EAPMDemoFieldTitleAttributedString(title, EAPMDemoSettingsHexColor(0x9A9EA8, 1.0));
         [self addSubview:titleLabel];
 
         _inputContainerView = [[UIView alloc] init];
         _inputContainerView.translatesAutoresizingMaskIntoConstraints = NO;
         _inputContainerView.backgroundColor = editable ? EAPMDemoSettingsHexColor(0xF0F2F5, 1.0) : EAPMDemoSettingsHexColor(0xE1E5EB, 1.0);
-        _inputContainerView.layer.cornerRadius = 8.0;
+        _inputContainerView.layer.cornerRadius = EAPMDemoUICornerRadius;
         [self addSubview:_inputContainerView];
 
         _textField = [[UITextField alloc] init];
         _textField.translatesAutoresizingMaskIntoConstraints = NO;
-        UIFont *textFont = [UIFont fontWithName:@"PingFangSC-Regular" size:16.0] ?: [UIFont systemFontOfSize:16.0 weight:UIFontWeightRegular];
+        UIFont *textFont = EAPMDemoUIFontRegular(16.0);
         _textField.font = textFont;
         _textField.textColor = editable ? EAPMDemoSettingsHexColor(0x4B4D52, 1.0) : EAPMDemoSettingsHexColor(0x95A4C2, 1.0);
         _textField.attributedPlaceholder = [[NSAttributedString alloc] initWithString:placeholder ?: @"" attributes:@{
@@ -330,12 +317,12 @@ static UIColor *EAPMDemoSettingsHexColor(NSUInteger hexValue, CGFloat alpha) {
 
             [_inputContainerView.leadingAnchor constraintEqualToAnchor:self.leadingAnchor],
             [_inputContainerView.trailingAnchor constraintEqualToAnchor:self.trailingAnchor],
-            [_inputContainerView.topAnchor constraintEqualToAnchor:titleLabel.bottomAnchor constant:6.0],
-            [_inputContainerView.heightAnchor constraintEqualToConstant:52.0],
+            [_inputContainerView.topAnchor constraintEqualToAnchor:titleLabel.bottomAnchor constant:EAPMDemoUIFieldSpacing],
+            [_inputContainerView.heightAnchor constraintEqualToConstant:EAPMDemoUIInputHeight],
             [_inputContainerView.bottomAnchor constraintEqualToAnchor:self.bottomAnchor],
 
-            [_textField.leadingAnchor constraintEqualToAnchor:_inputContainerView.leadingAnchor constant:16.0],
-            [_textField.trailingAnchor constraintEqualToAnchor:_inputContainerView.trailingAnchor constant:-16.0],
+            [_textField.leadingAnchor constraintEqualToAnchor:_inputContainerView.leadingAnchor constant:EAPMDemoUIHorizontalInset],
+            [_textField.trailingAnchor constraintEqualToAnchor:_inputContainerView.trailingAnchor constant:-EAPMDemoUIHorizontalInset],
             [_textField.topAnchor constraintEqualToAnchor:_inputContainerView.topAnchor],
             [_textField.bottomAnchor constraintEqualToAnchor:_inputContainerView.bottomAnchor],
         ]];

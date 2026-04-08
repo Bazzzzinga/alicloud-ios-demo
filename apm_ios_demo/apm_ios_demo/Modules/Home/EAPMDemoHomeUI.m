@@ -1,4 +1,5 @@
 #import "EAPMDemoHomeUI.h"
+#import "../Shared/EAPMDemoUIStyleGuide.h"
 
 static UIColor *EAPMDemoColorHex(NSUInteger hexValue, CGFloat alpha) {
     return [UIColor colorWithRed:((hexValue >> 16) & 0xFF) / 255.0
@@ -205,7 +206,7 @@ static UIColor *EAPMDemoColorHex(NSUInteger hexValue, CGFloat alpha) {
     messageLabel.numberOfLines = 0;
     messageLabel.textAlignment = self.messageAlignment == EAPMDemoHomeAlertMessageAlignmentLeft ? NSTextAlignmentLeft : NSTextAlignmentCenter;
     messageLabel.textColor = EAPMDemoColorHex(0x5B6472, 1.0);
-    messageLabel.font = [UIFont fontWithName:@"PingFangSC-Regular" size:15.0] ?: [UIFont systemFontOfSize:15.0 weight:UIFontWeightRegular];
+    messageLabel.font = EAPMDemoUIFontRegular(15.0);
 
     NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
     paragraphStyle.alignment = messageLabel.textAlignment;
@@ -245,8 +246,9 @@ static UIColor *EAPMDemoColorHex(NSUInteger hexValue, CGFloat alpha) {
         UIButton *button = [UIButton buttonWithType:UIButtonTypeSystem];
         button.translatesAutoresizingMaskIntoConstraints = NO;
         [button setTitle:action.title forState:UIControlStateNormal];
-        button.titleLabel.font = [UIFont fontWithName:(action.style == EAPMDemoHomeAlertActionStylePrimary ? @"PingFangSC-Medium" : @"PingFangSC-Regular")
-                                                 size:20.0] ?: [UIFont systemFontOfSize:20.0 weight:(action.style == EAPMDemoHomeAlertActionStylePrimary ? UIFontWeightMedium : UIFontWeightRegular)];
+        button.titleLabel.font = (action.style == EAPMDemoHomeAlertActionStylePrimary)
+            ? EAPMDemoUIFontSemibold(18.0)
+            : EAPMDemoUIFontRegular(18.0);
         UIColor *titleColor = (action.style == EAPMDemoHomeAlertActionStylePrimary)
             ? EAPMDemoColorHex(0x315CFC, 1.0)
             : EAPMDemoColorHex(0x9AA5B5, 1.0);
@@ -406,14 +408,15 @@ static UIColor *EAPMDemoColorHex(NSUInteger hexValue, CGFloat alpha) {
     _titleLabel = [[UILabel alloc] init];
     _titleLabel.text = @"移动监控 Demo";
     _titleLabel.textColor = EAPMDemoColorHex(0x4B4D52, 1.0);
-    _titleLabel.font = [UIFont systemFontOfSize:21.0 weight:UIFontWeightSemibold];
+    _titleLabel.font = EAPMDemoUIFontSemibold(22.0);
     _titleLabel.numberOfLines = 1;
 
     _subtitleLabel = [[UILabel alloc] init];
     _subtitleLabel.text = @"欢迎来到阿里云移动监控 Demo，开始你的调试吧~";
     _subtitleLabel.textColor = EAPMDemoColorHex(0x607B9C, 1.0);
-    _subtitleLabel.font = [UIFont systemFontOfSize:15.0 weight:UIFontWeightRegular];
     _subtitleLabel.numberOfLines = 2;
+    _subtitleLabel.attributedText = EAPMDemoInfoAttributedString(@"欢迎来到阿里云移动监控 Demo，开始你的调试吧~",
+                                                                 EAPMDemoColorHex(0x607B9C, 1.0));
 
     _settingsButton = [UIButton buttonWithType:UIButtonTypeSystem];
     _settingsButton.backgroundColor = UIColor.clearColor;
@@ -426,11 +429,11 @@ static UIColor *EAPMDemoColorHex(NSUInteger hexValue, CGFloat alpha) {
     } else {
         [_settingsButton setTitle:@"⚙︎" forState:UIControlStateNormal];
         [_settingsButton setTitleColor:EAPMDemoColorHex(0x5D6573, 1.0) forState:UIControlStateNormal];
-        _settingsButton.titleLabel.font = [UIFont systemFontOfSize:15.0 weight:UIFontWeightRegular];
+        _settingsButton.titleLabel.font = EAPMDemoUIFontRegular(15.0);
     }
     _settingsLabel = [[UILabel alloc] init];
     _settingsLabel.textColor = EAPMDemoColorHex(0x394153, 1.0);
-    _settingsLabel.font = [UIFont fontWithName:@"PingFangSC-Regular" size:15.0] ?: [UIFont systemFontOfSize:15.0 weight:UIFontWeightRegular];
+    _settingsLabel.font = EAPMDemoUIFontRegular(15.0);
     NSMutableAttributedString *settingsText = [[NSMutableAttributedString alloc] initWithString:@"设置" attributes:@{
         NSFontAttributeName: _settingsLabel.font,
         NSForegroundColorAttributeName: EAPMDemoColorHex(0x394153, 1.0),
@@ -530,7 +533,7 @@ static UIColor *EAPMDemoColorHex(NSUInteger hexValue, CGFloat alpha) {
         _accentView.layer.cornerRadius = 3.0;
 
         _titleLabel = [[UILabel alloc] init];
-        _titleLabel.font = [UIFont systemFontOfSize:18.0 weight:UIFontWeightMedium];
+        _titleLabel.font = EAPMDemoUIFontMedium(18.0);
         _titleLabel.textColor = EAPMDemoColorHex(0x4B4D52, 1.0);
 
         for (UIView *view in @[_accentView, _titleLabel]) {
@@ -569,22 +572,22 @@ static UIColor *EAPMDemoColorHex(NSUInteger hexValue, CGFloat alpha) {
     self = [super initWithFrame:frame];
     if (self) {
         self.backgroundColor = EAPMDemoColorHex(0xEBF0FF, 1.0);
-        self.layer.cornerRadius = 8.0;
+        self.layer.cornerRadius = EAPMDemoUICornerRadius;
         self.layer.borderWidth = 1.0;
         self.layer.borderColor = EAPMDemoColorHex(0xD9E4FB, 1.0).CGColor;
 
         _textLabel = [[UILabel alloc] init];
         _textLabel.textColor = EAPMDemoColorHex(0x7087AD, 1.0);
-        _textLabel.font = [UIFont fontWithName:@"PingFangSC-Regular" size:15.0] ?: [UIFont systemFontOfSize:15.0 weight:UIFontWeightRegular];
+        _textLabel.font = EAPMDemoUIFontRegular(15.0);
         _textLabel.numberOfLines = 1;
         _textLabel.translatesAutoresizingMaskIntoConstraints = NO;
         [self addSubview:_textLabel];
 
         [NSLayoutConstraint activateConstraints:@[
-            [_textLabel.leadingAnchor constraintEqualToAnchor:self.leadingAnchor constant:16.0],
-            [_textLabel.trailingAnchor constraintEqualToAnchor:self.trailingAnchor constant:-16.0],
-            [_textLabel.topAnchor constraintEqualToAnchor:self.topAnchor constant:14.0],
-            [_textLabel.bottomAnchor constraintEqualToAnchor:self.bottomAnchor constant:-14.0],
+            [_textLabel.leadingAnchor constraintEqualToAnchor:self.leadingAnchor constant:EAPMDemoUIHorizontalInset],
+            [_textLabel.trailingAnchor constraintEqualToAnchor:self.trailingAnchor constant:-EAPMDemoUIHorizontalInset],
+            [_textLabel.topAnchor constraintEqualToAnchor:self.topAnchor constant:EAPMDemoUITipCardVerticalInset],
+            [_textLabel.bottomAnchor constraintEqualToAnchor:self.bottomAnchor constant:-EAPMDemoUITipCardVerticalInset],
             [self.heightAnchor constraintEqualToConstant:48.0],
         ]];
     }
@@ -592,21 +595,11 @@ static UIColor *EAPMDemoColorHex(NSUInteger hexValue, CGFloat alpha) {
 }
 
 - (void)configureWithText:(NSString *)text {
-    NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
-    paragraphStyle.alignment = NSTextAlignmentLeft;
-    paragraphStyle.minimumLineHeight = 20.0;
-    paragraphStyle.maximumLineHeight = 20.0;
-
-    NSMutableAttributedString *attributedText = [[NSMutableAttributedString alloc] initWithString:text attributes:@{
-        NSFontAttributeName: self.textLabel.font,
-        NSForegroundColorAttributeName: EAPMDemoColorHex(0x7087AD, 1.0),
-        NSParagraphStyleAttributeName: paragraphStyle,
-        NSKernAttributeName: @(0.4),
-    }];
+    NSMutableAttributedString *attributedText = [[NSMutableAttributedString alloc] initWithAttributedString:EAPMDemoInfoAttributedString(text, EAPMDemoColorHex(0x7087AD, 1.0))];
     NSRange highlightRange = [text rangeOfString:@"EMAS 控制台"];
     if (highlightRange.location != NSNotFound) {
         [attributedText addAttributes:@{
-            NSFontAttributeName: [UIFont systemFontOfSize:15.0 weight:UIFontWeightSemibold],
+            NSFontAttributeName: EAPMDemoUIFontSemibold(15.0),
             NSForegroundColorAttributeName: EAPMDemoColorHex(0x374254, 1.0),
         } range:highlightRange];
     }
@@ -627,14 +620,14 @@ static UIColor *EAPMDemoColorHex(NSUInteger hexValue, CGFloat alpha) {
     self = [super initWithFrame:frame];
     if (self) {
         self.backgroundColor = UIColor.whiteColor;
-        self.layer.cornerRadius = 8.0;
+        self.layer.cornerRadius = EAPMDemoUICornerRadius;
         self.layer.borderWidth = 2.0;
         self.layer.borderColor = EAPMDemoColorHex(0xE6E8EB, 1.0).CGColor;
         self.layer.shadowOpacity = 0.0;
 
         _titleLabel = [[UILabel alloc] init];
         _titleLabel.textColor = EAPMDemoColorHex(0x1F2024, 1.0);
-        _titleLabel.font = [UIFont fontWithName:@"PingFangSC-Regular" size:16.0] ?: [UIFont systemFontOfSize:16.0 weight:UIFontWeightRegular];
+        _titleLabel.font = EAPMDemoUIFontRegular(16.0);
         _titleLabel.textAlignment = NSTextAlignmentCenter;
         _titleLabel.numberOfLines = 2;
         _titleLabel.translatesAutoresizingMaskIntoConstraints = NO;
@@ -650,16 +643,7 @@ static UIColor *EAPMDemoColorHex(NSUInteger hexValue, CGFloat alpha) {
 }
 
 - (void)configureWithTitle:(NSString *)title {
-    NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
-    paragraphStyle.alignment = NSTextAlignmentCenter;
-    paragraphStyle.minimumLineHeight = 24.0;
-    paragraphStyle.maximumLineHeight = 24.0;
-
-    self.titleLabel.attributedText = [[NSAttributedString alloc] initWithString:title attributes:@{
-        NSFontAttributeName: self.titleLabel.font,
-        NSForegroundColorAttributeName: EAPMDemoColorHex(0x1F2024, 1.0),
-        NSParagraphStyleAttributeName: paragraphStyle,
-    }];
+    self.titleLabel.attributedText = EAPMDemoCenteredActionAttributedString(title, EAPMDemoColorHex(0x1F2024, 1.0));
 }
 
 - (void)setCardHighlighted:(BOOL)highlighted {

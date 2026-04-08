@@ -1,4 +1,5 @@
 #import "EAPMDemoPerformanceScrollViewController.h"
+#import "../Shared/EAPMDemoUIStyleGuide.h"
 
 static UIColor *EAPMDemoPerformanceHexColor(NSUInteger hexValue, CGFloat alpha) {
     return [UIColor colorWithRed:((hexValue >> 16) & 0xFF) / 255.0
@@ -53,12 +54,7 @@ static UIColor *EAPMDemoPerformanceHexColor(NSUInteger hexValue, CGFloat alpha) 
 
     UILabel *pageTitleLabel = [[UILabel alloc] init];
     pageTitleLabel.translatesAutoresizingMaskIntoConstraints = NO;
-    UIFont *pageTitleFont = [UIFont fontWithName:@"PingFangSC-Medium" size:22.0] ?: [UIFont systemFontOfSize:22.0 weight:UIFontWeightMedium];
-    pageTitleLabel.attributedText = [[NSAttributedString alloc] initWithString:@"页面分析" attributes:@{
-        NSFontAttributeName: pageTitleFont,
-        NSForegroundColorAttributeName: EAPMDemoPerformanceHexColor(0x4B4D52, 1.0),
-        NSKernAttributeName: @(0.8),
-    }];
+    pageTitleLabel.attributedText = EAPMDemoPageTitleAttributedString(@"页面分析", EAPMDemoPerformanceHexColor(0x4B4D52, 1.0));
     [self.headerView addSubview:pageTitleLabel];
 
     self.scrollView = [[UIScrollView alloc] init];
@@ -72,18 +68,14 @@ static UIColor *EAPMDemoPerformanceHexColor(NSUInteger hexValue, CGFloat alpha) 
 
     UIView *bannerView = [[UIView alloc] init];
     bannerView.translatesAutoresizingMaskIntoConstraints = NO;
-    bannerView.backgroundColor = EAPMDemoPerformanceHexColor(0xEEF3FF, 1.0);
-    bannerView.layer.cornerRadius = 10.0;
-    bannerView.layer.masksToBounds = YES;
+    EAPMDemoApplyTipCardStyle(bannerView, EAPMDemoPerformanceHexColor(0xEEF3FF, 1.0));
     [self.contentView addSubview:bannerView];
 
     UILabel *bannerLabel = [[UILabel alloc] init];
     bannerLabel.translatesAutoresizingMaskIntoConstraints = NO;
     bannerLabel.numberOfLines = 0;
     bannerLabel.text = @"请滑动页面。页面分析数据在App退至后台时统一上报，稍后可在 EMAS 控制台查看。";
-    bannerLabel.font = [UIFont fontWithName:@"PingFangSC-Regular" size:16.0] ?: [UIFont systemFontOfSize:16.0 weight:UIFontWeightRegular];
-    bannerLabel.textColor = EAPMDemoPerformanceHexColor(0x7A8FB8, 1.0);
-    bannerLabel.textAlignment = NSTextAlignmentLeft;
+    bannerLabel.attributedText = EAPMDemoInfoAttributedString(bannerLabel.text, EAPMDemoPerformanceHexColor(0x7A8FB8, 1.0));
     [bannerView addSubview:bannerLabel];
 
     UIImageView *logoImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"emas_logo"]];
@@ -104,14 +96,8 @@ static UIColor *EAPMDemoPerformanceHexColor(NSUInteger hexValue, CGFloat alpha) 
     UILabel *introLabel = [[UILabel alloc] init];
     introLabel.translatesAutoresizingMaskIntoConstraints = NO;
     introLabel.numberOfLines = 0;
-    UIFont *bodyFont = [UIFont fontWithName:@"PingFangSC-Regular" size:16.0] ?: [UIFont systemFontOfSize:16.0 weight:UIFontWeightRegular];
-    NSMutableParagraphStyle *introParagraphStyle = [[NSMutableParagraphStyle alloc] init];
-    introParagraphStyle.lineHeightMultiple = 1.23;
-    introLabel.attributedText = [[NSAttributedString alloc] initWithString:@"EMAS（Enterprise Mobile Application Service）是阿里云面向移动研发领域，提供一站式移动应用研发管理服务。覆盖开发、测试、运维、运营四个环节，帮助企业快速搭建稳定高质量的移动应用。" attributes:@{
-        NSFontAttributeName: bodyFont,
-        NSForegroundColorAttributeName: EAPMDemoPerformanceHexColor(0x5A616E, 1.0),
-        NSParagraphStyleAttributeName: introParagraphStyle,
-    }];
+    introLabel.attributedText = EAPMDemoBodyAttributedString(@"EMAS（Enterprise Mobile Application Service）是阿里云面向移动研发领域，提供一站式移动应用研发管理服务。覆盖开发、测试、运维、运营四个环节，帮助企业快速搭建稳定高质量的移动应用。",
+                                                             EAPMDemoPerformanceHexColor(0x5A616E, 1.0));
     [self.contentView addSubview:introLabel];
 
     UIView *previousView = introLabel;
@@ -151,30 +137,24 @@ static UIColor *EAPMDemoPerformanceHexColor(NSUInteger hexValue, CGFloat alpha) 
         UILabel *titleLabel = [[UILabel alloc] init];
         titleLabel.translatesAutoresizingMaskIntoConstraints = NO;
         titleLabel.text = section[@"title"];
-        titleLabel.font = [UIFont fontWithName:@"PingFangSC-Medium" size:18.0] ?: [UIFont systemFontOfSize:18.0 weight:UIFontWeightMedium];
+        titleLabel.font = EAPMDemoUIFontMedium(18.0);
         titleLabel.textColor = EAPMDemoPerformanceHexColor(0x1F2024, 1.0);
         [self.contentView addSubview:titleLabel];
 
         UILabel *bodyLabel = [[UILabel alloc] init];
         bodyLabel.translatesAutoresizingMaskIntoConstraints = NO;
         bodyLabel.numberOfLines = 0;
-        NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
-        paragraphStyle.lineHeightMultiple = 1.23;
-        bodyLabel.attributedText = [[NSAttributedString alloc] initWithString:section[@"body"] attributes:@{
-            NSFontAttributeName: bodyFont,
-            NSForegroundColorAttributeName: EAPMDemoPerformanceHexColor(0x5A616E, 1.0),
-            NSParagraphStyleAttributeName: paragraphStyle,
-        }];
+        bodyLabel.attributedText = EAPMDemoBodyAttributedString(section[@"body"], EAPMDemoPerformanceHexColor(0x5A616E, 1.0));
         [self.contentView addSubview:bodyLabel];
 
         [sectionConstraints addObjectsFromArray:@[
-            [titleLabel.leadingAnchor constraintEqualToAnchor:self.contentView.leadingAnchor constant:16.0],
-            [titleLabel.trailingAnchor constraintEqualToAnchor:self.contentView.trailingAnchor constant:-16.0],
-            [titleLabel.topAnchor constraintEqualToAnchor:previousView.bottomAnchor constant:26.0],
+            [titleLabel.leadingAnchor constraintEqualToAnchor:self.contentView.leadingAnchor constant:EAPMDemoUIHorizontalInset],
+            [titleLabel.trailingAnchor constraintEqualToAnchor:self.contentView.trailingAnchor constant:-EAPMDemoUIHorizontalInset],
+            [titleLabel.topAnchor constraintEqualToAnchor:previousView.bottomAnchor constant:EAPMDemoUISectionTopSpacing],
 
             [bodyLabel.leadingAnchor constraintEqualToAnchor:titleLabel.leadingAnchor],
             [bodyLabel.trailingAnchor constraintEqualToAnchor:titleLabel.trailingAnchor],
-            [bodyLabel.topAnchor constraintEqualToAnchor:titleLabel.bottomAnchor constant:10.0],
+            [bodyLabel.topAnchor constraintEqualToAnchor:titleLabel.bottomAnchor constant:8.0],
         ]];
         previousView = bodyLabel;
     }
@@ -185,15 +165,15 @@ static UIColor *EAPMDemoPerformanceHexColor(NSUInteger hexValue, CGFloat alpha) 
         [self.headerView.trailingAnchor constraintEqualToAnchor:self.view.trailingAnchor],
         [self.headerView.topAnchor constraintEqualToAnchor:safeArea.topAnchor],
 
-        [backButton.leadingAnchor constraintEqualToAnchor:self.view.leadingAnchor constant:16.0],
-        [backButton.topAnchor constraintEqualToAnchor:self.headerView.topAnchor constant:10.0],
+        [backButton.leadingAnchor constraintEqualToAnchor:self.view.leadingAnchor constant:EAPMDemoUIHorizontalInset],
+        [backButton.topAnchor constraintEqualToAnchor:self.headerView.topAnchor constant:EAPMDemoUIHeaderTopPadding],
         [backButton.widthAnchor constraintEqualToConstant:20.0],
         [backButton.heightAnchor constraintEqualToConstant:20.0],
 
-        [pageTitleLabel.leadingAnchor constraintEqualToAnchor:backButton.trailingAnchor constant:6.0],
-        [pageTitleLabel.centerYAnchor constraintEqualToAnchor:backButton.centerYAnchor constant:-1.0],
+        [pageTitleLabel.leadingAnchor constraintEqualToAnchor:backButton.trailingAnchor constant:EAPMDemoUIHeaderTitleSpacing],
+        [pageTitleLabel.centerYAnchor constraintEqualToAnchor:backButton.centerYAnchor],
 
-        [self.headerView.bottomAnchor constraintEqualToAnchor:pageTitleLabel.bottomAnchor constant:24.0],
+        [self.headerView.bottomAnchor constraintEqualToAnchor:pageTitleLabel.bottomAnchor constant:EAPMDemoUIHeaderBottomPadding],
 
         [self.scrollView.leadingAnchor constraintEqualToAnchor:self.view.leadingAnchor],
         [self.scrollView.trailingAnchor constraintEqualToAnchor:self.view.trailingAnchor],
@@ -206,29 +186,29 @@ static UIColor *EAPMDemoPerformanceHexColor(NSUInteger hexValue, CGFloat alpha) 
         [self.contentView.bottomAnchor constraintEqualToAnchor:self.scrollView.contentLayoutGuide.bottomAnchor],
         [self.contentView.widthAnchor constraintEqualToAnchor:self.scrollView.frameLayoutGuide.widthAnchor],
 
-        [bannerView.leadingAnchor constraintEqualToAnchor:self.contentView.leadingAnchor constant:16.0],
-        [bannerView.trailingAnchor constraintEqualToAnchor:self.contentView.trailingAnchor constant:-16.0],
-        [bannerView.topAnchor constraintEqualToAnchor:self.contentView.topAnchor constant:-4.0],
+        [bannerView.leadingAnchor constraintEqualToAnchor:self.contentView.leadingAnchor constant:EAPMDemoUIHorizontalInset],
+        [bannerView.trailingAnchor constraintEqualToAnchor:self.contentView.trailingAnchor constant:-EAPMDemoUIHorizontalInset],
+        [bannerView.topAnchor constraintEqualToAnchor:self.contentView.topAnchor constant:EAPMDemoUIContentTopSpacing],
 
-        [bannerLabel.leadingAnchor constraintEqualToAnchor:bannerView.leadingAnchor constant:16.0],
-        [bannerLabel.trailingAnchor constraintEqualToAnchor:bannerView.trailingAnchor constant:-16.0],
-        [bannerLabel.topAnchor constraintEqualToAnchor:bannerView.topAnchor constant:14.0],
-        [bannerLabel.bottomAnchor constraintEqualToAnchor:bannerView.bottomAnchor constant:-14.0],
+        [bannerLabel.leadingAnchor constraintEqualToAnchor:bannerView.leadingAnchor constant:EAPMDemoUIHorizontalInset],
+        [bannerLabel.trailingAnchor constraintEqualToAnchor:bannerView.trailingAnchor constant:-EAPMDemoUIHorizontalInset],
+        [bannerLabel.topAnchor constraintEqualToAnchor:bannerView.topAnchor constant:EAPMDemoUITipCardVerticalInset],
+        [bannerLabel.bottomAnchor constraintEqualToAnchor:bannerView.bottomAnchor constant:-EAPMDemoUITipCardVerticalInset],
 
-        [logoImageView.leadingAnchor constraintEqualToAnchor:self.contentView.leadingAnchor constant:16.0],
-        [logoImageView.topAnchor constraintEqualToAnchor:bannerView.bottomAnchor constant:16.0],
+        [logoImageView.leadingAnchor constraintEqualToAnchor:self.contentView.leadingAnchor constant:EAPMDemoUIHorizontalInset],
+        [logoImageView.topAnchor constraintEqualToAnchor:bannerView.bottomAnchor constant:EAPMDemoUISectionTopSpacing],
         [logoImageView.widthAnchor constraintEqualToConstant:34.0],
         [logoImageView.heightAnchor constraintEqualToConstant:26.0],
 
         [brandLabel.leadingAnchor constraintEqualToAnchor:logoImageView.trailingAnchor constant:10.0],
         [brandLabel.centerYAnchor constraintEqualToAnchor:logoImageView.centerYAnchor],
-        [brandLabel.trailingAnchor constraintEqualToAnchor:self.contentView.trailingAnchor constant:-16.0],
+        [brandLabel.trailingAnchor constraintEqualToAnchor:self.contentView.trailingAnchor constant:-EAPMDemoUIHorizontalInset],
 
-        [introLabel.leadingAnchor constraintEqualToAnchor:self.contentView.leadingAnchor constant:16.0],
-        [introLabel.trailingAnchor constraintEqualToAnchor:self.contentView.trailingAnchor constant:-16.0],
-        [introLabel.topAnchor constraintEqualToAnchor:logoImageView.bottomAnchor constant:14.0],
+        [introLabel.leadingAnchor constraintEqualToAnchor:self.contentView.leadingAnchor constant:EAPMDemoUIHorizontalInset],
+        [introLabel.trailingAnchor constraintEqualToAnchor:self.contentView.trailingAnchor constant:-EAPMDemoUIHorizontalInset],
+        [introLabel.topAnchor constraintEqualToAnchor:logoImageView.bottomAnchor constant:EAPMDemoUISectionContentSpacing],
 
-        [previousView.bottomAnchor constraintEqualToAnchor:self.contentView.bottomAnchor constant:-28.0],
+        [previousView.bottomAnchor constraintEqualToAnchor:self.contentView.bottomAnchor constant:-EAPMDemoUIContentBottomPadding],
     ]];
     [NSLayoutConstraint activateConstraints:sectionConstraints];
 

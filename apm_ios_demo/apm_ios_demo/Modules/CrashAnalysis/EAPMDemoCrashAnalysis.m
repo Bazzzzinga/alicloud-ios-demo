@@ -1,6 +1,7 @@
 #import "EAPMDemoCrashAnalysis.h"
 
 #import "EAPMDemoHomeUI.h"
+#import "../Shared/EAPMDemoUIStyleGuide.h"
 #import "EAPMDemoCrashViewController.h"
 #import <AlicloudApmCrashAnalysis/AlicloudApmCrashAnalysis.h>
 
@@ -20,28 +21,14 @@ static void EAPMDemoShowToast(UIViewController *presenter, NSString *message) {
     toastView.translatesAutoresizingMaskIntoConstraints = NO;
     toastView.alpha = 0.0;
     toastView.backgroundColor = EAPMDemoCrashAnalysisHexColor(0x1E2A44, 0.96);
-    toastView.layer.cornerRadius = 14.0;
-    toastView.layer.borderWidth = 1.0;
-    toastView.layer.borderColor = EAPMDemoCrashAnalysisHexColor(0x5B7CFF, 0.34).CGColor;
-    toastView.layer.shadowColor = EAPMDemoCrashAnalysisHexColor(0x315CFC, 0.28).CGColor;
-    toastView.layer.shadowOpacity = 1.0;
-    toastView.layer.shadowRadius = 16.0;
-    toastView.layer.shadowOffset = CGSizeMake(0, 8);
-    toastView.layer.masksToBounds = NO;
+    toastView.layer.cornerRadius = 12.0;
 
     UILabel *messageLabel = [[UILabel alloc] init];
     messageLabel.translatesAutoresizingMaskIntoConstraints = NO;
     messageLabel.text = message;
-    messageLabel.font = [UIFont fontWithName:@"PingFangSC-Medium" size:15.0] ?: [UIFont systemFontOfSize:15.0 weight:UIFontWeightMedium];
+    messageLabel.font = EAPMDemoUIFontMedium(15.0);
     messageLabel.textColor = UIColor.whiteColor;
     messageLabel.textAlignment = NSTextAlignmentCenter;
-
-    UIView *accentView = [[UIView alloc] init];
-    accentView.translatesAutoresizingMaskIntoConstraints = NO;
-    accentView.backgroundColor = EAPMDemoCrashAnalysisHexColor(0x6E8DFF, 1.0);
-    accentView.layer.cornerRadius = 3.0;
-
-    [toastView addSubview:accentView];
     [toastView addSubview:messageLabel];
     [presenter.view addSubview:toastView];
 
@@ -49,14 +36,10 @@ static void EAPMDemoShowToast(UIViewController *presenter, NSString *message) {
         [toastView.centerXAnchor constraintEqualToAnchor:presenter.view.centerXAnchor],
         [toastView.bottomAnchor constraintEqualToAnchor:presenter.view.safeAreaLayoutGuide.bottomAnchor constant:-28.0],
         [toastView.leadingAnchor constraintGreaterThanOrEqualToAnchor:presenter.view.leadingAnchor constant:20.0],
-        [accentView.leadingAnchor constraintEqualToAnchor:toastView.leadingAnchor constant:14.0],
-        [accentView.centerYAnchor constraintEqualToAnchor:toastView.centerYAnchor],
-        [accentView.widthAnchor constraintEqualToConstant:6.0],
-        [accentView.heightAnchor constraintEqualToConstant:6.0],
-        [messageLabel.leadingAnchor constraintEqualToAnchor:accentView.trailingAnchor constant:10.0],
-        [messageLabel.trailingAnchor constraintEqualToAnchor:toastView.trailingAnchor constant:-16.0],
-        [messageLabel.topAnchor constraintEqualToAnchor:toastView.topAnchor constant:13.0],
-        [messageLabel.bottomAnchor constraintEqualToAnchor:toastView.bottomAnchor constant:-13.0],
+        [messageLabel.leadingAnchor constraintEqualToAnchor:toastView.leadingAnchor constant:18.0],
+        [messageLabel.trailingAnchor constraintEqualToAnchor:toastView.trailingAnchor constant:-18.0],
+        [messageLabel.topAnchor constraintEqualToAnchor:toastView.topAnchor constant:12.0],
+        [messageLabel.bottomAnchor constraintEqualToAnchor:toastView.bottomAnchor constant:-12.0],
     ]];
 
     toastView.transform = CGAffineTransformMakeTranslation(0, 8.0);
