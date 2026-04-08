@@ -1,6 +1,7 @@
 #import "EAPMDemoPerformance.h"
 
 #import "EAPMDemoHomeUI.h"
+#import "../Shared/EAPMDemoOverlayPresenter.h"
 #import "EAPMDemoNetworkAnalysisViewController.h"
 #import "EAPMDemoPerformanceScrollViewController.h"
 

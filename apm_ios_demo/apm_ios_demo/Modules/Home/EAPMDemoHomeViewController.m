@@ -2,6 +2,7 @@
 
 #import "EAPMDemoSettingsViewController.h"
 #import "EAPMDemoHomeUI.h"
+#import "../Shared/EAPMDemoUIComponents.h"
 #import "../Shared/EAPMDemoUIStyleGuide.h"
 #import "EAPMDemoCrashAnalysis.h"
 #import "EAPMDemoMemory.h"
@@ -228,7 +229,7 @@ static NSString * const EAPMDemoSectionHeaderReuseIdentifier = @"EAPMDemoSection
 
 @interface EAPMDemoActionCardCell ()
 
-@property (nonatomic, strong) EAPMDemoActionCardView *cardView;
+@property (nonatomic, strong) EAPMDemoSecondaryActionButton *cardView;
 
 @end
 
@@ -238,8 +239,9 @@ static NSString * const EAPMDemoSectionHeaderReuseIdentifier = @"EAPMDemoSection
     self = [super initWithFrame:frame];
     if (self) {
         self.backgroundColor = UIColor.clearColor;
-        _cardView = [[EAPMDemoActionCardView alloc] init];
+        _cardView = [[EAPMDemoSecondaryActionButton alloc] init];
         _cardView.translatesAutoresizingMaskIntoConstraints = NO;
+        _cardView.userInteractionEnabled = NO;
         [self.contentView addSubview:_cardView];
 
         [NSLayoutConstraint activateConstraints:@[
@@ -254,7 +256,7 @@ static NSString * const EAPMDemoSectionHeaderReuseIdentifier = @"EAPMDemoSection
 
 - (void)prepareForReuse {
     [super prepareForReuse];
-    [self.cardView setCardHighlighted:NO];
+    [self.cardView setActionHighlighted:NO];
 }
 
 - (void)configureWithItem:(EAPMDemoHomeActionItem *)item {
@@ -262,7 +264,7 @@ static NSString * const EAPMDemoSectionHeaderReuseIdentifier = @"EAPMDemoSection
 }
 
 - (void)setCardHighlighted:(BOOL)highlighted {
-    [self.cardView setCardHighlighted:highlighted];
+    [self.cardView setActionHighlighted:highlighted];
 }
 
 @end

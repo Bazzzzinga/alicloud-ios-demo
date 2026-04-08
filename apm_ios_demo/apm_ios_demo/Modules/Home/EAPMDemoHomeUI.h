@@ -1,5 +1,4 @@
 #import <UIKit/UIKit.h>
-#import "../Shared/EAPMDemoOverlayPresenter.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -30,25 +29,6 @@ typedef void (^EAPMDemoHomeActionHandler)(void);
 @interface EAPMDemoHeroHeaderView : UIView
 
 - (void)configureWithInfoText:(NSString *)text settingsHandler:(nullable EAPMDemoHomeActionHandler)settingsHandler;
-
-@end
-
-@interface EAPMDemoSectionHeaderView : UIView
-
-- (void)configureWithTitle:(NSString *)title;
-
-@end
-
-@interface EAPMDemoInfoBannerView : UIView
-
-- (void)configureWithText:(NSString *)text;
-
-@end
-
-@interface EAPMDemoActionCardView : UIView
-
-- (void)configureWithTitle:(NSString *)title;
-- (void)setCardHighlighted:(BOOL)highlighted;
 
 @end
 

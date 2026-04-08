@@ -1,4 +1,5 @@
 #import "EAPMDemoHomeUI.h"
+#import "../Shared/EAPMDemoUIComponents.h"
 #import "../Shared/EAPMDemoUIStyleGuide.h"
 
 static UIColor *EAPMDemoColorHex(NSUInteger hexValue, CGFloat alpha) {
@@ -88,7 +89,7 @@ static UIColor *EAPMDemoColorHex(NSUInteger hexValue, CGFloat alpha) {
 
 @property (nonatomic, strong) UIImageView *heroImageView;
 @property (nonatomic, strong) NSLayoutConstraint *heroImageHeightConstraint;
-@property (nonatomic, strong) EAPMDemoInfoBannerView *infoBannerView;
+@property (nonatomic, strong) EAPMDemoTipCardView *infoBannerView;
 @property (nonatomic, strong) UIView *bottomGradientView;
 @property (nonatomic, strong) UILabel *titleLabel;
 @property (nonatomic, strong) UILabel *subtitleLabel;
@@ -125,12 +126,14 @@ static UIColor *EAPMDemoColorHex(NSUInteger hexValue, CGFloat alpha) {
     bottomLayer.endPoint = CGPointMake(0.5, 1.0);
     [_bottomGradientView.layer addSublayer:bottomLayer];
 
-    _infoBannerView = [[EAPMDemoInfoBannerView alloc] init];
+    _infoBannerView = [[EAPMDemoTipCardView alloc] initWithBackgroundColor:EAPMDemoColorHex(0xEBF0FF, 1.0)
+                                                                 textColor:EAPMDemoColorHex(0x7087AD, 1.0)
+                                                               borderColor:EAPMDemoColorHex(0xD9E4FB, 1.0)];
 
     _titleLabel = [[UILabel alloc] init];
     _titleLabel.text = @"移动监控 Demo";
     _titleLabel.textColor = EAPMDemoColorHex(0x4B4D52, 1.0);
-    _titleLabel.font = EAPMDemoUIFontSemibold(22.0);
+    _titleLabel.font = EAPMDemoUIFontMedium(22.0);
     _titleLabel.numberOfLines = 1;
 
     _subtitleLabel = [[UILabel alloc] init];
@@ -226,97 +229,6 @@ static UIColor *EAPMDemoColorHex(NSUInteger hexValue, CGFloat alpha) {
 
 - (void)configureWithInfoText:(NSString *)text settingsHandler:(nullable EAPMDemoHomeActionHandler)settingsHandler {
     self.settingsHandler = settingsHandler;
-    [self.infoBannerView configureWithText:text];
-    self.settingsTapButton.enabled = (settingsHandler != nil);
-}
-
-- (void)handleSettingsTapped {
-    if (self.settingsHandler) {
-        self.settingsHandler();
-    }
-}
-
-@end
-
-@interface EAPMDemoSectionHeaderView ()
-
-@property (nonatomic, strong) UIView *accentView;
-@property (nonatomic, strong) UILabel *titleLabel;
-
-@end
-
-@implementation EAPMDemoSectionHeaderView
-
-- (instancetype)initWithFrame:(CGRect)frame {
-    self = [super initWithFrame:frame];
-    if (self) {
-        _accentView = [[UIView alloc] init];
-        _accentView.backgroundColor = EAPMDemoColorHex(0x315CFC, 1.0);
-        _accentView.layer.cornerRadius = 3.0;
-
-        _titleLabel = [[UILabel alloc] init];
-        _titleLabel.font = EAPMDemoUIFontMedium(18.0);
-        _titleLabel.textColor = EAPMDemoColorHex(0x4B4D52, 1.0);
-
-        for (UIView *view in @[_accentView, _titleLabel]) {
-            view.translatesAutoresizingMaskIntoConstraints = NO;
-            [self addSubview:view];
-        }
-
-        [NSLayoutConstraint activateConstraints:@[
-            [_accentView.leadingAnchor constraintEqualToAnchor:self.leadingAnchor],
-            [_accentView.centerYAnchor constraintEqualToAnchor:self.centerYAnchor],
-            [_accentView.widthAnchor constraintEqualToConstant:4.0],
-            [_accentView.heightAnchor constraintEqualToConstant:20.0],
-
-            [_titleLabel.leadingAnchor constraintEqualToAnchor:_accentView.trailingAnchor constant:12.0],
-            [_titleLabel.centerYAnchor constraintEqualToAnchor:_accentView.centerYAnchor],
-        ]];
-    }
-    return self;
-}
-
-- (void)configureWithTitle:(NSString *)title {
-    self.titleLabel.text = title;
-}
-
-@end
-
-@interface EAPMDemoInfoBannerView ()
-
-@property (nonatomic, strong) UILabel *textLabel;
-
-@end
-
-@implementation EAPMDemoInfoBannerView
-
-- (instancetype)initWithFrame:(CGRect)frame {
-    self = [super initWithFrame:frame];
-    if (self) {
-        self.backgroundColor = EAPMDemoColorHex(0xEBF0FF, 1.0);
-        self.layer.cornerRadius = EAPMDemoUICornerRadius;
-        self.layer.borderWidth = 1.0;
-        self.layer.borderColor = EAPMDemoColorHex(0xD9E4FB, 1.0).CGColor;
-
-        _textLabel = [[UILabel alloc] init];
-        _textLabel.textColor = EAPMDemoColorHex(0x7087AD, 1.0);
-        _textLabel.font = EAPMDemoUIFontRegular(15.0);
-        _textLabel.numberOfLines = 1;
-        _textLabel.translatesAutoresizingMaskIntoConstraints = NO;
-        [self addSubview:_textLabel];
-
-        [NSLayoutConstraint activateConstraints:@[
-            [_textLabel.leadingAnchor constraintEqualToAnchor:self.leadingAnchor constant:EAPMDemoUIHorizontalInset],
-            [_textLabel.trailingAnchor constraintEqualToAnchor:self.trailingAnchor constant:-EAPMDemoUIHorizontalInset],
-            [_textLabel.topAnchor constraintEqualToAnchor:self.topAnchor constant:EAPMDemoUITipCardVerticalInset],
-            [_textLabel.bottomAnchor constraintEqualToAnchor:self.bottomAnchor constant:-EAPMDemoUITipCardVerticalInset],
-            [self.heightAnchor constraintEqualToConstant:48.0],
-        ]];
-    }
-    return self;
-}
-
-- (void)configureWithText:(NSString *)text {
     NSMutableAttributedString *attributedText = [[NSMutableAttributedString alloc] initWithAttributedString:EAPMDemoInfoAttributedString(text, EAPMDemoColorHex(0x7087AD, 1.0))];
     NSRange highlightRange = [text rangeOfString:@"EMAS 控制台"];
     if (highlightRange.location != NSNotFound) {
@@ -325,56 +237,14 @@ static UIColor *EAPMDemoColorHex(NSUInteger hexValue, CGFloat alpha) {
             NSForegroundColorAttributeName: EAPMDemoColorHex(0x374254, 1.0),
         } range:highlightRange];
     }
-    self.textLabel.attributedText = attributedText;
+    [self.infoBannerView configureWithAttributedText:attributedText];
+    self.settingsTapButton.enabled = (settingsHandler != nil);
 }
 
-@end
-
-@interface EAPMDemoActionCardView ()
-
-@property (nonatomic, strong) UILabel *titleLabel;
-
-@end
-
-@implementation EAPMDemoActionCardView
-
-- (instancetype)initWithFrame:(CGRect)frame {
-    self = [super initWithFrame:frame];
-    if (self) {
-        self.backgroundColor = UIColor.whiteColor;
-        self.layer.cornerRadius = EAPMDemoUICornerRadius;
-        self.layer.borderWidth = 2.0;
-        self.layer.borderColor = EAPMDemoColorHex(0xE6E8EB, 1.0).CGColor;
-        self.layer.shadowOpacity = 0.0;
-
-        _titleLabel = [[UILabel alloc] init];
-        _titleLabel.textColor = EAPMDemoColorHex(0x1F2024, 1.0);
-        _titleLabel.font = EAPMDemoUIFontRegular(16.0);
-        _titleLabel.textAlignment = NSTextAlignmentCenter;
-        _titleLabel.numberOfLines = 2;
-        _titleLabel.translatesAutoresizingMaskIntoConstraints = NO;
-        [self addSubview:_titleLabel];
-
-        [NSLayoutConstraint activateConstraints:@[
-            [_titleLabel.leadingAnchor constraintEqualToAnchor:self.leadingAnchor constant:12.0],
-            [_titleLabel.trailingAnchor constraintEqualToAnchor:self.trailingAnchor constant:-12.0],
-            [_titleLabel.centerYAnchor constraintEqualToAnchor:self.centerYAnchor],
-        ]];
+- (void)handleSettingsTapped {
+    if (self.settingsHandler) {
+        self.settingsHandler();
     }
-    return self;
-}
-
-- (void)configureWithTitle:(NSString *)title {
-    self.titleLabel.attributedText = EAPMDemoCenteredActionAttributedString(title, EAPMDemoColorHex(0x1F2024, 1.0));
-}
-
-- (void)setCardHighlighted:(BOOL)highlighted {
-    CGFloat alpha = highlighted ? 0.9 : 1.0;
-    CGAffineTransform transform = highlighted ? CGAffineTransformMakeScale(0.98, 0.98) : CGAffineTransformIdentity;
-    [UIView animateWithDuration:0.18 animations:^{
-        self.alpha = alpha;
-        self.transform = transform;
-    }];
 }
 
 @end

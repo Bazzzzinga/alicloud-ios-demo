@@ -2,6 +2,7 @@
 
 #import "EAPMDemoCrashViewController.h"
 #import "EAPMDemoHomeUI.h"
+#import "../Shared/EAPMDemoOverlayPresenter.h"
 #import <mach/mach.h>
 #import <TargetConditionals.h>
 #import <stdlib.h>

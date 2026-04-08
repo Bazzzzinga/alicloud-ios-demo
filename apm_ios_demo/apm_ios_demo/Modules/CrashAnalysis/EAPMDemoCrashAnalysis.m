@@ -1,65 +1,13 @@
 #import "EAPMDemoCrashAnalysis.h"
 
 #import "EAPMDemoHomeUI.h"
-#import "../Shared/EAPMDemoUIStyleGuide.h"
+#import "../Shared/EAPMDemoOverlayPresenter.h"
+#import "../Shared/EAPMDemoUIComponents.h"
 #import "EAPMDemoCrashViewController.h"
 #import <AlicloudApmCrashAnalysis/AlicloudApmCrashAnalysis.h>
 
-static UIColor *EAPMDemoCrashAnalysisHexColor(NSUInteger hexValue, CGFloat alpha) {
-    return [UIColor colorWithRed:((hexValue >> 16) & 0xFF) / 255.0
-                           green:((hexValue >> 8) & 0xFF) / 255.0
-                            blue:(hexValue & 0xFF) / 255.0
-                           alpha:alpha];
-}
-
 static void EAPMDemoShowToast(UIViewController *presenter, NSString *message) {
-    if (!presenter || !presenter.view || message.length == 0) {
-        return;
-    }
-
-    UIView *toastView = [[UIView alloc] init];
-    toastView.translatesAutoresizingMaskIntoConstraints = NO;
-    toastView.alpha = 0.0;
-    toastView.backgroundColor = EAPMDemoCrashAnalysisHexColor(0x1E2A44, 0.96);
-    toastView.layer.cornerRadius = 12.0;
-
-    UILabel *messageLabel = [[UILabel alloc] init];
-    messageLabel.translatesAutoresizingMaskIntoConstraints = NO;
-    messageLabel.text = message;
-    messageLabel.font = EAPMDemoUIFontMedium(15.0);
-    messageLabel.textColor = UIColor.whiteColor;
-    messageLabel.textAlignment = NSTextAlignmentCenter;
-    [toastView addSubview:messageLabel];
-    [presenter.view addSubview:toastView];
-
-    [NSLayoutConstraint activateConstraints:@[
-        [toastView.centerXAnchor constraintEqualToAnchor:presenter.view.centerXAnchor],
-        [toastView.bottomAnchor constraintEqualToAnchor:presenter.view.safeAreaLayoutGuide.bottomAnchor constant:-28.0],
-        [toastView.leadingAnchor constraintGreaterThanOrEqualToAnchor:presenter.view.leadingAnchor constant:20.0],
-        [messageLabel.leadingAnchor constraintEqualToAnchor:toastView.leadingAnchor constant:18.0],
-        [messageLabel.trailingAnchor constraintEqualToAnchor:toastView.trailingAnchor constant:-18.0],
-        [messageLabel.topAnchor constraintEqualToAnchor:toastView.topAnchor constant:12.0],
-        [messageLabel.bottomAnchor constraintEqualToAnchor:toastView.bottomAnchor constant:-12.0],
-    ]];
-
-    toastView.transform = CGAffineTransformMakeTranslation(0, 8.0);
-    [UIView animateWithDuration:0.22
-                          delay:0
-                        options:UIViewAnimationOptionCurveEaseOut
-                     animations:^{
-        toastView.alpha = 1.0;
-        toastView.transform = CGAffineTransformIdentity;
-    } completion:^(__unused BOOL finished) {
-        [UIView animateWithDuration:0.2
-                              delay:1.2
-                            options:UIViewAnimationOptionCurveEaseInOut
-                         animations:^{
-            toastView.alpha = 0.0;
-            toastView.transform = CGAffineTransformMakeTranslation(0, 6.0);
-        } completion:^(__unused BOOL finishedInner) {
-            [toastView removeFromSuperview];
-        }];
-    }];
+    [EAPMDemoToastPresenter showToastInViewController:presenter message:message];
 }
 
 static void EAPMDemoPresentAlert(UIViewController *presenter, NSString *title, NSString *message) {

@@ -1,6 +1,7 @@
 #import "EAPMDemoNetworkAnalysisViewController.h"
 
-#import "EAPMDemoHomeUI.h"
+#import "../Shared/EAPMDemoOverlayPresenter.h"
+#import "../Shared/EAPMDemoUIComponents.h"
 #import "../Shared/EAPMDemoUIStyleGuide.h"
 
 static NSString * const EAPMDemoNetworkAnalysisDefaultURLString = @"https://www.aliyun.com";
@@ -16,14 +17,13 @@ static UIColor *EAPMDemoNetworkAnalysisHexColor(NSUInteger hexValue, CGFloat alp
 
 @interface EAPMDemoNetworkAnalysisViewController () <UITextFieldDelegate>
 
-@property (nonatomic, strong) UIView *headerView;
+@property (nonatomic, strong) EAPMDemoSecondaryPageHeaderView *headerView;
 @property (nonatomic, strong) UIScrollView *scrollView;
 @property (nonatomic, strong) UIView *contentView;
 @property (nonatomic, strong) UITextField *urlTextField;
-@property (nonatomic, strong) UIButton *sendButton;
-@property (nonatomic, strong) UIButton *transportErrorButton;
-@property (nonatomic, strong) UIButton *httpErrorButton;
-@property (nonatomic, strong) CAGradientLayer *sendButtonGradientLayer;
+@property (nonatomic, strong) EAPMDemoPrimaryButton *sendButton;
+@property (nonatomic, strong) EAPMDemoSecondaryActionButton *transportErrorButton;
+@property (nonatomic, strong) EAPMDemoSecondaryActionButton *httpErrorButton;
 @property (nonatomic, assign) BOOL requestInProgress;
 
 @end
@@ -45,36 +45,12 @@ static UIColor *EAPMDemoNetworkAnalysisHexColor(NSUInteger hexValue, CGFloat alp
     [self.navigationController setNavigationBarHidden:YES animated:animated];
 }
 
-- (void)viewDidLayoutSubviews {
-    [super viewDidLayoutSubviews];
-    self.sendButtonGradientLayer.frame = self.sendButton.bounds;
-    self.sendButtonGradientLayer.cornerRadius = self.sendButton.layer.cornerRadius;
-}
-
 - (void)buildViews {
-    self.headerView = [[UIView alloc] init];
-    self.headerView.translatesAutoresizingMaskIntoConstraints = NO;
+    __weak typeof(self) weakSelf = self;
+    self.headerView = [[EAPMDemoSecondaryPageHeaderView alloc] initWithTitle:@"网络分析" backHandler:^{
+        [weakSelf handleBackButtonTapped];
+    }];
     [self.view addSubview:self.headerView];
-
-    UIButton *backButton = [UIButton buttonWithType:UIButtonTypeSystem];
-    backButton.translatesAutoresizingMaskIntoConstraints = NO;
-    if (@available(iOS 13.0, *)) {
-        UIImageSymbolConfiguration *configuration = [UIImageSymbolConfiguration configurationWithPointSize:12.0 weight:UIImageSymbolWeightMedium];
-        UIImage *image = [UIImage systemImageNamed:@"chevron.left" withConfiguration:configuration];
-        [backButton setImage:image forState:UIControlStateNormal];
-    } else {
-        [backButton setTitle:@"返回" forState:UIControlStateNormal];
-        backButton.titleLabel.font = [UIFont systemFontOfSize:13.0 weight:UIFontWeightMedium];
-    }
-    backButton.tintColor = EAPMDemoNetworkAnalysisHexColor(0x1F2024, 1.0);
-    [backButton addTarget:self action:@selector(handleBackButtonTapped) forControlEvents:UIControlEventTouchUpInside];
-    [self.headerView addSubview:backButton];
-
-    UILabel *titleLabel = [[UILabel alloc] init];
-    titleLabel.translatesAutoresizingMaskIntoConstraints = NO;
-    titleLabel.numberOfLines = 1;
-    titleLabel.attributedText = EAPMDemoPageTitleAttributedString(@"网络分析", EAPMDemoNetworkAnalysisHexColor(0x4B4D52, 1.0));
-    [self.headerView addSubview:titleLabel];
 
     self.scrollView = [[UIScrollView alloc] init];
     self.scrollView.translatesAutoresizingMaskIntoConstraints = NO;
@@ -86,76 +62,37 @@ static UIColor *EAPMDemoNetworkAnalysisHexColor(NSUInteger hexValue, CGFloat alp
     self.contentView.translatesAutoresizingMaskIntoConstraints = NO;
     [self.scrollView addSubview:self.contentView];
 
-    UIView *tipCardView = [[UIView alloc] init];
-    tipCardView.translatesAutoresizingMaskIntoConstraints = NO;
-    EAPMDemoApplyTipCardStyle(tipCardView, EAPMDemoNetworkAnalysisHexColor(0xEEF3FF, 1.0));
+    EAPMDemoTipCardView *tipCardView = [[EAPMDemoTipCardView alloc] initWithBackgroundColor:EAPMDemoNetworkAnalysisHexColor(0xEEF3FF, 1.0)
+                                                                                   textColor:EAPMDemoNetworkAnalysisHexColor(0x7A8FB8, 1.0)
+                                                                                 borderColor:nil];
+    [tipCardView configureWithText:@"请触发不同类型的网络请求。网络分析数据在App退至后台时统一上报，稍后可在 EMAS 控制台查看。"];
     [self.contentView addSubview:tipCardView];
 
-    UILabel *tipLabel = [[UILabel alloc] init];
-    tipLabel.translatesAutoresizingMaskIntoConstraints = NO;
-    tipLabel.numberOfLines = 0;
-    tipLabel.text = @"请触发不同类型的网络请求。网络分析数据在App退至后台时统一上报，稍后可在 EMAS 控制台查看。";
-    tipLabel.attributedText = EAPMDemoInfoAttributedString(tipLabel.text, EAPMDemoNetworkAnalysisHexColor(0x7A8FB8, 1.0));
-    [tipCardView addSubview:tipLabel];
+    EAPMDemoSectionHeaderView *requestSectionHeaderView = [[EAPMDemoSectionHeaderView alloc] init];
+    requestSectionHeaderView.translatesAutoresizingMaskIntoConstraints = NO;
+    [requestSectionHeaderView configureWithTitle:@"网络请求"];
+    [self.contentView addSubview:requestSectionHeaderView];
 
-    UIView *requestSectionIndicator = [self createSectionIndicatorView];
-    [self.contentView addSubview:requestSectionIndicator];
-
-    UILabel *requestSectionLabel = [self createSectionTitleLabel:@"网络请求"];
-    [self.contentView addSubview:requestSectionLabel];
-
-    UILabel *urlLabel = [[UILabel alloc] init];
-    urlLabel.translatesAutoresizingMaskIntoConstraints = NO;
-    urlLabel.attributedText = EAPMDemoFieldTitleAttributedString(@"URL", EAPMDemoNetworkAnalysisHexColor(0x9A9EA8, 1.0));
-    [self.contentView addSubview:urlLabel];
-
-    UIView *urlInputContainerView = [[UIView alloc] init];
-    urlInputContainerView.translatesAutoresizingMaskIntoConstraints = NO;
-    urlInputContainerView.backgroundColor = EAPMDemoNetworkAnalysisHexColor(0xF0F2F5, 1.0);
-    urlInputContainerView.layer.cornerRadius = EAPMDemoUICornerRadius;
-    [self.contentView addSubview:urlInputContainerView];
-
-    self.urlTextField = [[UITextField alloc] init];
-    self.urlTextField.translatesAutoresizingMaskIntoConstraints = NO;
-    UIFont *textFont = EAPMDemoUIFontRegular(16.0);
-    self.urlTextField.font = textFont;
-    self.urlTextField.textColor = EAPMDemoNetworkAnalysisHexColor(0x4B4D52, 1.0);
-    self.urlTextField.attributedPlaceholder = [[NSAttributedString alloc] initWithString:@"请输入完整URL，默认https://www.aliyun.com" attributes:@{
-        NSFontAttributeName: textFont,
-        NSForegroundColorAttributeName: EAPMDemoNetworkAnalysisHexColor(0xC8D0DD, 1.0),
-    }];
+    EAPMDemoInputFieldView *urlInputView = [[EAPMDemoInputFieldView alloc] initWithTitle:@"URL"
+                                                                              placeholder:@"请输入完整URL，默认https://www.aliyun.com"
+                                                                                 editable:YES];
+    self.urlTextField = urlInputView.textField;
     self.urlTextField.keyboardType = UIKeyboardTypeURL;
     self.urlTextField.autocapitalizationType = UITextAutocapitalizationTypeNone;
     self.urlTextField.autocorrectionType = UITextAutocorrectionTypeNo;
     self.urlTextField.returnKeyType = UIReturnKeyGo;
-    self.urlTextField.clearButtonMode = UITextFieldViewModeWhileEditing;
     self.urlTextField.delegate = self;
-    [urlInputContainerView addSubview:self.urlTextField];
+    [self.contentView addSubview:urlInputView];
 
-    self.sendButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    self.sendButton.translatesAutoresizingMaskIntoConstraints = NO;
+    self.sendButton = [EAPMDemoPrimaryButton buttonWithType:UIButtonTypeCustom];
     [self.sendButton setTitle:@"发送请求" forState:UIControlStateNormal];
-    [self.sendButton setTitleColor:UIColor.whiteColor forState:UIControlStateNormal];
-    self.sendButton.titleLabel.font = EAPMDemoUIFontSemibold(18.0);
-    self.sendButton.layer.cornerRadius = EAPMDemoUICornerRadius;
-    self.sendButton.layer.masksToBounds = YES;
     [self.sendButton addTarget:self action:@selector(handleSendButtonTapped) forControlEvents:UIControlEventTouchUpInside];
-    self.sendButtonGradientLayer = [CAGradientLayer layer];
-    self.sendButtonGradientLayer.colors = @[
-        (__bridge id)EAPMDemoNetworkAnalysisHexColor(0x6E84FF, 1.0).CGColor,
-        (__bridge id)EAPMDemoNetworkAnalysisHexColor(0x7277FF, 1.0).CGColor,
-    ];
-    self.sendButtonGradientLayer.locations = @[@0, @1];
-    self.sendButtonGradientLayer.startPoint = CGPointMake(0.0, 0.5);
-    self.sendButtonGradientLayer.endPoint = CGPointMake(1.0, 0.5);
-    [self.sendButton.layer insertSublayer:self.sendButtonGradientLayer atIndex:0];
     [self.contentView addSubview:self.sendButton];
 
-    UIView *errorSectionIndicator = [self createSectionIndicatorView];
-    [self.contentView addSubview:errorSectionIndicator];
-
-    UILabel *errorSectionLabel = [self createSectionTitleLabel:@"网络错误"];
-    [self.contentView addSubview:errorSectionLabel];
+    EAPMDemoSectionHeaderView *errorSectionHeaderView = [[EAPMDemoSectionHeaderView alloc] init];
+    errorSectionHeaderView.translatesAutoresizingMaskIntoConstraints = NO;
+    [errorSectionHeaderView configureWithTitle:@"网络错误"];
+    [self.contentView addSubview:errorSectionHeaderView];
 
     UIStackView *errorButtonStackView = [[UIStackView alloc] init];
     errorButtonStackView.translatesAutoresizingMaskIntoConstraints = NO;
@@ -176,16 +113,6 @@ static UIColor *EAPMDemoNetworkAnalysisHexColor(NSUInteger hexValue, CGFloat alp
         [self.headerView.trailingAnchor constraintEqualToAnchor:self.view.trailingAnchor],
         [self.headerView.topAnchor constraintEqualToAnchor:safeArea.topAnchor],
 
-        [backButton.leadingAnchor constraintEqualToAnchor:self.view.leadingAnchor constant:EAPMDemoUIHorizontalInset],
-        [backButton.topAnchor constraintEqualToAnchor:self.headerView.topAnchor constant:EAPMDemoUIHeaderTopPadding],
-        [backButton.widthAnchor constraintEqualToConstant:20.0],
-        [backButton.heightAnchor constraintEqualToConstant:20.0],
-
-        [titleLabel.leadingAnchor constraintEqualToAnchor:backButton.trailingAnchor constant:EAPMDemoUIHeaderTitleSpacing],
-        [titleLabel.centerYAnchor constraintEqualToAnchor:backButton.centerYAnchor],
-
-        [self.headerView.bottomAnchor constraintEqualToAnchor:titleLabel.bottomAnchor constant:EAPMDemoUIHeaderBottomPadding],
-
         [self.scrollView.leadingAnchor constraintEqualToAnchor:self.view.leadingAnchor],
         [self.scrollView.trailingAnchor constraintEqualToAnchor:self.view.trailingAnchor],
         [self.scrollView.topAnchor constraintEqualToAnchor:self.headerView.bottomAnchor],
@@ -201,77 +128,36 @@ static UIColor *EAPMDemoNetworkAnalysisHexColor(NSUInteger hexValue, CGFloat alp
         [tipCardView.trailingAnchor constraintEqualToAnchor:self.contentView.trailingAnchor constant:-EAPMDemoUIHorizontalInset],
         [tipCardView.topAnchor constraintEqualToAnchor:self.contentView.topAnchor constant:EAPMDemoUIContentTopSpacing],
 
-        [tipLabel.leadingAnchor constraintEqualToAnchor:tipCardView.leadingAnchor constant:EAPMDemoUIHorizontalInset],
-        [tipLabel.trailingAnchor constraintEqualToAnchor:tipCardView.trailingAnchor constant:-EAPMDemoUIHorizontalInset],
-        [tipLabel.topAnchor constraintEqualToAnchor:tipCardView.topAnchor constant:EAPMDemoUITipCardVerticalInset],
-        [tipLabel.bottomAnchor constraintEqualToAnchor:tipCardView.bottomAnchor constant:-EAPMDemoUITipCardVerticalInset],
+        [requestSectionHeaderView.leadingAnchor constraintEqualToAnchor:self.contentView.leadingAnchor constant:EAPMDemoUIHorizontalInset],
+        [requestSectionHeaderView.trailingAnchor constraintEqualToAnchor:self.contentView.trailingAnchor constant:-EAPMDemoUIHorizontalInset],
+        [requestSectionHeaderView.topAnchor constraintEqualToAnchor:tipCardView.bottomAnchor constant:EAPMDemoUISectionTopSpacing],
 
-        [requestSectionIndicator.leadingAnchor constraintEqualToAnchor:self.contentView.leadingAnchor constant:EAPMDemoUIHorizontalInset],
-        [requestSectionIndicator.topAnchor constraintEqualToAnchor:tipCardView.bottomAnchor constant:EAPMDemoUISectionTopSpacing],
-        [requestSectionIndicator.widthAnchor constraintEqualToConstant:4.0],
-        [requestSectionIndicator.heightAnchor constraintEqualToConstant:20.0],
-
-        [requestSectionLabel.leadingAnchor constraintEqualToAnchor:requestSectionIndicator.trailingAnchor constant:12.0],
-        [requestSectionLabel.centerYAnchor constraintEqualToAnchor:requestSectionIndicator.centerYAnchor],
-
-        [urlLabel.leadingAnchor constraintEqualToAnchor:self.contentView.leadingAnchor constant:EAPMDemoUIHorizontalInset],
-        [urlLabel.trailingAnchor constraintEqualToAnchor:self.contentView.trailingAnchor constant:-EAPMDemoUIHorizontalInset],
-        [urlLabel.topAnchor constraintEqualToAnchor:requestSectionIndicator.bottomAnchor constant:EAPMDemoUISectionContentSpacing],
-
-        [urlInputContainerView.leadingAnchor constraintEqualToAnchor:self.contentView.leadingAnchor constant:EAPMDemoUIHorizontalInset],
-        [urlInputContainerView.trailingAnchor constraintEqualToAnchor:self.contentView.trailingAnchor constant:-EAPMDemoUIHorizontalInset],
-        [urlInputContainerView.topAnchor constraintEqualToAnchor:urlLabel.bottomAnchor constant:EAPMDemoUIFieldSpacing],
-        [urlInputContainerView.heightAnchor constraintEqualToConstant:EAPMDemoUIInputHeight],
-
-        [self.urlTextField.leadingAnchor constraintEqualToAnchor:urlInputContainerView.leadingAnchor constant:EAPMDemoUIHorizontalInset],
-        [self.urlTextField.trailingAnchor constraintEqualToAnchor:urlInputContainerView.trailingAnchor constant:-EAPMDemoUIHorizontalInset],
-        [self.urlTextField.topAnchor constraintEqualToAnchor:urlInputContainerView.topAnchor],
-        [self.urlTextField.bottomAnchor constraintEqualToAnchor:urlInputContainerView.bottomAnchor],
+        [urlInputView.leadingAnchor constraintEqualToAnchor:self.contentView.leadingAnchor constant:EAPMDemoUIHorizontalInset],
+        [urlInputView.trailingAnchor constraintEqualToAnchor:self.contentView.trailingAnchor constant:-EAPMDemoUIHorizontalInset],
+        [urlInputView.topAnchor constraintEqualToAnchor:requestSectionHeaderView.bottomAnchor constant:EAPMDemoUISectionContentSpacing],
 
         [self.sendButton.leadingAnchor constraintEqualToAnchor:self.contentView.leadingAnchor constant:EAPMDemoUIHorizontalInset],
         [self.sendButton.trailingAnchor constraintEqualToAnchor:self.contentView.trailingAnchor constant:-EAPMDemoUIHorizontalInset],
-        [self.sendButton.topAnchor constraintEqualToAnchor:urlInputContainerView.bottomAnchor constant:20.0],
+        [self.sendButton.topAnchor constraintEqualToAnchor:urlInputView.bottomAnchor constant:20.0],
         [self.sendButton.heightAnchor constraintEqualToConstant:EAPMDemoUIPrimaryButtonHeight],
 
-        [errorSectionIndicator.leadingAnchor constraintEqualToAnchor:self.contentView.leadingAnchor constant:EAPMDemoUIHorizontalInset],
-        [errorSectionIndicator.topAnchor constraintEqualToAnchor:self.sendButton.bottomAnchor constant:24.0],
-        [errorSectionIndicator.widthAnchor constraintEqualToConstant:4.0],
-        [errorSectionIndicator.heightAnchor constraintEqualToConstant:20.0],
-
-        [errorSectionLabel.leadingAnchor constraintEqualToAnchor:errorSectionIndicator.trailingAnchor constant:12.0],
-        [errorSectionLabel.centerYAnchor constraintEqualToAnchor:errorSectionIndicator.centerYAnchor],
+        [errorSectionHeaderView.leadingAnchor constraintEqualToAnchor:self.contentView.leadingAnchor constant:EAPMDemoUIHorizontalInset],
+        [errorSectionHeaderView.trailingAnchor constraintEqualToAnchor:self.contentView.trailingAnchor constant:-EAPMDemoUIHorizontalInset],
+        [errorSectionHeaderView.topAnchor constraintEqualToAnchor:self.sendButton.bottomAnchor constant:EAPMDemoUISectionTopSpacing],
 
         [errorButtonStackView.leadingAnchor constraintEqualToAnchor:self.contentView.leadingAnchor constant:EAPMDemoUIHorizontalInset],
         [errorButtonStackView.trailingAnchor constraintEqualToAnchor:self.contentView.trailingAnchor constant:-EAPMDemoUIHorizontalInset],
-        [errorButtonStackView.topAnchor constraintEqualToAnchor:errorSectionIndicator.bottomAnchor constant:EAPMDemoUISectionContentSpacing],
+        [errorButtonStackView.topAnchor constraintEqualToAnchor:errorSectionHeaderView.bottomAnchor constant:EAPMDemoUISectionContentSpacing],
         [errorButtonStackView.bottomAnchor constraintEqualToAnchor:self.contentView.bottomAnchor constant:-EAPMDemoUIContentBottomPadding],
         [errorButtonStackView.heightAnchor constraintEqualToConstant:EAPMDemoUISecondaryActionHeight],
     ]];
 }
 
-- (UIView *)createSectionIndicatorView {
-    return EAPMDemoCreateSectionIndicatorView(EAPMDemoNetworkAnalysisHexColor(0x315CFC, 1.0));
-}
-
-- (UILabel *)createSectionTitleLabel:(NSString *)title {
-    UILabel *label = [[UILabel alloc] init];
-    EAPMDemoConfigureSectionTitleLabel(label, title, EAPMDemoNetworkAnalysisHexColor(0x4B4D52, 1.0));
-    return label;
-}
-
-- (UIButton *)createErrorButtonWithTitle:(NSString *)title action:(SEL)action {
-    UIButton *button = [UIButton buttonWithType:UIButtonTypeSystem];
-    EAPMDemoApplySecondaryCardStyle(button,
-                                    EAPMDemoNetworkAnalysisHexColor(0xF0F2F5, 1.0),
-                                    EAPMDemoNetworkAnalysisHexColor(0xE6E8EB, 1.0));
-    button.titleLabel.numberOfLines = 1;
-    [button setAttributedTitle:[self errorButtonTitle:title] forState:UIControlStateNormal];
+- (EAPMDemoSecondaryActionButton *)createErrorButtonWithTitle:(NSString *)title action:(SEL)action {
+    EAPMDemoSecondaryActionButton *button = [EAPMDemoSecondaryActionButton buttonWithType:UIButtonTypeSystem];
+    [button configureWithTitle:title];
     [button addTarget:self action:action forControlEvents:UIControlEventTouchUpInside];
     return button;
-}
-
-- (NSAttributedString *)errorButtonTitle:(NSString *)title {
-    return EAPMDemoCenteredActionAttributedString(title, EAPMDemoNetworkAnalysisHexColor(0x1F2024, 1.0));
 }
 
 - (void)handleBackButtonTapped {

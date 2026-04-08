@@ -1,6 +1,7 @@
 #import "EAPMDemoCrashViewController.h"
 
-#import "EAPMDemoHomeUI.h"
+#import "../Shared/EAPMDemoOverlayPresenter.h"
+#import "../Shared/EAPMDemoUIComponents.h"
 #import "../Shared/EAPMDemoUIStyleGuide.h"
 #import <signal.h>
 #import <stdlib.h>
@@ -38,7 +39,7 @@ typedef NS_ENUM(NSInteger, EAPMDemoCrashTriggerType) {
 
 @interface EAPMDemoCrashViewController ()
 
-@property (nonatomic, strong) UIView *headerView;
+@property (nonatomic, strong) EAPMDemoSecondaryPageHeaderView *headerView;
 @property (nonatomic, strong) UIScrollView *scrollView;
 @property (nonatomic, strong) UIView *contentView;
 
@@ -62,29 +63,11 @@ typedef NS_ENUM(NSInteger, EAPMDemoCrashTriggerType) {
 }
 
 - (void)buildViews {
-    _headerView = [[UIView alloc] init];
-    _headerView.translatesAutoresizingMaskIntoConstraints = NO;
-    [self.view addSubview:_headerView];
-
-    UIButton *backButton = [UIButton buttonWithType:UIButtonTypeSystem];
-    backButton.translatesAutoresizingMaskIntoConstraints = NO;
-    if (@available(iOS 13.0, *)) {
-        UIImageSymbolConfiguration *configuration = [UIImageSymbolConfiguration configurationWithPointSize:12.0 weight:UIImageSymbolWeightMedium];
-        UIImage *image = [UIImage systemImageNamed:@"chevron.left" withConfiguration:configuration];
-        [backButton setImage:image forState:UIControlStateNormal];
-    } else {
-        [backButton setTitle:@"返回" forState:UIControlStateNormal];
-        backButton.titleLabel.font = [UIFont systemFontOfSize:13.0 weight:UIFontWeightMedium];
-    }
-    backButton.tintColor = EAPMDemoCrashHexColor(0x1F2024, 1.0);
-    [backButton addTarget:self action:@selector(handleBackButtonTapped) forControlEvents:UIControlEventTouchUpInside];
-    [_headerView addSubview:backButton];
-
-    UILabel *titleLabel = [[UILabel alloc] init];
-    titleLabel.translatesAutoresizingMaskIntoConstraints = NO;
-    titleLabel.numberOfLines = 1;
-    titleLabel.attributedText = EAPMDemoPageTitleAttributedString(@"其它类型崩溃", EAPMDemoCrashHexColor(0x4B4D52, 1.0));
-    [_headerView addSubview:titleLabel];
+    __weak typeof(self) weakSelf = self;
+    self.headerView = [[EAPMDemoSecondaryPageHeaderView alloc] initWithTitle:@"其它类型崩溃" backHandler:^{
+        [weakSelf handleBackButtonTapped];
+    }];
+    [self.view addSubview:self.headerView];
 
     _scrollView = [[UIScrollView alloc] init];
     _scrollView.translatesAutoresizingMaskIntoConstraints = NO;
@@ -95,24 +78,16 @@ typedef NS_ENUM(NSInteger, EAPMDemoCrashTriggerType) {
     _contentView.translatesAutoresizingMaskIntoConstraints = NO;
     [_scrollView addSubview:_contentView];
 
-    UIView *tipCardView = [[UIView alloc] init];
-    tipCardView.translatesAutoresizingMaskIntoConstraints = NO;
-    EAPMDemoApplyTipCardStyle(tipCardView, EAPMDemoCrashHexColor(0xEEF3FF, 1.0));
+    EAPMDemoTipCardView *tipCardView = [[EAPMDemoTipCardView alloc] initWithBackgroundColor:EAPMDemoCrashHexColor(0xEEF3FF, 1.0)
+                                                                                   textColor:EAPMDemoCrashHexColor(0x7A8FB8, 1.0)
+                                                                                 borderColor:nil];
+    [tipCardView configureWithText:@"更多崩溃和错误类型，点击按钮触发对应类型的异常。触发后请前往 EMAS 控制台查看崩溃详情和堆栈信息。"];
     [_contentView addSubview:tipCardView];
 
-    UILabel *descLabel = [[UILabel alloc] init];
-    descLabel.translatesAutoresizingMaskIntoConstraints = NO;
-    descLabel.numberOfLines = 0;
-    descLabel.text = @"更多崩溃和错误类型，点击按钮触发对应类型的异常。触发后请前往 EMAS 控制台查看崩溃详情和堆栈信息。";
-    descLabel.attributedText = EAPMDemoInfoAttributedString(descLabel.text, EAPMDemoCrashHexColor(0x7A8FB8, 1.0));
-    [tipCardView addSubview:descLabel];
-
-    UIView *sectionIndicator = EAPMDemoCreateSectionIndicatorView(EAPMDemoCrashHexColor(0x315CFC, 1.0));
-    [_contentView addSubview:sectionIndicator];
-
-    UILabel *sectionTitleLabel = [[UILabel alloc] init];
-    EAPMDemoConfigureSectionTitleLabel(sectionTitleLabel, @"崩溃列表", EAPMDemoCrashHexColor(0x4B4D52, 1.0));
-    [_contentView addSubview:sectionTitleLabel];
+    EAPMDemoSectionHeaderView *sectionHeaderView = [[EAPMDemoSectionHeaderView alloc] init];
+    sectionHeaderView.translatesAutoresizingMaskIntoConstraints = NO;
+    [sectionHeaderView configureWithTitle:@"崩溃列表"];
+    [_contentView addSubview:sectionHeaderView];
 
     NSArray<NSDictionary<NSString *, id> *> *items = @[
         @{@"title": @"NSException", @"type": @(EAPMDemoCrashTriggerTypeNSException)},
@@ -156,23 +131,13 @@ typedef NS_ENUM(NSInteger, EAPMDemoCrashTriggerType) {
 
     UILayoutGuide *safeArea = self.view.safeAreaLayoutGuide;
     [NSLayoutConstraint activateConstraints:@[
-        [_headerView.leadingAnchor constraintEqualToAnchor:self.view.leadingAnchor],
-        [_headerView.trailingAnchor constraintEqualToAnchor:self.view.trailingAnchor],
-        [_headerView.topAnchor constraintEqualToAnchor:safeArea.topAnchor],
-
-        [backButton.leadingAnchor constraintEqualToAnchor:self.view.leadingAnchor constant:EAPMDemoUIHorizontalInset],
-        [backButton.topAnchor constraintEqualToAnchor:_headerView.topAnchor constant:EAPMDemoUIHeaderTopPadding],
-        [backButton.widthAnchor constraintEqualToConstant:20.0],
-        [backButton.heightAnchor constraintEqualToConstant:20.0],
-
-        [titleLabel.leadingAnchor constraintEqualToAnchor:backButton.trailingAnchor constant:EAPMDemoUIHeaderTitleSpacing],
-        [titleLabel.centerYAnchor constraintEqualToAnchor:backButton.centerYAnchor],
-
-        [_headerView.bottomAnchor constraintEqualToAnchor:titleLabel.bottomAnchor constant:EAPMDemoUIHeaderBottomPadding],
+        [self.headerView.leadingAnchor constraintEqualToAnchor:self.view.leadingAnchor],
+        [self.headerView.trailingAnchor constraintEqualToAnchor:self.view.trailingAnchor],
+        [self.headerView.topAnchor constraintEqualToAnchor:safeArea.topAnchor],
 
         [_scrollView.leadingAnchor constraintEqualToAnchor:self.view.leadingAnchor],
         [_scrollView.trailingAnchor constraintEqualToAnchor:self.view.trailingAnchor],
-        [_scrollView.topAnchor constraintEqualToAnchor:_headerView.bottomAnchor],
+        [_scrollView.topAnchor constraintEqualToAnchor:self.headerView.bottomAnchor],
         [_scrollView.bottomAnchor constraintEqualToAnchor:self.view.bottomAnchor],
 
         [_contentView.leadingAnchor constraintEqualToAnchor:_scrollView.contentLayoutGuide.leadingAnchor],
@@ -185,41 +150,23 @@ typedef NS_ENUM(NSInteger, EAPMDemoCrashTriggerType) {
         [tipCardView.trailingAnchor constraintEqualToAnchor:_contentView.trailingAnchor constant:-EAPMDemoUIHorizontalInset],
         [tipCardView.topAnchor constraintEqualToAnchor:_contentView.topAnchor constant:EAPMDemoUIContentTopSpacing],
 
-        [descLabel.leadingAnchor constraintEqualToAnchor:tipCardView.leadingAnchor constant:EAPMDemoUIHorizontalInset],
-        [descLabel.trailingAnchor constraintEqualToAnchor:tipCardView.trailingAnchor constant:-EAPMDemoUIHorizontalInset],
-        [descLabel.topAnchor constraintEqualToAnchor:tipCardView.topAnchor constant:EAPMDemoUITipCardVerticalInset],
-        [descLabel.bottomAnchor constraintEqualToAnchor:tipCardView.bottomAnchor constant:-EAPMDemoUITipCardVerticalInset],
-
-        [sectionIndicator.leadingAnchor constraintEqualToAnchor:_contentView.leadingAnchor constant:EAPMDemoUIHorizontalInset],
-        [sectionIndicator.topAnchor constraintEqualToAnchor:tipCardView.bottomAnchor constant:EAPMDemoUISectionTopSpacing],
-        [sectionIndicator.widthAnchor constraintEqualToConstant:4.0],
-        [sectionIndicator.heightAnchor constraintEqualToConstant:20.0],
-
-        [sectionTitleLabel.leadingAnchor constraintEqualToAnchor:sectionIndicator.trailingAnchor constant:12.0],
-        [sectionTitleLabel.centerYAnchor constraintEqualToAnchor:sectionIndicator.centerYAnchor],
+        [sectionHeaderView.leadingAnchor constraintEqualToAnchor:_contentView.leadingAnchor constant:EAPMDemoUIHorizontalInset],
+        [sectionHeaderView.trailingAnchor constraintEqualToAnchor:_contentView.trailingAnchor constant:-EAPMDemoUIHorizontalInset],
+        [sectionHeaderView.topAnchor constraintEqualToAnchor:tipCardView.bottomAnchor constant:EAPMDemoUISectionTopSpacing],
 
         [gridStackView.leadingAnchor constraintEqualToAnchor:_contentView.leadingAnchor constant:EAPMDemoUIHorizontalInset],
         [gridStackView.trailingAnchor constraintEqualToAnchor:_contentView.trailingAnchor constant:-EAPMDemoUIHorizontalInset],
-        [gridStackView.topAnchor constraintEqualToAnchor:sectionIndicator.bottomAnchor constant:EAPMDemoUISectionContentSpacing],
+        [gridStackView.topAnchor constraintEqualToAnchor:sectionHeaderView.bottomAnchor constant:EAPMDemoUISectionContentSpacing],
         [gridStackView.bottomAnchor constraintEqualToAnchor:_contentView.bottomAnchor constant:-EAPMDemoUIContentBottomPadding],
     ]];
 }
 
 - (UIButton *)createCrashButtonWithTitle:(NSString *)title type:(EAPMDemoCrashTriggerType)type {
-    UIButton *button = [UIButton buttonWithType:UIButtonTypeSystem];
+    EAPMDemoSecondaryActionButton *button = [EAPMDemoSecondaryActionButton buttonWithType:UIButtonTypeSystem];
     button.tag = type;
-    EAPMDemoApplySecondaryCardStyle(button,
-                                    EAPMDemoCrashHexColor(0xF0F2F5, 1.0),
-                                    EAPMDemoCrashHexColor(0xE6E8EB, 1.0));
-    button.titleLabel.numberOfLines = 2;
-    button.titleLabel.textAlignment = NSTextAlignmentCenter;
-    [button setAttributedTitle:[self crashButtonTitle:title] forState:UIControlStateNormal];
+    [button configureWithTitle:title];
     [button addTarget:self action:@selector(handleTriggerButtonTapped:) forControlEvents:UIControlEventTouchUpInside];
     return button;
-}
-
-- (NSAttributedString *)crashButtonTitle:(NSString *)title {
-    return EAPMDemoCenteredActionAttributedString(title, EAPMDemoCrashHexColor(0x1F2024, 1.0));
 }
 
 - (void)handleBackButtonTapped {
