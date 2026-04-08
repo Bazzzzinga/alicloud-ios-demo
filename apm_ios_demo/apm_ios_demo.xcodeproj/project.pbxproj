@@ -16,6 +16,7 @@
 		7EFDB8822DAFB2060079A3D1 /* EAPMDemoConfigStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 7EFDB8802DAFB2060079A3D1 /* EAPMDemoConfigStore.m */; };
 		7EFDB8852DAFBA490079A3D1 /* EAPMDemoCrashAnalysis.m in Sources */ = {isa = PBXBuildFile; fileRef = 7EFDB8842DAFBA490079A3D1 /* EAPMDemoCrashAnalysis.m */; };
 		7EFDB8BE2DB0E2900079A3D1 /* EAPMDemoRemoteLog.m in Sources */ = {isa = PBXBuildFile; fileRef = 7EFDB8BD2DB0E2900079A3D1 /* EAPMDemoRemoteLog.m */; };
+		D40000000000000000000001 /* EAPMDemoOverlayPresenter.m in Sources */ = {isa = PBXBuildFile; fileRef = D40000000000000000000011 /* EAPMDemoOverlayPresenter.m */; };
 		9A0000000000000000000001 /* EAPMDemoSettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9A0000000000000000000011 /* EAPMDemoSettingsViewController.m */; };
 		A10000000000000000000001 /* EAPMDemoHomeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000011 /* EAPMDemoHomeViewController.m */; };
 		A10000000000000000000002 /* EAPMDemoHomeUI.m in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000013 /* EAPMDemoHomeUI.m */; };
@@ -45,6 +46,9 @@
 		7EFDB8842DAFBA490079A3D1 /* EAPMDemoCrashAnalysis.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EAPMDemoCrashAnalysis.m; sourceTree = "<group>"; };
 		7EFDB8BC2DB0E2900079A3D1 /* EAPMDemoRemoteLog.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EAPMDemoRemoteLog.h; sourceTree = "<group>"; };
 		7EFDB8BD2DB0E2900079A3D1 /* EAPMDemoRemoteLog.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EAPMDemoRemoteLog.m; sourceTree = "<group>"; };
+		D40000000000000000000010 /* EAPMDemoOverlayPresenter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EAPMDemoOverlayPresenter.h; sourceTree = "<group>"; };
+		D40000000000000000000011 /* EAPMDemoOverlayPresenter.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EAPMDemoOverlayPresenter.m; sourceTree = "<group>"; };
+		D40000000000000000000012 /* EAPMDemoUIStyleGuide.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EAPMDemoUIStyleGuide.h; sourceTree = "<group>"; };
 		9A0000000000000000000010 /* EAPMDemoSettingsViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EAPMDemoSettingsViewController.h; sourceTree = "<group>"; };
 		9A0000000000000000000011 /* EAPMDemoSettingsViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EAPMDemoSettingsViewController.m; sourceTree = "<group>"; };
 		94ADE4EBEB8CB88EB1639A09 /* Pods_apm_ios_demo.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_apm_ios_demo.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -209,6 +213,9 @@
 				7EFDB87F2DAFB2060079A3D1 /* EAPMDemoConfigStore.h */,
 				7EFDB8802DAFB2060079A3D1 /* EAPMDemoConfigStore.m */,
 				7EFDB8812DAFB2060079A3D1 /* EAPMDemoConstants.h */,
+				D40000000000000000000012 /* EAPMDemoUIStyleGuide.h */,
+				D40000000000000000000010 /* EAPMDemoOverlayPresenter.h */,
+				D40000000000000000000011 /* EAPMDemoOverlayPresenter.m */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -336,6 +343,7 @@
 				330B627523505591004ABFDA /* EAPMDemoPerformance.m in Sources */,
 				9A0000000000000000000001 /* EAPMDemoSettingsViewController.m in Sources */,
 				7EFDB8822DAFB2060079A3D1 /* EAPMDemoConfigStore.m in Sources */,
+				D40000000000000000000001 /* EAPMDemoOverlayPresenter.m in Sources */,
 				7EFDB8BE2DB0E2900079A3D1 /* EAPMDemoRemoteLog.m in Sources */,
 				7EFDB8852DAFBA490079A3D1 /* EAPMDemoCrashAnalysis.m in Sources */,
 				330B628023505592004ABFDA /* main.m in Sources */,

@@ -372,13 +372,13 @@ static UIColor *EAPMDemoNetworkAnalysisHexColor(NSUInteger hexValue, CGFloat alp
 }
 
 - (void)presentAlertWithTitle:(NSString *)title message:(NSString *)message {
-    [EAPMDemoHomeAlertPresenter presentAlertFrom:self
-                                           title:title
-                                         message:message
-                                messageAlignment:EAPMDemoHomeAlertMessageAlignmentLeft
-                                         actions:@[
-        [EAPMDemoHomeAlertAction actionWithTitle:@"知道了"
-                                           style:EAPMDemoHomeAlertActionStylePrimary
+    [EAPMDemoAlertPresenter presentAlertFrom:self
+                                       title:title
+                                     message:message
+                            messageAlignment:EAPMDemoAlertMessageAlignmentLeft
+                                     actions:@[
+        [EAPMDemoAlertAction actionWithTitle:@"知道了"
+                                       style:EAPMDemoAlertActionStylePrimary
                                          handler:nil],
     ]];
 }
@@ -427,12 +427,12 @@ static UIColor *EAPMDemoNetworkAnalysisHexColor(NSUInteger hexValue, CGFloat alp
 }
 
 - (void)presentResultAlertWithMessage:(NSAttributedString *)message {
-    [EAPMDemoHomeAlertPresenter presentAlertFrom:self
-                                           title:@"网络请求"
-                               attributedMessage:message
-                                         actions:@[
-        [EAPMDemoHomeAlertAction actionWithTitle:@"知道了"
-                                           style:EAPMDemoHomeAlertActionStylePrimary
+    [EAPMDemoAlertPresenter presentAlertFrom:self
+                                       title:@"网络请求"
+                           attributedMessage:message
+                                     actions:@[
+        [EAPMDemoAlertAction actionWithTitle:@"知道了"
+                                       style:EAPMDemoAlertActionStylePrimary
                                          handler:nil],
     ]];
 }

@@ -16,6 +16,20 @@ static const CGFloat EAPMDemoUICornerRadius = 8.0;
 static const CGFloat EAPMDemoUIInputHeight = 52.0;
 static const CGFloat EAPMDemoUISecondaryActionHeight = 48.0;
 static const CGFloat EAPMDemoUIPrimaryButtonHeight = 60.0;
+static const CGFloat EAPMDemoUIAlertCornerRadius = 20.0;
+static const CGFloat EAPMDemoUIAlertHorizontalInset = 20.0;
+static const CGFloat EAPMDemoUIAlertTopInset = 20.0;
+static const CGFloat EAPMDemoUIAlertTitleSpacing = 10.0;
+static const CGFloat EAPMDemoUIAlertButtonTopSpacing = 18.0;
+static const CGFloat EAPMDemoUIAlertButtonHeight = 52.0;
+static const CGFloat EAPMDemoUIBottomSheetCornerRadius = 22.0;
+static const CGFloat EAPMDemoUIBottomSheetHorizontalInset = 16.0;
+static const CGFloat EAPMDemoUIBottomSheetTitleInset = 24.0;
+static const CGFloat EAPMDemoUIBottomSheetStatusTopSpacing = 18.0;
+static const CGFloat EAPMDemoUIBottomSheetStatusHeight = 40.0;
+static const CGFloat EAPMDemoUIBottomSheetGuideTopSpacing = 20.0;
+static const CGFloat EAPMDemoUIBottomSheetGuideSpacing = 16.0;
+static const CGFloat EAPMDemoUIBottomSheetButtonTopSpacing = 28.0;
 
 static inline UIColor *EAPMDemoUIColor(NSUInteger hexValue, CGFloat alpha) {
     return [UIColor colorWithRed:((hexValue >> 16) & 0xFF) / 255.0
@@ -41,6 +55,21 @@ static inline NSAttributedString *EAPMDemoPageTitleAttributedString(NSString *te
         NSFontAttributeName: EAPMDemoUIFontMedium(22.0),
         NSForegroundColorAttributeName: textColor,
         NSKernAttributeName: @(0.8),
+    }];
+}
+
+static inline NSAttributedString *EAPMDemoAlertTitleAttributedString(NSString *text, UIColor *textColor) {
+    return [[NSAttributedString alloc] initWithString:text attributes:@{
+        NSFontAttributeName: EAPMDemoUIFontSemibold(20.0),
+        NSForegroundColorAttributeName: textColor,
+    }];
+}
+
+static inline NSAttributedString *EAPMDemoBottomSheetTitleAttributedString(NSString *text, UIColor *textColor) {
+    return [[NSAttributedString alloc] initWithString:text attributes:@{
+        NSFontAttributeName: EAPMDemoUIFontMedium(20.0),
+        NSForegroundColorAttributeName: textColor,
+        NSKernAttributeName: @(0.4),
     }];
 }
 
@@ -88,6 +117,20 @@ static inline NSAttributedString *EAPMDemoCenteredActionAttributedString(NSStrin
     paragraphStyle.maximumLineHeight = 24.0;
     return [[NSAttributedString alloc] initWithString:text attributes:@{
         NSFontAttributeName: EAPMDemoUIFontRegular(16.0),
+        NSForegroundColorAttributeName: textColor,
+        NSParagraphStyleAttributeName: paragraphStyle,
+    }];
+}
+
+static inline NSAttributedString *EAPMDemoAlertMessageAttributedString(NSString *text,
+                                                                       UIColor *textColor,
+                                                                       NSTextAlignment alignment) {
+    NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
+    paragraphStyle.alignment = alignment;
+    paragraphStyle.minimumLineHeight = 24.0;
+    paragraphStyle.maximumLineHeight = 24.0;
+    return [[NSAttributedString alloc] initWithString:text attributes:@{
+        NSFontAttributeName: EAPMDemoUIFontRegular(15.0),
         NSForegroundColorAttributeName: textColor,
         NSParagraphStyleAttributeName: paragraphStyle,
     }];

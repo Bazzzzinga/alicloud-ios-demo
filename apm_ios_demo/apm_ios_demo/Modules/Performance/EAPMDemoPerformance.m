@@ -48,13 +48,13 @@
     __weak UIViewController *weakPresenter = presenter;
     return [EAPMDemoHomeSectionModel sectionWithTitle:@"性能分析" items:@[
         [EAPMDemoHomeActionItem itemWithTitle:@"启动分析" actionHandler:^{
-            [EAPMDemoHomeAlertPresenter presentAlertFrom:weakPresenter
-                                                   title:@"启动分析"
-                                       attributedMessage:[self startupAnalysisMessage]
-                                                 actions:@[
-                [EAPMDemoHomeAlertAction actionWithTitle:@"知道了"
-                                                   style:EAPMDemoHomeAlertActionStylePrimary
-                                                 handler:nil],
+            [EAPMDemoAlertPresenter presentAlertFrom:weakPresenter
+                                               title:@"启动分析"
+                                   attributedMessage:[self startupAnalysisMessage]
+                                             actions:@[
+                [EAPMDemoAlertAction actionWithTitle:@"知道了"
+                                               style:EAPMDemoAlertActionStylePrimary
+                                             handler:nil],
             ]];
         }],
         [EAPMDemoHomeActionItem itemWithTitle:@"页面分析" actionHandler:^{

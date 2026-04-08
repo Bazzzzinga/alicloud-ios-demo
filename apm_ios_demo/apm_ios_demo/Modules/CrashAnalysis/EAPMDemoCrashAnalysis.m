@@ -67,12 +67,12 @@ static void EAPMDemoPresentAlert(UIViewController *presenter, NSString *title, N
         return;
     }
 
-    [EAPMDemoHomeAlertPresenter presentAlertFrom:presenter
-                                           title:title
-                                         message:message
-                                         actions:@[
-        [EAPMDemoHomeAlertAction actionWithTitle:@"知道了"
-                                           style:EAPMDemoHomeAlertActionStylePrimary
+    [EAPMDemoAlertPresenter presentAlertFrom:presenter
+                                       title:title
+                                     message:message
+                                     actions:@[
+        [EAPMDemoAlertAction actionWithTitle:@"知道了"
+                                       style:EAPMDemoAlertActionStylePrimary
                                          handler:nil],
     ]];
 }
@@ -82,15 +82,15 @@ static void EAPMDemoPresentConfirmAlert(UIViewController *presenter, NSString *t
         return;
     }
 
-    [EAPMDemoHomeAlertPresenter presentAlertFrom:presenter
-                                           title:title
-                                         message:message
-                                         actions:@[
-        [EAPMDemoHomeAlertAction actionWithTitle:@"取消"
-                                           style:EAPMDemoHomeAlertActionStyleSecondary
+    [EAPMDemoAlertPresenter presentAlertFrom:presenter
+                                       title:title
+                                     message:message
+                                     actions:@[
+        [EAPMDemoAlertAction actionWithTitle:@"取消"
+                                       style:EAPMDemoAlertActionStyleSecondary
                                          handler:nil],
-        [EAPMDemoHomeAlertAction actionWithTitle:@"确定"
-                                           style:EAPMDemoHomeAlertActionStylePrimary
+        [EAPMDemoAlertAction actionWithTitle:@"确定"
+                                       style:EAPMDemoAlertActionStylePrimary
                                          handler:confirmHandler],
     ]];
 }

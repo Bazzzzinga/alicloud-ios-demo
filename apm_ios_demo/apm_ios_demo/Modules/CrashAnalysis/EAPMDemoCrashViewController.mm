@@ -298,15 +298,15 @@ typedef NS_ENUM(NSInteger, EAPMDemoCrashTriggerType) {
         return;
     }
 
-    [EAPMDemoHomeAlertPresenter presentAlertFrom:viewController
-                                           title:@"OOM"
-                                         message:@"即将触发「OOM」，App将闪退，重启App之后可在 EMAS 控制台看到崩溃信息。"
-                                         actions:@[
-        [EAPMDemoHomeAlertAction actionWithTitle:@"取消"
-                                           style:EAPMDemoHomeAlertActionStyleSecondary
+    [EAPMDemoAlertPresenter presentAlertFrom:viewController
+                                       title:@"OOM"
+                                     message:@"即将触发「OOM」，App将闪退，重启App之后可在 EMAS 控制台看到崩溃信息。"
+                                     actions:@[
+        [EAPMDemoAlertAction actionWithTitle:@"取消"
+                                       style:EAPMDemoAlertActionStyleSecondary
                                          handler:nil],
-        [EAPMDemoHomeAlertAction actionWithTitle:@"确定"
-                                           style:EAPMDemoHomeAlertActionStylePrimary
+        [EAPMDemoAlertAction actionWithTitle:@"确定"
+                                       style:EAPMDemoAlertActionStylePrimary
                                          handler:^{
             [self triggerOOM];
         }],
@@ -352,15 +352,15 @@ typedef NS_ENUM(NSInteger, EAPMDemoCrashTriggerType) {
         return;
     }
 
-    [EAPMDemoHomeAlertPresenter presentAlertFrom:self
-                                           title:title
-                                         message:message
-                                         actions:@[
-        [EAPMDemoHomeAlertAction actionWithTitle:@"取消"
-                                           style:EAPMDemoHomeAlertActionStyleSecondary
+    [EAPMDemoAlertPresenter presentAlertFrom:self
+                                       title:title
+                                     message:message
+                                     actions:@[
+        [EAPMDemoAlertAction actionWithTitle:@"取消"
+                                       style:EAPMDemoAlertActionStyleSecondary
                                          handler:nil],
-        [EAPMDemoHomeAlertAction actionWithTitle:@"确定"
-                                           style:EAPMDemoHomeAlertActionStylePrimary
+        [EAPMDemoAlertAction actionWithTitle:@"确定"
+                                       style:EAPMDemoAlertActionStylePrimary
                                          handler:confirmAction],
     ]];
 }
