@@ -6,25 +6,6 @@
 #import "EAPMDemoCrashViewController.h"
 #import <AlicloudApmCrashAnalysis/AlicloudApmCrashAnalysis.h>
 
-static void EAPMDemoShowToast(UIViewController *presenter, NSString *message) {
-    [EAPMDemoToastPresenter showToastInViewController:presenter message:message];
-}
-
-static void EAPMDemoPresentAlert(UIViewController *presenter, NSString *title, NSString *message) {
-    if (!presenter || presenter.presentedViewController) {
-        return;
-    }
-
-    [EAPMDemoAlertPresenter presentAlertFrom:presenter
-                                       title:title
-                                     message:message
-                                     actions:@[
-        [EAPMDemoAlertAction actionWithTitle:@"知道了"
-                                       style:EAPMDemoAlertActionStylePrimary
-                                         handler:nil],
-    ]];
-}
-
 static void EAPMDemoPresentConfirmAlert(UIViewController *presenter, NSString *title, NSString *message, dispatch_block_t confirmHandler) {
     if (!presenter || presenter.presentedViewController) {
         return;
@@ -63,7 +44,7 @@ static void EAPMDemoPresentConfirmAlert(UIViewController *presenter, NSString *t
                                         @"即将触发应用5秒「卡顿」，卡顿结束后，请切换至后台触发上报，稍后可在 EMAS 控制台看到卡顿信息。",
                                         ^{
                 dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                    EAPMDemoShowToast(weakPresenter, @"卡顿结束");
+                    [EAPMDemoToastPresenter showToastInViewController:weakPresenter message:@"卡顿结束"];
                 });
                 dispatch_async(dispatch_get_main_queue(), ^{
                     [NSThread sleepForTimeInterval:5];
@@ -83,9 +64,18 @@ static void EAPMDemoPresentConfirmAlert(UIViewController *presenter, NSString *t
                                                  }];
                 [crashAnalysis recordError:error];
             }
-            EAPMDemoPresentAlert(weakPresenter,
-                                 @"自定义异常",
-                                 @"已触发多条自定义异常，请在 EMAS 控制台查看自定义异常详情");
+            if (!weakPresenter || weakPresenter.presentedViewController) {
+                return;
+            }
+
+            [EAPMDemoAlertPresenter presentAlertFrom:weakPresenter
+                                               title:@"自定义异常"
+                                             message:@"已触发多条自定义异常，请在 EMAS 控制台查看自定义异常详情"
+                                             actions:@[
+                [EAPMDemoAlertAction actionWithTitle:@"知道了"
+                                               style:EAPMDemoAlertActionStylePrimary
+                                             handler:nil],
+            ]];
         }],
         [EAPMDemoHomeActionItem itemWithTitle:@"其它类型崩溃" actionHandler:^{
             if (!weakPresenter.navigationController) {

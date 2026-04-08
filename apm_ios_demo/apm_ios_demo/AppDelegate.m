@@ -22,10 +22,6 @@ static NSString * const EAPMDemoAPMAppKey = @"";
 static NSString * const EAPMDemoAPMAppSecret = @"";
 static NSString * const EAPMDemoAPMAppRsaSecret = @"";
 
-@interface AppDelegate ()
-
-@end
-
 @implementation AppDelegate
 
 
