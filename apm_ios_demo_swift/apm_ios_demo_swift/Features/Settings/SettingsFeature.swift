@@ -1,10 +1,13 @@
 import SwiftUI
+import AlicloudApmCore
 
 @MainActor
 final class SettingsViewModel: ObservableObject {
     private let settingsStore: SettingsStoreProtocol
-    private let sdkService: ApmSDKServiceProtocol
     private let toastCenter: ToastCenter
+    private let fetchUTDID: () -> String
+    private let isSDKStarted: () -> Bool
+    private let applyUserSettings: (_ userId: String, _ userNick: String) -> Void
 
     @Published var userId: String = ""
     @Published var userNick: String = ""
@@ -12,12 +15,23 @@ final class SettingsViewModel: ObservableObject {
 
     init(
         settingsStore: SettingsStoreProtocol,
-        sdkService: ApmSDKServiceProtocol,
-        toastCenter: ToastCenter
+        toastCenter: ToastCenter,
+        fetchUTDID: @escaping () -> String = {
+            EAPMApm.utdid()
+        },
+        isSDKStarted: @escaping () -> Bool = {
+            EAPMApm.apm() != nil
+        },
+        applyUserSettings: @escaping (_ userId: String, _ userNick: String) -> Void = { userId, userNick in
+            EAPMApm.apm()?.setUserId(userId: SettingsStore.normalize(userId) ?? "")
+            EAPMApm.apm()?.setUserNick(userNick: SettingsStore.normalize(userNick) ?? "")
+        }
     ) {
         self.settingsStore = settingsStore
-        self.sdkService = sdkService
         self.toastCenter = toastCenter
+        self.fetchUTDID = fetchUTDID
+        self.isSDKStarted = isSDKStarted
+        self.applyUserSettings = applyUserSettings
         refresh()
     }
 
@@ -25,7 +39,8 @@ final class SettingsViewModel: ObservableObject {
         let settings = settingsStore.loadSettings()
         userId = settings.userId
         userNick = settings.userNick
-        utdidText = sdkService.utdid
+        let utdid = fetchUTDID()
+        utdidText = utdid.isEmpty ? "获取失败" : utdid
     }
 
     func save() {
@@ -33,8 +48,8 @@ final class SettingsViewModel: ObservableObject {
 
         settingsStore.save(settings: userSettings)
 
-        if sdkService.hasStarted {
-            sdkService.setUser(id: userId, nick: userNick)
+        if isSDKStarted() {
+            applyUserSettings(userId, userNick)
         }
 
         refresh()

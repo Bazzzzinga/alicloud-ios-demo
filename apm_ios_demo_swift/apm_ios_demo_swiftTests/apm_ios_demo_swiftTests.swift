@@ -1,5 +1,4 @@
 import XCTest
-import AlicloudApmCore
 @testable import apm_ios_demo_swift
 
 final class SettingsStoreTests: XCTestCase {
@@ -42,12 +41,6 @@ final class DemoConfigurationTests: XCTestCase {
 
         XCTAssertFalse(configuration.isValid)
     }
-
-    func testApmSDKServiceHasStartedMatchesSDKRuntimeState() {
-        let service = ApmSDKService()
-
-        XCTAssertEqual(service.hasStarted, EAPMApm.apm() != nil)
-    }
 }
 
 @MainActor
@@ -65,7 +58,7 @@ final class HomeViewModelTests: XCTestCase {
 
 @MainActor
 final class NetworkAnalysisViewModelTests: XCTestCase {
-    func testInvalidURLShowsValidationAlert() {
+    func testInvalidURLShowsValidationAlert() async {
         let overlay = OverlayCoordinator()
         let viewModel = NetworkAnalysisViewModel(
             overlayCoordinator: overlay,
@@ -73,26 +66,34 @@ final class NetworkAnalysisViewModelTests: XCTestCase {
         )
 
         viewModel.sendRequest(urlString: "invalid-url")
+        await Task.yield()
 
         XCTAssertEqual(overlay.alert?.title, "提示")
         XCTAssertEqual(overlay.alert?.message, "请输入有效的完整 HTTP(S) URL")
     }
 
-    func testSuccessRequestBuildsSuccessMessage() {
+    func testSuccessRequestBuildsSuccessMessage() async {
         let overlay = OverlayCoordinator()
+        let response = HTTPURLResponse(
+            url: URL(string: "https://www.aliyun.com")!,
+            statusCode: 204,
+            httpVersion: nil,
+            headerFields: nil
+        )!
         let viewModel = NetworkAnalysisViewModel(
             overlayCoordinator: overlay,
-            networkClient: MockNetworkClient(result: .success((Data(), HTTPURLResponse(url: URL(string: "https://www.aliyun.com")!, statusCode: 204, httpVersion: nil, headerFields: nil))))
+            networkClient: MockNetworkClient(result: .success((Data(), response)))
         )
 
         viewModel.sendRequest(urlString: "https://www.aliyun.com")
+        await Task.yield()
 
         XCTAssertEqual(overlay.alert?.title, "网络请求")
-        XCTAssertTrue(overlay.alert?.message.contains("Result: Success") == true)
+        XCTAssertTrue(overlay.alert?.message.contains("Success") == true)
         XCTAssertTrue(overlay.alert?.message.contains("Status Code: 204") == true)
     }
 
-    func testTransportErrorBuildsFailureMessageWithErrorDescription() {
+    func testTransportErrorBuildsFailureMessageWithErrorDescription() async {
         let overlay = OverlayCoordinator()
         let viewModel = NetworkAnalysisViewModel(
             overlayCoordinator: overlay,
@@ -100,11 +101,72 @@ final class NetworkAnalysisViewModelTests: XCTestCase {
         )
 
         viewModel.sendRequest(urlString: "https://www.aliyun.com")
+        await Task.yield()
 
         XCTAssertEqual(overlay.alert?.title, "网络请求")
-        XCTAssertTrue(overlay.alert?.message.contains("Result: Failure") == true)
+        XCTAssertTrue(overlay.alert?.message.contains("Failure") == true)
         XCTAssertTrue(overlay.alert?.message.contains("Status Code: -") == true)
         XCTAssertTrue(overlay.alert?.message.contains("Error:") == true)
+    }
+}
+
+@MainActor
+final class SettingsViewModelTests: XCTestCase {
+    func testRefreshFallsBackWhenUTDIDIsEmpty() {
+        let viewModel = SettingsViewModel(
+            settingsStore: SettingsStore(defaults: UserDefaults(suiteName: #function)!),
+            toastCenter: ToastCenter(),
+            fetchUTDID: { "" }
+        )
+
+        XCTAssertEqual(viewModel.utdidText, "获取失败")
+    }
+
+    func testSaveDoesNotApplyUserWhenSDKHasNotStarted() {
+        let defaults = UserDefaults(suiteName: #function)!
+        defaults.removePersistentDomain(forName: #function)
+        let store = SettingsStore(defaults: defaults)
+        var applyCallCount = 0
+        let viewModel = SettingsViewModel(
+            settingsStore: store,
+            toastCenter: ToastCenter(),
+            fetchUTDID: { "mock-utdid" },
+            isSDKStarted: { false },
+            applyUserSettings: { _, _ in
+                applyCallCount += 1
+            }
+        )
+
+        viewModel.userId = " demo-user "
+        viewModel.userNick = " demo-nick "
+        viewModel.save()
+
+        XCTAssertEqual(applyCallCount, 0)
+        XCTAssertEqual(store.loadSettings(), DemoUserSettings(userId: "demo-user", userNick: "demo-nick"))
+    }
+
+    func testSaveAppliesUserWhenSDKHasStarted() {
+        let defaults = UserDefaults(suiteName: #function)!
+        defaults.removePersistentDomain(forName: #function)
+        let store = SettingsStore(defaults: defaults)
+        var appliedUsers: [(String, String)] = []
+        let viewModel = SettingsViewModel(
+            settingsStore: store,
+            toastCenter: ToastCenter(),
+            fetchUTDID: { "mock-utdid" },
+            isSDKStarted: { true },
+            applyUserSettings: { userId, userNick in
+                appliedUsers.append((userId, userNick))
+            }
+        )
+
+        viewModel.userId = "demo-user"
+        viewModel.userNick = "demo-nick"
+        viewModel.save()
+
+        XCTAssertEqual(appliedUsers.count, 1)
+        XCTAssertEqual(appliedUsers.first?.0, "demo-user")
+        XCTAssertEqual(appliedUsers.first?.1, "demo-nick")
     }
 }
 
@@ -112,28 +174,39 @@ final class NetworkAnalysisViewModelTests: XCTestCase {
 final class FeatureActionTests: XCTestCase {
     func testRemoteLogViewModelWritesLogsAndPresentsGuide() {
         let overlay = OverlayCoordinator()
-        let sdkService = MockApmSDKService()
-        let viewModel = RemoteLogFeatureViewModel(overlayCoordinator: overlay, sdkService: sdkService)
+        var loggedEntries: [RemoteLogEntry] = []
+        let viewModel = RemoteLogFeatureViewModel(
+            overlayCoordinator: overlay,
+            writeRemoteLogs: { _, entries in
+                loggedEntries.append(contentsOf: entries)
+            }
+        )
 
         viewModel.captureLogs()
 
-        XCTAssertEqual(sdkService.loggedEntries.count, 4)
+        XCTAssertEqual(loggedEntries.count, 4)
+        XCTAssertEqual(loggedEntries.map(\.level), [.error, .warn, .debug, .info])
         XCTAssertEqual(overlay.guideSheet?.title, "日志回捞")
     }
 
     func testCrashViewModelRecordsCustomErrors() {
         let overlay = OverlayCoordinator()
-        let sdkService = MockApmSDKService()
+        var recordedErrors: [(NSError, [String: String])] = []
         let viewModel = CrashFeatureViewModel(
             overlayCoordinator: overlay,
             toastCenter: ToastCenter(),
-            sdkService: sdkService,
-            crashTrigger: MockCrashTrigger()
+            crashTrigger: MockCrashTrigger(),
+            recordCustomError: { error, metadata in
+                recordedErrors.append((error, metadata))
+            }
         )
 
         viewModel.recordCustomExceptions()
 
-        XCTAssertEqual(sdkService.recordedErrors.count, 8)
+        XCTAssertEqual(recordedErrors.count, 8)
+        XCTAssertEqual(recordedErrors.first?.0.domain, "customError")
+        XCTAssertEqual(recordedErrors.first?.0.code, 10001)
+        XCTAssertEqual(recordedErrors.first?.1["errorScene"], "home_custom_exception")
         XCTAssertEqual(overlay.alert?.title, "自定义异常")
     }
 
@@ -143,7 +216,6 @@ final class FeatureActionTests: XCTestCase {
         let viewModel = CrashFeatureViewModel(
             overlayCoordinator: overlay,
             toastCenter: ToastCenter(),
-            sdkService: MockApmSDKService(),
             crashTrigger: crashTrigger
         )
 
@@ -152,6 +224,28 @@ final class FeatureActionTests: XCTestCase {
 
         XCTAssertEqual(overlay.alert?.title, "崩溃")
         XCTAssertEqual(crashTrigger.triggers, [.swiftRuntime])
+    }
+
+    func testRemoteLogViewModelUploadsCommentAndPresentsGuide() {
+        let overlay = OverlayCoordinator()
+        var loggedEntries: [RemoteLogEntry] = []
+        var uploadedComments: [String] = []
+        let viewModel = RemoteLogFeatureViewModel(
+            overlayCoordinator: overlay,
+            writeRemoteLogs: { _, entries in
+                loggedEntries.append(contentsOf: entries)
+            },
+            uploadRemoteLogs: { comment in
+                uploadedComments.append(comment)
+            }
+        )
+
+        viewModel.uploadLogs()
+
+        XCTAssertEqual(loggedEntries.count, 1)
+        XCTAssertEqual(loggedEntries.first?.message, "主动上报日志内容")
+        XCTAssertEqual(uploadedComments, ["主动上报 bizComment"])
+        XCTAssertEqual(overlay.guideSheet?.title, "主动上报")
     }
 
     func testMemoryViewModelCreatesLeakScenario() {
@@ -280,29 +374,9 @@ private struct MockNetworkClient: NetworkClient {
     var result: NetworkClientResult = .failure(URLError(.notConnectedToInternet))
 
     func data(for request: URLRequest, completion: @escaping @MainActor (NetworkClientResult) -> Void) {
-        completion(result)
-    }
-}
-
-private final class MockApmSDKService: ApmSDKServiceProtocol {
-    var hasStarted: Bool = false
-    var utdid: String = "mock-utdid"
-    var recordedErrors: [DemoRecordedError] = []
-    var loggedEntries: [DemoRemoteLogEntry] = []
-    var uploadedComments: [String] = []
-
-    func setUser(id: String?, nick: String?) {}
-
-    func recordCustomError(_ error: DemoRecordedError) {
-        recordedErrors.append(error)
-    }
-
-    func writeRemoteLogs(moduleName: String, entries: [DemoRemoteLogEntry]) {
-        loggedEntries.append(contentsOf: entries)
-    }
-
-    func uploadRemoteLogs(comment: String) {
-        uploadedComments.append(comment)
+        Task { @MainActor in
+            completion(result)
+        }
     }
 }
 

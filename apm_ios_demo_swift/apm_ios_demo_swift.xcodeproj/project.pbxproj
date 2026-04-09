@@ -17,7 +17,6 @@
 		AABF00080000000000000008 /* DemoConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAFR00150000000000000015 /* DemoConfiguration.swift */; };
 		AABF00090000000000000009 /* SettingsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAFR00160000000000000016 /* SettingsStore.swift */; };
 		AABF00100000000000000010 /* OverlayCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAFR00170000000000000017 /* OverlayCoordinator.swift */; };
-		AABF00120000000000000012 /* ApmSDKService.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAFR00190000000000000019 /* ApmSDKService.swift */; };
 		AABF00130000000000000013 /* AppEnvironment.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAFR00200000000000000020 /* AppEnvironment.swift */; };
 		AABF00140000000000000014 /* DemoTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAFR00210000000000000021 /* DemoTheme.swift */; };
 		AABF00150000000000000015 /* DemoComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAFR00220000000000000022 /* DemoComponents.swift */; };
@@ -38,7 +37,6 @@
 		AABF00300000000000000030 /* LargeObjectScenario.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAFR00390000000000000039 /* LargeObjectScenario.swift */; };
 		AABF00310000000000000031 /* LeakScenario.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAFR00400000000000000040 /* LeakScenario.swift */; };
 		AABF00320000000000000032 /* PageAnalysisScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAFR00410000000000000041 /* PageAnalysisScreen.swift */; };
-		AABF00330000000000000033 /* PageAnalysisViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAFR00420000000000000042 /* PageAnalysisViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -76,7 +74,6 @@
 		AAFR00150000000000000015 /* DemoConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoConfiguration.swift; sourceTree = "<group>"; };
 		AAFR00160000000000000016 /* SettingsStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsStore.swift; sourceTree = "<group>"; };
 		AAFR00170000000000000017 /* OverlayCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlayCoordinator.swift; sourceTree = "<group>"; };
-		AAFR00190000000000000019 /* ApmSDKService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApmSDKService.swift; sourceTree = "<group>"; };
 		AAFR00200000000000000020 /* AppEnvironment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppEnvironment.swift; sourceTree = "<group>"; };
 		AAFR00210000000000000021 /* DemoTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoTheme.swift; sourceTree = "<group>"; };
 		AAFR00220000000000000022 /* DemoComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoComponents.swift; sourceTree = "<group>"; };
@@ -99,7 +96,6 @@
 		AAFR00390000000000000039 /* LargeObjectScenario.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LargeObjectScenario.swift; sourceTree = "<group>"; };
 		AAFR00400000000000000040 /* LeakScenario.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeakScenario.swift; sourceTree = "<group>"; };
 		AAFR00410000000000000041 /* PageAnalysisScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PageAnalysisScreen.swift; sourceTree = "<group>"; };
-		AAFR00420000000000000042 /* PageAnalysisViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PageAnalysisViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -201,7 +197,6 @@
 				AAFR00150000000000000015 /* DemoConfiguration.swift */,
 				AAFR00160000000000000016 /* SettingsStore.swift */,
 				AAFR00170000000000000017 /* OverlayCoordinator.swift */,
-				AAFR00190000000000000019 /* ApmSDKService.swift */,
 				AAFR00200000000000000020 /* AppEnvironment.swift */,
 			);
 			path = AppCore;
@@ -261,7 +256,6 @@
 				AAFR00360000000000000036 /* NetworkAnalysisViewModel.swift */,
 				AAFR00370000000000000037 /* NetworkAnalysisScreen.swift */,
 				AAFR00410000000000000041 /* PageAnalysisScreen.swift */,
-				AAFR00420000000000000042 /* PageAnalysisViewController.swift */,
 				AAFR00260000000000000026 /* PerformanceFeature.swift */,
 			);
 			path = Performance;
@@ -482,7 +476,6 @@
 				AABF00100000000000000010 /* OverlayCoordinator.swift in Sources */,
 				AABF00290000000000000029 /* LargeObjectMemoryAllocator.swift in Sources */,
 				AABF00300000000000000030 /* LargeObjectScenario.swift in Sources */,
-				AABF00120000000000000012 /* ApmSDKService.swift in Sources */,
 				AABF00130000000000000013 /* AppEnvironment.swift in Sources */,
 				AABF00140000000000000014 /* DemoTheme.swift in Sources */,
 				AABF00150000000000000015 /* DemoComponents.swift in Sources */,
@@ -499,7 +492,6 @@
 				AABF00270000000000000027 /* NetworkAnalysisViewModel.swift in Sources */,
 				AABF00280000000000000028 /* NetworkAnalysisScreen.swift in Sources */,
 				AABF00320000000000000032 /* PageAnalysisScreen.swift in Sources */,
-				AABF00330000000000000033 /* PageAnalysisViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

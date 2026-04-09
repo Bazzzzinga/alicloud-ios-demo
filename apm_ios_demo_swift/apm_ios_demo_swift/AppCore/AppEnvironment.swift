@@ -32,7 +32,6 @@ final class AppEnvironment: ObservableObject {
     let overlayCoordinator: OverlayCoordinator
     let toastCenter: ToastCenter
     let settingsStore: SettingsStoreProtocol
-    let sdkService: ApmSDKServiceProtocol
     let leakScenario: any LeakScenarioSimulating
     let largeObjectScenario: any LargeObjectScenarioSimulating
     let crashTrigger: CrashTriggering
@@ -52,7 +51,6 @@ final class AppEnvironment: ObservableObject {
         overlayCoordinator: OverlayCoordinator = OverlayCoordinator(),
         toastCenter: ToastCenter = ToastCenter(),
         settingsStore: SettingsStoreProtocol = SettingsStore(),
-        sdkService: ApmSDKServiceProtocol = ApmSDKService(),
         leakScenario: any LeakScenarioSimulating = ViewControllerLeakScenario(),
         largeObjectScenario: any LargeObjectScenarioSimulating = LargeObjectScenario(),
         crashTrigger: CrashTriggering = CrashBridge()
@@ -60,7 +58,6 @@ final class AppEnvironment: ObservableObject {
         self.overlayCoordinator = overlayCoordinator
         self.toastCenter = toastCenter
         self.settingsStore = settingsStore
-        self.sdkService = sdkService
         self.leakScenario = leakScenario
         self.largeObjectScenario = largeObjectScenario
         self.crashTrigger = crashTrigger
@@ -69,13 +66,11 @@ final class AppEnvironment: ObservableObject {
         homeViewModel = HomeViewModel()
         settingsViewModel = SettingsViewModel(
             settingsStore: settingsStore,
-            sdkService: sdkService,
             toastCenter: toastCenter
         )
         crashViewModel = CrashFeatureViewModel(
             overlayCoordinator: overlayCoordinator,
             toastCenter: toastCenter,
-            sdkService: sdkService,
             crashTrigger: crashTrigger
         )
         otherCrashTypesViewModel = OtherCrashTypesViewModel(
@@ -96,8 +91,7 @@ final class AppEnvironment: ObservableObject {
             largeObjectScenario: largeObjectScenario
         )
         remoteLogViewModel = RemoteLogFeatureViewModel(
-            overlayCoordinator: overlayCoordinator,
-            sdkService: sdkService
+            overlayCoordinator: overlayCoordinator
         )
     }
 

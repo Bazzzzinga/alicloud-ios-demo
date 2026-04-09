@@ -2,7 +2,6 @@ import SwiftUI
 import UIKit
 
 enum HomeRoute: Hashable {
-    case settings
     case otherCrashTypes
     case networkAnalysis
 }
@@ -111,7 +110,7 @@ struct HomeScreen: View {
                     )
                     .padding(.bottom, 18)
 
-                    ForEach(Array(viewModel.sections.enumerated()), id: \.element.id) { _, section in
+                    ForEach(viewModel.sections) { section in
                         VStack(alignment: .leading, spacing: 0) {
                             SectionTitleView(title: section.title)
                                 .padding(.horizontal, DemoSpacing.horizontal)
@@ -165,8 +164,6 @@ struct HomeScreen: View {
     @ViewBuilder
     private func destinationView(for route: HomeRoute) -> some View {
         switch route {
-        case .settings:
-            SettingsScreen(viewModel: environment.settingsViewModel)
         case .otherCrashTypes:
             OtherCrashTypesScreen(viewModel: environment.otherCrashTypesViewModel)
         case .networkAnalysis:
@@ -195,7 +192,9 @@ struct HomeScreen: View {
                 return
             }
             navigationController.pushViewController(
-                environment.performanceViewModel.makePageAnalysisViewController(),
+                environment.performanceViewModel.makePageAnalysisViewController {
+                    navigationController.popViewController(animated: true)
+                },
                 animated: true
             )
         case .oom:

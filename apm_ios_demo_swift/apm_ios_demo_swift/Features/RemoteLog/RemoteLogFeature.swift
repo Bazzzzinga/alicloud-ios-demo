@@ -1,25 +1,57 @@
 import SwiftUI
+import AlicloudApmRemoteLog
+
+enum RemoteLogLevel: String, Equatable {
+    case error
+    case warn
+    case debug
+    case info
+}
+
+struct RemoteLogEntry: Equatable {
+    let level: RemoteLogLevel
+    let message: String
+}
 
 @MainActor
 final class RemoteLogFeatureViewModel: ObservableObject {
     private let overlayCoordinator: OverlayCoordinator
-    private let sdkService: ApmSDKServiceProtocol
+    private let writeRemoteLogs: (_ moduleName: String, _ entries: [RemoteLogEntry]) -> Void
+    private let uploadRemoteLogs: (_ comment: String) -> Void
 
-    init(overlayCoordinator: OverlayCoordinator, sdkService: ApmSDKServiceProtocol) {
+    init(
+        overlayCoordinator: OverlayCoordinator,
+        writeRemoteLogs: @escaping (_ moduleName: String, _ entries: [RemoteLogEntry]) -> Void = { moduleName, entries in
+            let logger = RemoteLogFactory.createLog(moduleName: moduleName)
+            for entry in entries {
+                switch entry.level {
+                case .error:
+                    logger.error(entry.message)
+                case .warn:
+                    logger.warn(entry.message)
+                case .debug:
+                    logger.debug(entry.message)
+                case .info:
+                    logger.info(entry.message)
+                }
+            }
+        },
+        uploadRemoteLogs: @escaping (_ comment: String) -> Void = { comment in
+            RemoteLog.uploadTLog(comment)
+        }
+    ) {
         self.overlayCoordinator = overlayCoordinator
-        self.sdkService = sdkService
+        self.writeRemoteLogs = writeRemoteLogs
+        self.uploadRemoteLogs = uploadRemoteLogs
     }
 
     func captureLogs() {
-        sdkService.writeRemoteLogs(
-            moduleName: "YourModuleName",
-            entries: [
-                DemoRemoteLogEntry(level: .error, message: "error message"),
-                DemoRemoteLogEntry(level: .warn, message: "warn message"),
-                DemoRemoteLogEntry(level: .debug, message: "debug message"),
-                DemoRemoteLogEntry(level: .info, message: "info message"),
-            ]
-        )
+        writeRemoteLogs("YourModuleName", [
+            RemoteLogEntry(level: .error, message: "error message"),
+            RemoteLogEntry(level: .warn, message: "warn message"),
+            RemoteLogEntry(level: .debug, message: "debug message"),
+            RemoteLogEntry(level: .info, message: "info message"),
+        ])
 
         overlayCoordinator.presentGuide(
             title: "日志回捞",
@@ -33,11 +65,10 @@ final class RemoteLogFeatureViewModel: ObservableObject {
     }
 
     func uploadLogs() {
-        sdkService.writeRemoteLogs(
-            moduleName: "YourModuleName",
-            entries: [DemoRemoteLogEntry(level: .error, message: "主动上报日志内容")]
-        )
-        sdkService.uploadRemoteLogs(comment: "主动上报 bizComment")
+        writeRemoteLogs("YourModuleName", [
+            RemoteLogEntry(level: .error, message: "主动上报日志内容"),
+        ])
+        uploadRemoteLogs("主动上报 bizComment")
 
         overlayCoordinator.presentGuide(
             title: "主动上报",

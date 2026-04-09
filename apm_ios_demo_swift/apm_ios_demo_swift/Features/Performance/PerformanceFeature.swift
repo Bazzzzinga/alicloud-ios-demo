@@ -1,5 +1,5 @@
-import Combine
 import Foundation
+import SwiftUI
 import UIKit
 
 @MainActor
@@ -18,8 +18,14 @@ final class PerformanceFeatureViewModel: ObservableObject {
         )
     }
 
-    func makePageAnalysisViewController() -> UIViewController {
-        PageAnalysisViewController()
+    func makePageAnalysisViewController(onBack: @escaping () -> Void) -> UIViewController {
+        let hostingController = UIHostingController(
+            rootView: PageAnalysisScreen(onBack: onBack)
+        )
+        hostingController.title = ""
+        hostingController.navigationItem.hidesBackButton = true
+        hostingController.view.backgroundColor = .white
+        return hostingController
     }
 
     private static var startupAnalysisMessage: AttributedString {

@@ -1,5 +1,6 @@
 import SwiftUI
 import Darwin
+import AlicloudApmCrashAnalysis
 
 enum CrashTriggerType: CaseIterable, Hashable {
     case swiftRuntime
@@ -167,19 +168,25 @@ final class CrashBridge: CrashTriggering {
 final class CrashFeatureViewModel: ObservableObject {
     private let overlayCoordinator: OverlayCoordinator
     private let toastCenter: ToastCenter
-    private let sdkService: ApmSDKServiceProtocol
     private let crashTrigger: CrashTriggering
+    private let recordCustomError: (_ error: NSError, _ metadata: [String: String]) -> Void
 
     init(
         overlayCoordinator: OverlayCoordinator,
         toastCenter: ToastCenter,
-        sdkService: ApmSDKServiceProtocol,
-        crashTrigger: CrashTriggering
+        crashTrigger: CrashTriggering,
+        recordCustomError: @escaping (_ error: NSError, _ metadata: [String: String]) -> Void = { error, metadata in
+            let crashAnalysis = CrashAnalysis.crashAnalysis()
+            metadata.forEach { key, value in
+                crashAnalysis.setCustomValue(value, forKey: key)
+            }
+            crashAnalysis.record(error: error, userInfo: metadata)
+        }
     ) {
         self.overlayCoordinator = overlayCoordinator
         self.toastCenter = toastCenter
-        self.sdkService = sdkService
         self.crashTrigger = crashTrigger
+        self.recordCustomError = recordCustomError
     }
 
     func triggerCrash() {
@@ -205,17 +212,17 @@ final class CrashFeatureViewModel: ObservableObject {
 
     func recordCustomExceptions() {
         for index in 0..<8 {
-            sdkService.recordCustomError(
-                DemoRecordedError(
-                    message: "customError",
-                    code: 10001 + index,
-                    metadata: [
-                        "configCustomInfoWithKey": "customValue-\(index + 1)",
-                        "errorInfoKey": "errorInfoValue-\(index + 1)",
-                        "errorScene": "home_custom_exception",
-                    ]
-                )
+            let metadata = [
+                "configCustomInfoWithKey": "customValue-\(index + 1)",
+                "errorInfoKey": "errorInfoValue-\(index + 1)",
+                "errorScene": "home_custom_exception",
+            ]
+            let error = NSError(
+                domain: "customError",
+                code: 10001 + index,
+                userInfo: metadata
             )
+            recordCustomError(error, metadata)
         }
 
         overlayCoordinator.presentInfoAlert(
@@ -259,8 +266,6 @@ final class OtherCrashTypesViewModel: ObservableObject {
     func trigger(_ item: OtherCrashTypeItem) {
         let message: String
         switch item.type {
-        case .hang:
-            message = "即将触发「\(item.title)」，应用会长时间卡死，稍后可在 EMAS 控制台查看对应数据。"
         case .watchdog:
             message = "即将触发「卡死」，主线程会阻塞 30 秒，等待系统终止应用。终止后可在 EMAS 控制台查看对应数据。"
         case .oom:
