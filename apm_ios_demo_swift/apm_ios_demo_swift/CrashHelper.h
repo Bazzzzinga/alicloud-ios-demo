@@ -4,7 +4,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface CrashHelper : NSObject
 
-+ (void)triggerCrash;
++ (void)triggerNSArrayException;
++ (void)triggerCppCrash;
++ (void)triggerMachException;
 
 @end
 

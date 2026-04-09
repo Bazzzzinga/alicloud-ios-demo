@@ -1,11 +1,19 @@
 #import "CrashHelper.h"
+#import "CrashHandler.hpp"
 
 @implementation CrashHelper
 
-+ (void)triggerCrash {
-    // 触发EXC_BAD_ACCESS崩溃
++ (void)triggerNSArrayException {
     NSArray *array = @[];
     NSLog(@"Crash element: %@", array[1]);
+}
+
++ (void)triggerCppCrash {
+    triggerCppCrash();
+}
+
++ (void)triggerMachException {
+    __builtin_trap();
 }
 
 @end
