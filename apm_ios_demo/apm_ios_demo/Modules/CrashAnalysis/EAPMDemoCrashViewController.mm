@@ -26,6 +26,15 @@ static NSMutableArray<NSValue *> *EAPMDemoOOMPointers(void) {
     return pointers;
 }
 
+__attribute__((noinline)) static NSUInteger EAPMDemoTriggerStackOverflow(NSUInteger depth) {
+    volatile char stackFrame[1024];
+    for (size_t index = 0; index < sizeof(stackFrame); index++) {
+        stackFrame[index] = (char)((depth + index) & 0x7F);
+    }
+
+    return (NSUInteger)stackFrame[depth % sizeof(stackFrame)] + EAPMDemoTriggerStackOverflow(depth + 1);
+}
+
 typedef NS_ENUM(NSInteger, EAPMDemoCrashTriggerType) {
     EAPMDemoCrashTriggerTypeNSException = 0,
     EAPMDemoCrashTriggerTypeCpp,
@@ -35,6 +44,8 @@ typedef NS_ENUM(NSInteger, EAPMDemoCrashTriggerType) {
     EAPMDemoCrashTriggerTypeOOM,
     EAPMDemoCrashTriggerTypeAsyncException,
     EAPMDemoCrashTriggerTypeDeadlock,
+    EAPMDemoCrashTriggerTypeAbort,
+    EAPMDemoCrashTriggerTypeStackOverflow,
 };
 
 @interface EAPMDemoCrashViewController ()
@@ -98,6 +109,8 @@ typedef NS_ENUM(NSInteger, EAPMDemoCrashTriggerType) {
         @{@"title": @"OOM", @"type": @(EAPMDemoCrashTriggerTypeOOM)},
         @{@"title": @"AsyncException", @"type": @(EAPMDemoCrashTriggerTypeAsyncException)},
         @{@"title": @"Deadlock", @"type": @(EAPMDemoCrashTriggerTypeDeadlock)},
+        @{@"title": @"Abort", @"type": @(EAPMDemoCrashTriggerTypeAbort)},
+        @{@"title": @"Stack Overflow", @"type": @(EAPMDemoCrashTriggerTypeStackOverflow)},
     ];
 
     UIStackView *gridStackView = [[UIStackView alloc] init];
@@ -234,6 +247,18 @@ typedef NS_ENUM(NSInteger, EAPMDemoCrashTriggerType) {
                     NSLog(@"This will never be printed because of the deadlock");
                 });
                 NSLog(@"Code after dispatch_async");
+            }];
+            break;
+        }
+        case EAPMDemoCrashTriggerTypeAbort: {
+            [self presentCrashConfirmAlertWithTitle:@"Abort" confirmAction:^{
+                abort();
+            }];
+            break;
+        }
+        case EAPMDemoCrashTriggerTypeStackOverflow: {
+            [self presentCrashConfirmAlertWithTitle:@"Stack Overflow" confirmAction:^{
+                (void)EAPMDemoTriggerStackOverflow(1);
             }];
             break;
         }
