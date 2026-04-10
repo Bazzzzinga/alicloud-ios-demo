@@ -8,7 +8,7 @@ private struct PageAnalysisSection: Identifiable {
     var id: String { title }
 }
 
-struct PageAnalysisScreen: View {
+struct PageAnalysisContentView: View {
     let onBack: () -> Void
 
     private let sections: [PageAnalysisSection] = [
@@ -124,4 +124,42 @@ struct PageAnalysisScreen: View {
             )
         )
     }
+}
+
+@objc(EAPMDemoPageAnalysisViewController)
+final class PageAnalysisHostingController: UIHostingController<PageAnalysisContentView> {
+    init() {
+        super.init(rootView: PageAnalysisContentView(onBack: {}))
+        title = ""
+        navigationItem.hidesBackButton = true
+    }
+
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        view.backgroundColor = .white
+        rootView = PageAnalysisContentView { [weak self] in
+            self?.handleBack()
+        }
+    }
+
+    private func handleBack() {
+        if let navigationController {
+            navigationController.popViewController(animated: true)
+            return
+        }
+        dismiss(animated: true)
+    }
+}
+
+struct PageAnalysisScreen: UIViewControllerRepresentable {
+    func makeUIViewController(context: Context) -> PageAnalysisHostingController {
+        PageAnalysisHostingController()
+    }
+
+    func updateUIViewController(_ uiViewController: PageAnalysisHostingController, context: Context) {}
 }

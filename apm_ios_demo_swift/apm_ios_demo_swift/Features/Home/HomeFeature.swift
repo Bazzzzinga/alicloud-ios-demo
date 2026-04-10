@@ -1,8 +1,8 @@
 import SwiftUI
-import UIKit
 
 enum HomeRoute: Hashable {
     case otherCrashTypes
+    case pageAnalysis
     case networkAnalysis
 }
 
@@ -30,6 +30,8 @@ struct HomeCardModel: Identifiable {
         switch kind {
         case .otherCrashTypes:
             return .otherCrashTypes
+        case .pageAnalysis:
+            return .pageAnalysis
         case .networkAnalysis:
             return .networkAnalysis
         default:
@@ -91,7 +93,6 @@ struct HomeScreen: View {
     @ObservedObject var viewModel: HomeViewModel
     @EnvironmentObject private var environment: AppEnvironment
     @State private var isShowingSettings = false
-    @State private var hostViewController: UIViewController?
 
     private let columns = [
         GridItem(.flexible(), spacing: 6),
@@ -153,11 +154,6 @@ struct HomeScreen: View {
             }
             .hidden()
         }
-        .background(
-            HostingViewControllerResolver { controller in
-                hostViewController = controller
-            }
-        )
         .navigationBarHidden(true)
     }
 
@@ -166,6 +162,8 @@ struct HomeScreen: View {
         switch route {
         case .otherCrashTypes:
             OtherCrashTypesScreen(viewModel: environment.otherCrashTypesViewModel)
+        case .pageAnalysis:
+            PageAnalysisScreen()
         case .networkAnalysis:
             NetworkAnalysisScreen(viewModel: environment.networkAnalysisViewModel)
         }
@@ -187,16 +185,6 @@ struct HomeScreen: View {
             environment.crashViewModel.recordCustomExceptions()
         case .startupAnalysis:
             environment.performanceViewModel.presentStartupAnalysis()
-        case .pageAnalysis:
-            guard let navigationController = hostViewController?.navigationController else {
-                return
-            }
-            navigationController.pushViewController(
-                environment.performanceViewModel.makePageAnalysisViewController {
-                    navigationController.popViewController(animated: true)
-                },
-                animated: true
-            )
         case .oom:
             environment.memoryViewModel.triggerOOM()
         case .memoryLeak:
@@ -207,52 +195,8 @@ struct HomeScreen: View {
             environment.remoteLogViewModel.captureLogs()
         case .remoteLogUpload:
             environment.remoteLogViewModel.uploadLogs()
-        case .otherCrashTypes, .networkAnalysis:
+        case .pageAnalysis, .otherCrashTypes, .networkAnalysis:
             break
-        }
-    }
-}
-
-private struct HostingViewControllerResolver: UIViewControllerRepresentable {
-    let onResolve: (UIViewController) -> Void
-
-    func makeUIViewController(context: Context) -> HostingResolverViewController {
-        HostingResolverViewController(onResolve: onResolve)
-    }
-
-    func updateUIViewController(_ uiViewController: HostingResolverViewController, context: Context) {}
-}
-
-private final class HostingResolverViewController: UIViewController {
-    private let onResolve: (UIViewController) -> Void
-
-    init(onResolve: @escaping (UIViewController) -> Void) {
-        self.onResolve = onResolve
-        super.init(nibName: nil, bundle: nil)
-    }
-
-    @available(*, unavailable)
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
-    override func didMove(toParent parent: UIViewController?) {
-        super.didMove(toParent: parent)
-        resolveViewController()
-    }
-
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        resolveViewController()
-    }
-
-    private func resolveViewController() {
-        DispatchQueue.main.async { [onResolve, weak parent = parent, weak self] in
-            if let parent {
-                onResolve(parent)
-            } else if let self {
-                onResolve(self)
-            }
         }
     }
 }

@@ -1,6 +1,5 @@
 import Foundation
 import SwiftUI
-import UIKit
 
 @MainActor
 final class PerformanceFeatureViewModel: ObservableObject {
@@ -16,16 +15,6 @@ final class PerformanceFeatureViewModel: ObservableObject {
             attributedMessage: Self.startupAnalysisMessage,
             alignment: .leading
         )
-    }
-
-    func makePageAnalysisViewController(onBack: @escaping () -> Void) -> UIViewController {
-        let hostingController = UIHostingController(
-            rootView: PageAnalysisScreen(onBack: onBack)
-        )
-        hostingController.title = ""
-        hostingController.navigationItem.hidesBackButton = true
-        hostingController.view.backgroundColor = .white
-        return hostingController
     }
 
     private static var startupAnalysisMessage: AttributedString {
