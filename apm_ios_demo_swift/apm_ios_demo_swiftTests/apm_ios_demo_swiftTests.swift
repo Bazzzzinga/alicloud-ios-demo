@@ -105,8 +105,9 @@ final class NetworkAnalysisViewModelTests: XCTestCase {
 
         XCTAssertEqual(overlay.alert?.title, "网络请求")
         XCTAssertTrue(overlay.alert?.message.contains("Failure") == true)
-        XCTAssertTrue(overlay.alert?.message.contains("Status Code: -") == true)
-        XCTAssertTrue(overlay.alert?.message.contains("Error:") == true)
+        XCTAssertTrue(overlay.alert?.message.contains("Status Code: \n") == true)
+        XCTAssertFalse(overlay.alert?.message.contains("Status Code: -") == true)
+        XCTAssertFalse(overlay.alert?.message.contains("Error:") == true)
     }
 }
 

@@ -96,7 +96,7 @@ final class NetworkAnalysisViewModel: ObservableObject {
         let statusSymbol = isSuccess ? "✓" : "✕"
         let statusText = isSuccess ? "Success" : "Failure"
         let statusColor = isSuccess ? successColor : failureColor
-        let statusCodeText = statusCode.map(String.init) ?? "-"
+        let statusCodeText = statusCode.map(String.init) ?? ""
 
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.alignment = .left
@@ -125,9 +125,6 @@ final class NetworkAnalysisViewModel: ObservableObject {
         message.append(NSAttributedString(string: statusSymbol, attributes: symbolAttributes))
         message.append(NSAttributedString(string: " \(statusText)\n", attributes: statusAttributes))
         message.append(NSAttributedString(string: "Status Code: \(statusCodeText)\n", attributes: bodyAttributes))
-        if let errorDescription, !errorDescription.isEmpty {
-            message.append(NSAttributedString(string: "Error: \(errorDescription)\n", attributes: bodyAttributes))
-        }
         message.append(NSAttributedString(string: "\n请切换至后台触发上报，稍后可在 EMAS 控制台查看。", attributes: bodyAttributes))
         return AttributedString(message)
     }
