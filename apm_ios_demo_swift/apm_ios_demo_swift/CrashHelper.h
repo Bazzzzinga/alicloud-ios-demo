@@ -7,6 +7,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (void)triggerNSArrayException;
 + (void)triggerCppCrash;
 + (void)triggerMachException;
++ (void)triggerSignalCrash;
 
 @end
 

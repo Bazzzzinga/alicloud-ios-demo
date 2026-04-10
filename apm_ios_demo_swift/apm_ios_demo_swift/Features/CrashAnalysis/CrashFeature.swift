@@ -34,7 +34,7 @@ private enum SwiftCrashRuntime {
     }
 
     static func triggerSignalCrash() {
-        raise(SIGSEGV)
+        CrashHelper.triggerSignalCrash()
     }
 
     static func triggerHang() {

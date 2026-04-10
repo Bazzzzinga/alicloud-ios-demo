@@ -481,6 +481,7 @@ struct GuideBottomSheet: View {
 struct DemoAlertOverlay: View {
     let state: DemoAlertState
     let onDismiss: () -> Void
+    @State private var pendingAction: (() -> Void)?
 
     var body: some View {
         ZStack {
@@ -534,12 +535,17 @@ struct DemoAlertOverlay: View {
                     .fill(Color.white.opacity(0.95))
             )
         }
+        .onDisappear {
+            guard let pendingAction else { return }
+            self.pendingAction = nil
+            pendingAction()
+        }
     }
 
     private func alertButton(for action: DemoAlertAction) -> some View {
         Button {
+            pendingAction = action.handler
             onDismiss()
-            action.handler?()
         } label: {
             Text(action.title)
                 .font(action.style == .primary ? DemoFont.button : Font.custom("PingFangSC-Regular", size: 18))
