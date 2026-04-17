@@ -195,7 +195,7 @@ static UIColor *EAPMDemoColorHex(NSUInteger hexValue, CGFloat alpha) {
         [_subtitleLabel.widthAnchor constraintEqualToConstant:208.0],
 
         [_settingsButton.trailingAnchor constraintEqualToAnchor:_settingsLabel.leadingAnchor constant:-3.0],
-        [_settingsButton.centerYAnchor constraintEqualToAnchor:_settingsLabel.centerYAnchor],
+        [_settingsButton.centerYAnchor constraintEqualToAnchor:_settingsLabel.centerYAnchor constant:-2.0],
         [_settingsButton.widthAnchor constraintEqualToConstant:18.0],
         [_settingsButton.heightAnchor constraintEqualToConstant:18.0],
 

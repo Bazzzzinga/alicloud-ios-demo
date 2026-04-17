@@ -26,6 +26,9 @@ static NSString * const EAPMDemoAPMAppRsaSecret = @"";
 
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+    // 打印沙盒路径
+     NSLog(@"App Directory: %@", NSHomeDirectory());
+
     self.window = [[UIWindow alloc] initWithFrame:UIScreen.mainScreen.bounds];
     [self installMainInterface];
 

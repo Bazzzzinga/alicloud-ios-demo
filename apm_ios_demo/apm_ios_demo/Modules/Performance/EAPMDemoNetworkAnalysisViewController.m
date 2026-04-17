@@ -7,6 +7,9 @@
 static NSString * const EAPMDemoNetworkAnalysisDefaultURLString = @"https://www.aliyun.com";
 static NSString * const EAPMDemoNetworkAnalysisTransportErrorURLString = @"https://demo-network-error.invalid/";
 static NSString * const EAPMDemoNetworkAnalysisHTTPErrorURLString = @"https://postman-echo.com/status/500";
+static const CGFloat EAPMDemoNetworkAnalysisContentBottomPadding = 64.0;
+static const CGFloat EAPMDemoNetworkAnalysisInputButtonSpacing = 12.0;
+static const CGFloat EAPMDemoNetworkAnalysisErrorSectionTopSpacing = 32.0;
 
 static UIColor *EAPMDemoNetworkAnalysisHexColor(NSUInteger hexValue, CGFloat alpha) {
     return [UIColor colorWithRed:((hexValue >> 16) & 0xFF) / 255.0
@@ -38,6 +41,7 @@ static UIColor *EAPMDemoNetworkAnalysisHexColor(NSUInteger hexValue, CGFloat alp
     self.view.backgroundColor = UIColor.whiteColor;
 
     [self buildViews];
+    [self installDismissKeyboardGesture];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -55,6 +59,7 @@ static UIColor *EAPMDemoNetworkAnalysisHexColor(NSUInteger hexValue, CGFloat alp
     self.scrollView = [[UIScrollView alloc] init];
     self.scrollView.translatesAutoresizingMaskIntoConstraints = NO;
     self.scrollView.alwaysBounceVertical = YES;
+    self.scrollView.showsVerticalScrollIndicator = NO;
     self.scrollView.keyboardDismissMode = UIScrollViewKeyboardDismissModeOnDrag;
     [self.view addSubview:self.scrollView];
 
@@ -138,19 +143,29 @@ static UIColor *EAPMDemoNetworkAnalysisHexColor(NSUInteger hexValue, CGFloat alp
 
         [self.sendButton.leadingAnchor constraintEqualToAnchor:self.contentView.leadingAnchor constant:EAPMDemoUIHorizontalInset],
         [self.sendButton.trailingAnchor constraintEqualToAnchor:self.contentView.trailingAnchor constant:-EAPMDemoUIHorizontalInset],
-        [self.sendButton.topAnchor constraintEqualToAnchor:urlInputView.bottomAnchor constant:20.0],
+        [self.sendButton.topAnchor constraintEqualToAnchor:urlInputView.bottomAnchor constant:EAPMDemoNetworkAnalysisInputButtonSpacing],
         [self.sendButton.heightAnchor constraintEqualToConstant:EAPMDemoUIPrimaryButtonHeight],
 
         [errorSectionHeaderView.leadingAnchor constraintEqualToAnchor:self.contentView.leadingAnchor constant:EAPMDemoUIHorizontalInset],
         [errorSectionHeaderView.trailingAnchor constraintEqualToAnchor:self.contentView.trailingAnchor constant:-EAPMDemoUIHorizontalInset],
-        [errorSectionHeaderView.topAnchor constraintEqualToAnchor:self.sendButton.bottomAnchor constant:EAPMDemoUISectionTopSpacing],
+        [errorSectionHeaderView.topAnchor constraintEqualToAnchor:self.sendButton.bottomAnchor constant:EAPMDemoNetworkAnalysisErrorSectionTopSpacing],
 
         [errorButtonStackView.leadingAnchor constraintEqualToAnchor:self.contentView.leadingAnchor constant:EAPMDemoUIHorizontalInset],
         [errorButtonStackView.trailingAnchor constraintEqualToAnchor:self.contentView.trailingAnchor constant:-EAPMDemoUIHorizontalInset],
         [errorButtonStackView.topAnchor constraintEqualToAnchor:errorSectionHeaderView.bottomAnchor constant:EAPMDemoUISectionContentSpacing],
-        [errorButtonStackView.bottomAnchor constraintEqualToAnchor:self.contentView.bottomAnchor constant:-EAPMDemoUIContentBottomPadding],
+        [errorButtonStackView.bottomAnchor constraintEqualToAnchor:self.contentView.bottomAnchor constant:-EAPMDemoNetworkAnalysisContentBottomPadding],
         [errorButtonStackView.heightAnchor constraintEqualToConstant:EAPMDemoUISecondaryActionHeight],
     ]];
+}
+
+- (void)installDismissKeyboardGesture {
+    UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleBackgroundTapped)];
+    tapGesture.cancelsTouchesInView = NO;
+    [self.view addGestureRecognizer:tapGesture];
+}
+
+- (void)handleBackgroundTapped {
+    [self.view endEditing:YES];
 }
 
 - (EAPMDemoSecondaryActionButton *)createErrorButtonWithTitle:(NSString *)title action:(SEL)action {
@@ -190,7 +205,9 @@ static UIColor *EAPMDemoNetworkAnalysisHexColor(NSUInteger hexValue, CGFloat alp
 
 - (nullable NSURL *)validatedURLFromString:(NSString *)urlString {
     NSURLComponents *components = [NSURLComponents componentsWithString:urlString];
-    if (components.URL == nil || components.scheme.length == 0 || components.host.length == 0) {
+    NSString *scheme = components.scheme.lowercaseString;
+    BOOL isHTTPScheme = [scheme isEqualToString:@"http"] || [scheme isEqualToString:@"https"];
+    if (components.URL == nil || !isHTTPScheme || components.host.length == 0) {
         return nil;
     }
     return components.URL;
@@ -203,7 +220,7 @@ static UIColor *EAPMDemoNetworkAnalysisHexColor(NSUInteger hexValue, CGFloat alp
 
     NSURL *url = [self validatedURLFromString:urlString];
     if (url == nil) {
-        [self presentAlertWithTitle:@"提示" message:@"请输入有效的完整 URL"];
+        [self presentAlertWithTitle:@"提示" message:@"请输入有效的完整 HTTP(S) URL"];
         return;
     }
 
@@ -228,7 +245,7 @@ static UIColor *EAPMDemoNetworkAnalysisHexColor(NSUInteger hexValue, CGFloat alp
         }
 
         NSHTTPURLResponse *httpResponse = [response isKindOfClass:[NSHTTPURLResponse class]] ? (NSHTTPURLResponse *)response : nil;
-        BOOL requestSucceeded = (error == nil && httpResponse.statusCode == 200);
+        BOOL requestSucceeded = (error == nil && httpResponse.statusCode >= 200 && httpResponse.statusCode <= 299);
         NSString *statusCodeText = httpResponse ? [NSString stringWithFormat:@"%ld", (long)httpResponse.statusCode] : @"";
         NSAttributedString *message = [strongSelf resultMessageWithURLString:url.absoluteString
                                                             requestSucceeded:requestSucceeded
@@ -250,6 +267,7 @@ static UIColor *EAPMDemoNetworkAnalysisHexColor(NSUInteger hexValue, CGFloat alp
     self.sendButton.enabled = enabled;
     self.transportErrorButton.enabled = enabled;
     self.httpErrorButton.enabled = enabled;
+    [self.sendButton setTitle:(enabled ? @"发送请求" : @"请求中...") forState:UIControlStateNormal];
 
     CGFloat alpha = enabled ? 1.0 : 0.55;
     self.sendButton.alpha = alpha;

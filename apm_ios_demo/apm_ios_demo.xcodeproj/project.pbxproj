@@ -16,14 +16,14 @@
 		7EFDB8822DAFB2060079A3D1 /* EAPMDemoConfigStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 7EFDB8802DAFB2060079A3D1 /* EAPMDemoConfigStore.m */; };
 		7EFDB8852DAFBA490079A3D1 /* EAPMDemoCrashAnalysis.m in Sources */ = {isa = PBXBuildFile; fileRef = 7EFDB8842DAFBA490079A3D1 /* EAPMDemoCrashAnalysis.m */; };
 		7EFDB8BE2DB0E2900079A3D1 /* EAPMDemoRemoteLog.m in Sources */ = {isa = PBXBuildFile; fileRef = 7EFDB8BD2DB0E2900079A3D1 /* EAPMDemoRemoteLog.m */; };
-		D40000000000000000000001 /* EAPMDemoOverlayPresenter.m in Sources */ = {isa = PBXBuildFile; fileRef = D40000000000000000000011 /* EAPMDemoOverlayPresenter.m */; };
-		D40000000000000000000020 /* EAPMDemoUIComponents.m in Sources */ = {isa = PBXBuildFile; fileRef = D40000000000000000000022 /* EAPMDemoUIComponents.m */; };
 		9A0000000000000000000001 /* EAPMDemoSettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9A0000000000000000000011 /* EAPMDemoSettingsViewController.m */; };
 		A10000000000000000000001 /* EAPMDemoHomeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000011 /* EAPMDemoHomeViewController.m */; };
 		A10000000000000000000002 /* EAPMDemoHomeUI.m in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000013 /* EAPMDemoHomeUI.m */; };
 		A10000000000000000000004 /* EAPMDemoPerformanceScrollViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000017 /* EAPMDemoPerformanceScrollViewController.m */; };
-		C30000000000000000000001 /* EAPMDemoNetworkAnalysisViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C30000000000000000000011 /* EAPMDemoNetworkAnalysisViewController.m */; };
 		B20000000000000000000001 /* EAPMDemoCrashViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = B20000000000000000000011 /* EAPMDemoCrashViewController.mm */; };
+		C30000000000000000000001 /* EAPMDemoNetworkAnalysisViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C30000000000000000000011 /* EAPMDemoNetworkAnalysisViewController.m */; };
+		D40000000000000000000001 /* EAPMDemoOverlayPresenter.m in Sources */ = {isa = PBXBuildFile; fileRef = D40000000000000000000011 /* EAPMDemoOverlayPresenter.m */; };
+		D40000000000000000000020 /* EAPMDemoUIComponents.m in Sources */ = {isa = PBXBuildFile; fileRef = D40000000000000000000022 /* EAPMDemoUIComponents.m */; };
 		FEA34C68ED2E042C74A482DD /* Pods_apm_ios_demo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 94ADE4EBEB8CB88EB1639A09 /* Pods_apm_ios_demo.framework */; };
 /* End PBXBuildFile section */
 
@@ -46,25 +46,25 @@
 		7EFDB8842DAFBA490079A3D1 /* EAPMDemoCrashAnalysis.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EAPMDemoCrashAnalysis.m; sourceTree = "<group>"; };
 		7EFDB8BC2DB0E2900079A3D1 /* EAPMDemoRemoteLog.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EAPMDemoRemoteLog.h; sourceTree = "<group>"; };
 		7EFDB8BD2DB0E2900079A3D1 /* EAPMDemoRemoteLog.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EAPMDemoRemoteLog.m; sourceTree = "<group>"; };
-		D40000000000000000000010 /* EAPMDemoOverlayPresenter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EAPMDemoOverlayPresenter.h; sourceTree = "<group>"; };
-		D40000000000000000000011 /* EAPMDemoOverlayPresenter.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EAPMDemoOverlayPresenter.m; sourceTree = "<group>"; };
-		D40000000000000000000012 /* EAPMDemoUIStyleGuide.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EAPMDemoUIStyleGuide.h; sourceTree = "<group>"; };
-		D40000000000000000000021 /* EAPMDemoUIComponents.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EAPMDemoUIComponents.h; sourceTree = "<group>"; };
-		D40000000000000000000022 /* EAPMDemoUIComponents.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EAPMDemoUIComponents.m; sourceTree = "<group>"; };
+		94ADE4EBEB8CB88EB1639A09 /* Pods_apm_ios_demo.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_apm_ios_demo.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		9A0000000000000000000010 /* EAPMDemoSettingsViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EAPMDemoSettingsViewController.h; sourceTree = "<group>"; };
 		9A0000000000000000000011 /* EAPMDemoSettingsViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EAPMDemoSettingsViewController.m; sourceTree = "<group>"; };
-		94ADE4EBEB8CB88EB1639A09 /* Pods_apm_ios_demo.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_apm_ios_demo.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A10000000000000000000010 /* EAPMDemoHomeViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EAPMDemoHomeViewController.h; sourceTree = "<group>"; };
 		A10000000000000000000011 /* EAPMDemoHomeViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EAPMDemoHomeViewController.m; sourceTree = "<group>"; };
 		A10000000000000000000012 /* EAPMDemoHomeUI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EAPMDemoHomeUI.h; sourceTree = "<group>"; };
 		A10000000000000000000013 /* EAPMDemoHomeUI.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EAPMDemoHomeUI.m; sourceTree = "<group>"; };
 		A10000000000000000000016 /* EAPMDemoPerformanceScrollViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EAPMDemoPerformanceScrollViewController.h; sourceTree = "<group>"; };
 		A10000000000000000000017 /* EAPMDemoPerformanceScrollViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EAPMDemoPerformanceScrollViewController.m; sourceTree = "<group>"; };
-		C30000000000000000000010 /* EAPMDemoNetworkAnalysisViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EAPMDemoNetworkAnalysisViewController.h; sourceTree = "<group>"; };
-		C30000000000000000000011 /* EAPMDemoNetworkAnalysisViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EAPMDemoNetworkAnalysisViewController.m; sourceTree = "<group>"; };
+		A416AF6F4BABBE512C7FBD28 /* Pods-apm_ios_demo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-apm_ios_demo.release.xcconfig"; path = "Pods/Target Support Files/Pods-apm_ios_demo/Pods-apm_ios_demo.release.xcconfig"; sourceTree = "<group>"; };
 		B20000000000000000000010 /* EAPMDemoCrashViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EAPMDemoCrashViewController.h; sourceTree = "<group>"; };
 		B20000000000000000000011 /* EAPMDemoCrashViewController.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = EAPMDemoCrashViewController.mm; sourceTree = "<group>"; };
-		A416AF6F4BABBE512C7FBD28 /* Pods-apm_ios_demo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-apm_ios_demo.release.xcconfig"; path = "Pods/Target Support Files/Pods-apm_ios_demo/Pods-apm_ios_demo.release.xcconfig"; sourceTree = "<group>"; };
+		C30000000000000000000010 /* EAPMDemoNetworkAnalysisViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EAPMDemoNetworkAnalysisViewController.h; sourceTree = "<group>"; };
+		C30000000000000000000011 /* EAPMDemoNetworkAnalysisViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EAPMDemoNetworkAnalysisViewController.m; sourceTree = "<group>"; };
+		D40000000000000000000010 /* EAPMDemoOverlayPresenter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EAPMDemoOverlayPresenter.h; sourceTree = "<group>"; };
+		D40000000000000000000011 /* EAPMDemoOverlayPresenter.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EAPMDemoOverlayPresenter.m; sourceTree = "<group>"; };
+		D40000000000000000000012 /* EAPMDemoUIStyleGuide.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EAPMDemoUIStyleGuide.h; sourceTree = "<group>"; };
+		D40000000000000000000021 /* EAPMDemoUIComponents.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EAPMDemoUIComponents.h; sourceTree = "<group>"; };
+		D40000000000000000000022 /* EAPMDemoUIComponents.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EAPMDemoUIComponents.m; sourceTree = "<group>"; };
 		D979A2B91797F489F795B7DB /* Pods-apm_ios_demo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-apm_ios_demo.debug.xcconfig"; path = "Pods/Target Support Files/Pods-apm_ios_demo/Pods-apm_ios_demo.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -127,6 +127,15 @@
 				330B627F23505592004ABFDA /* main.m */,
 			);
 			path = apm_ios_demo;
+			sourceTree = "<group>";
+		};
+		9A0000000000000000000020 /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				9A0000000000000000000010 /* EAPMDemoSettingsViewController.h */,
+				9A0000000000000000000011 /* EAPMDemoSettingsViewController.m */,
+			);
+			path = Settings;
 			sourceTree = "<group>";
 		};
 		A10000000000000000000020 /* Modules */ = {
@@ -194,15 +203,6 @@
 				7EFDB8BD2DB0E2900079A3D1 /* EAPMDemoRemoteLog.m */,
 			);
 			path = RemoteLog;
-			sourceTree = "<group>";
-		};
-		9A0000000000000000000020 /* Settings */ = {
-			isa = PBXGroup;
-			children = (
-				9A0000000000000000000010 /* EAPMDemoSettingsViewController.h */,
-				9A0000000000000000000011 /* EAPMDemoSettingsViewController.m */,
-			);
-			path = Settings;
 			sourceTree = "<group>";
 		};
 		A10000000000000000000037 /* Shared */ = {
@@ -317,9 +317,13 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-apm_ios_demo/Pods-apm_ios_demo-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
+			inputPaths = (
+			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-apm_ios_demo/Pods-apm_ios_demo-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -482,19 +486,18 @@
 			baseConfigurationReference = D979A2B91797F489F795B7DB /* Pods-apm_ios_demo.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_STYLE = Manual;
-				DEVELOPMENT_TEAM = "";
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = VSW2PKYTD7;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = VSW2PKYTD7;
 				INFOPLIST_FILE = apm_ios_demo/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.aliyun.emas.pocdemo;
+				PRODUCT_BUNDLE_IDENTIFIER = com.aliyun.emas.pocdemo.apm;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = com.aliyun.emas.pocdemo.dev;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -504,19 +507,18 @@
 			baseConfigurationReference = A416AF6F4BABBE512C7FBD28 /* Pods-apm_ios_demo.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_STYLE = Manual;
-				DEVELOPMENT_TEAM = "";
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = VSW2PKYTD7;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = VSW2PKYTD7;
 				INFOPLIST_FILE = apm_ios_demo/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.aliyun.emas.pocdemo;
+				PRODUCT_BUNDLE_IDENTIFIER = com.aliyun.emas.pocdemo.apm;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = com.aliyun.emas.pocdemo.dev;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;

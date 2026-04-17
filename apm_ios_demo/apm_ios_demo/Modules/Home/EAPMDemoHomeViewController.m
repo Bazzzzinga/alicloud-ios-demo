@@ -64,7 +64,7 @@ static NSString * const EAPMDemoSectionHeaderReuseIdentifier = @"EAPMDemoSection
 }
 
 - (void)buildData {
-    self.infoBannerText = @"触发相关事件，并在 EMAS控制台 查看上报数据";
+    self.infoBannerText = @"触发相关事件，并在 EMAS 控制台 查看上报数据";
     self.sections = @[
         [EAPMDemoCrashAnalysis sectionWithPresenter:self],
         [EAPMDemoPerformance sectionWithPresenter:self],

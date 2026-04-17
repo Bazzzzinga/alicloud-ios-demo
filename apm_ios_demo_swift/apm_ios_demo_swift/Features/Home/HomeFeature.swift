@@ -48,7 +48,7 @@ struct HomeSectionModel: Identifiable {
 
 @MainActor
 final class HomeViewModel: ObservableObject {
-    static let infoBannerText = "触发相关事件，并在 EMAS控制台 查看上报数据"
+    static let infoBannerText = "触发相关事件，并在 EMAS 控制台 查看上报数据"
     @Published private(set) var sections: [HomeSectionModel] = HomeViewModel.makeSections()
 
     static func makeSections() -> [HomeSectionModel] {

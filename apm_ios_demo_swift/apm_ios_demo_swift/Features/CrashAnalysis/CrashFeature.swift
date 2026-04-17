@@ -39,7 +39,7 @@ private enum SwiftCrashRuntime {
 
     static func triggerHang() {
         DispatchQueue.main.async {
-            Thread.sleep(forTimeInterval: 5.0)
+            Thread.sleep(forTimeInterval: 6.0)
         }
     }
 
@@ -192,7 +192,7 @@ final class CrashFeatureViewModel: ObservableObject {
     func triggerCrash() {
         overlayCoordinator.presentConfirmation(
             title: "崩溃",
-            message: "即将触发 Swift 运行时崩溃（强制解包 nil），App 将闪退，稍后可在 EMAS 控制台看到崩溃信息。"
+            message: "即将触发崩溃，App 将闪退，稍后可在 EMAS 控制台看到崩溃信息。"
         ) { [crashTrigger] in
             crashTrigger.trigger(type: .swiftRuntime)
         }
@@ -201,9 +201,9 @@ final class CrashFeatureViewModel: ObservableObject {
     func triggerHang() {
         overlayCoordinator.presentConfirmation(
             title: "卡顿",
-            message: "即将触发应用 5 秒卡顿。卡顿结束后，请切换至后台触发上报，稍后可在 EMAS 控制台看到卡顿信息。"
+            message: "即将触发应用「卡顿」。卡顿结束后，请切换至后台触发上报，稍后可在 EMAS 控制台看到卡顿信息。"
         ) { [crashTrigger, toastCenter] in
-            DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 6) {
                 toastCenter.show(message: "卡顿结束")
             }
             crashTrigger.trigger(type: .hang)

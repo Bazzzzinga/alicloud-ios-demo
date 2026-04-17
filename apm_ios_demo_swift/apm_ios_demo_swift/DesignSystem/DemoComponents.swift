@@ -317,7 +317,7 @@ struct HeroPanel: View {
                     backgroundColor: Color(hex: 0xEBF0FF),
                     textColor: DemoTheme.homeBannerText,
                     borderColor: DemoTheme.tipBorder,
-                    highlightedRanges: ["EMAS控制台", "EMAS 控制台"],
+                    highlightedRanges: ["EMAS 控制台", "EMAS 控制台"],
                     highlightColor: DemoTheme.homeBannerHighlight
                 )
                 .padding(.horizontal, DemoSpacing.horizontal)
@@ -331,13 +331,14 @@ struct HeroPanel: View {
 
                         Text(settingsAttributedText)
                     }
-                    .frame(minWidth: 44, minHeight: 30, alignment: .trailing)
+                    .padding(.vertical, 6)
+                    .padding(.leading, 6)
                     .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
                 .accessibilityIdentifier("home.settings")
                 .padding(.trailing, DemoSpacing.horizontal)
-                .padding(.top, max(safeTop - 4, 0))
+                .padding(.top, max(safeTop - 10, 0))
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
             }
         }
