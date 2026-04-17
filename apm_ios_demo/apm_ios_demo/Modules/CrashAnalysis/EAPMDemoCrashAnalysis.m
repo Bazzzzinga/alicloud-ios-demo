@@ -41,13 +41,13 @@ static void EAPMDemoPresentConfirmAlert(UIViewController *presenter, NSString *t
         [EAPMDemoHomeActionItem itemWithTitle:@"卡顿" actionHandler:^{
             EAPMDemoPresentConfirmAlert(weakPresenter,
                                         @"卡顿",
-                                        @"即将触发应用5秒「卡顿」，卡顿结束后，请切换至后台触发上报，稍后可在 EMAS 控制台看到卡顿信息。",
+                                        @"即将触发应用「卡顿」，卡顿结束后，请切换至后台触发上报，稍后可在 EMAS 控制台看到卡顿信息。",
                                         ^{
-                dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(6 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
                     [EAPMDemoToastPresenter showToastInViewController:weakPresenter message:@"卡顿结束"];
                 });
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    [NSThread sleepForTimeInterval:5];
+                    [NSThread sleepForTimeInterval:6];
                 });
             });
         }],
