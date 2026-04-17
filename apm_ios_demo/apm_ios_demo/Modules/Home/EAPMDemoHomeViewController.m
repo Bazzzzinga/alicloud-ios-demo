@@ -3,6 +3,7 @@
 #import "EAPMDemoSettingsViewController.h"
 #import "EAPMDemoHomeUI.h"
 #import "../Shared/EAPMDemoUIComponents.h"
+#import "../Shared/EAPMDemoOverlayPresenter.h"
 #import "../Shared/EAPMDemoUIStyleGuide.h"
 #import "EAPMDemoCrashAnalysis.h"
 #import "EAPMDemoMemory.h"
@@ -37,6 +38,7 @@ static NSString * const EAPMDemoSectionHeaderReuseIdentifier = @"EAPMDemoSection
 @property (nonatomic, strong) UICollectionView *collectionView;
 @property (nonatomic, strong) NSArray<EAPMDemoHomeSectionModel *> *sections;
 @property (nonatomic, copy) NSString *infoBannerText;
+@property (nonatomic, assign) BOOL hasPresentedLaunchBlockingAlert;
 
 @end
 
@@ -54,6 +56,11 @@ static NSString * const EAPMDemoSectionHeaderReuseIdentifier = @"EAPMDemoSection
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     [self.navigationController setNavigationBarHidden:YES animated:animated];
+}
+
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    [self presentLaunchBlockingAlertIfNeeded];
 }
 
 - (void)buildData {
@@ -135,6 +142,33 @@ static NSString * const EAPMDemoSectionHeaderReuseIdentifier = @"EAPMDemoSection
     [self.navigationController setNavigationBarHidden:NO animated:YES];
     EAPMDemoSettingsViewController *settingsViewController = [[EAPMDemoSettingsViewController alloc] init];
     [self.navigationController pushViewController:settingsViewController animated:YES];
+}
+
+- (void)presentLaunchBlockingAlertIfNeeded {
+    if (self.hasPresentedLaunchBlockingAlert ||
+        self.launchBlockingAlertTitle.length == 0 ||
+        self.launchBlockingAlertMessage.length == 0 ||
+        self.presentedViewController) {
+        return;
+    }
+
+    self.hasPresentedLaunchBlockingAlert = YES;
+    __weak typeof(self) weakSelf = self;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        __strong typeof(weakSelf) strongSelf = weakSelf;
+        if (!strongSelf || strongSelf.presentedViewController) {
+            return;
+        }
+
+        [EAPMDemoAlertPresenter presentAlertFrom:strongSelf
+                                           title:strongSelf.launchBlockingAlertTitle
+                                         message:strongSelf.launchBlockingAlertMessage
+                                         actions:@[
+            [EAPMDemoAlertAction actionWithTitle:@"确认退出"
+                                           style:EAPMDemoAlertActionStylePrimary
+                                         handler:strongSelf.launchBlockingAlertActionHandler]
+        ]];
+    });
 }
 
 - (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView {

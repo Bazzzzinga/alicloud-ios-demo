@@ -27,27 +27,17 @@ static NSString * const EAPMDemoAPMAppRsaSecret = @"";
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     self.window = [[UIWindow alloc] initWithFrame:UIScreen.mainScreen.bounds];
-    UIViewController *launchViewController = [self installLaunchViewController];
+    [self installMainInterface];
 
     if (![self canStartApmSDK]) {
-        [self presentInvalidConfigAlertOnPresenter:launchViewController];
+        [self configureLaunchBlockingAlertOnHomeInterface];
         return YES;
     }
 
     // 启动 Alicloud APM SDK
     [self startApmSDK];
 
-    [self installMainInterface];
-
     return YES;
-}
-
-- (UIViewController *)installLaunchViewController {
-    UIViewController *launchViewController = [[UIViewController alloc] init];
-    launchViewController.view.backgroundColor = [UIColor colorWithRed:0xF3 / 255.0 green:0xF4 / 255.0 blue:0xF8 / 255.0 alpha:1.0];
-    self.window.rootViewController = launchViewController;
-    [self.window makeKeyAndVisible];
-    return launchViewController;
 }
 
 - (void)installMainInterface {
@@ -55,6 +45,7 @@ static NSString * const EAPMDemoAPMAppRsaSecret = @"";
     UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:homeViewController];
     navigationController.navigationBar.prefersLargeTitles = NO;
     self.window.rootViewController = navigationController;
+    [self.window makeKeyAndVisible];
 }
 
 - (BOOL)canStartApmSDK {
@@ -94,16 +85,23 @@ static NSString * const EAPMDemoAPMAppRsaSecret = @"";
     return [self normalizedConfigValue:value] != nil;
 }
 
-- (void)presentInvalidConfigAlertOnPresenter:(UIViewController *)presenter {
-    NSString *message = @"当前缺少 appKey 等应用配置。\n请前往 EMAS 控制台获取应用配置，并修改 AppDelegate 中的 APM 配置块后重新启动应用。";
-    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"应用配置缺失"
-                                                                             message:message
-                                                                      preferredStyle:UIAlertControllerStyleAlert];
+- (void)configureLaunchBlockingAlertOnHomeInterface {
+    UINavigationController *navigationController = (UINavigationController *)self.window.rootViewController;
+    if (![navigationController isKindOfClass:[UINavigationController class]]) {
+        return;
+    }
+
+    EAPMDemoHomeViewController *homeViewController = (EAPMDemoHomeViewController *)navigationController.topViewController;
+    if (![homeViewController isKindOfClass:[EAPMDemoHomeViewController class]]) {
+        return;
+    }
+
+    homeViewController.launchBlockingAlertTitle = @"应用配置缺失";
+    homeViewController.launchBlockingAlertMessage = @"当前缺少 appKey 等应用配置。\n\n请前往 EMAS 控制台获取应用配置，并修改 AppDelegate 中的 APM 配置后重新启动应用。";
     __weak typeof(self) weakSelf = self;
-    [alertController addAction:[UIAlertAction actionWithTitle:@"确认退出" style:UIAlertActionStyleDestructive handler:^(__unused UIAlertAction * _Nonnull action) {
+    homeViewController.launchBlockingAlertActionHandler = ^{
         [weakSelf terminateApplication];
-    }]];
-    [presenter presentViewController:alertController animated:YES completion:nil];
+    };
 }
 
 - (void)terminateApplication {
