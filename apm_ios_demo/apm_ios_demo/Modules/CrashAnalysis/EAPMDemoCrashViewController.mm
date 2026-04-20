@@ -3,6 +3,7 @@
 #import "../Shared/EAPMDemoOverlayPresenter.h"
 #import "../Shared/EAPMDemoUIComponents.h"
 #import "../Shared/EAPMDemoUIStyleGuide.h"
+#import <pthread.h>
 #import <signal.h>
 #import <stdlib.h>
 #import <string.h>
@@ -26,13 +27,59 @@ static NSMutableArray<NSValue *> *EAPMDemoOOMPointers(void) {
     return pointers;
 }
 
-__attribute__((noinline)) static NSUInteger EAPMDemoTriggerStackOverflow(NSUInteger depth) {
-    volatile char stackFrame[1024];
+static const size_t EAPMDemoStackOverflowThreadStackSize = 128 * 1024;
+static const size_t EAPMDemoStackOverflowGuardSize = 16 * 1024;
+static const size_t EAPMDemoStackOverflowFrameSize = 16 * 1024;
+
+__attribute__((noinline, optnone)) static NSUInteger EAPMDemoTriggerStackOverflow(NSUInteger depth) {
+    volatile char stackFrame[EAPMDemoStackOverflowFrameSize];
     for (size_t index = 0; index < sizeof(stackFrame); index++) {
         stackFrame[index] = (char)((depth + index) & 0x7F);
     }
 
     return (NSUInteger)stackFrame[depth % sizeof(stackFrame)] + EAPMDemoTriggerStackOverflow(depth + 1);
+}
+
+static void *EAPMDemoTriggerStackOverflowThreadEntry(void *context) {
+    (void)context;
+    (void)EAPMDemoTriggerStackOverflow(1);
+    return NULL;
+}
+
+static void EAPMDemoTriggerStackOverflowOnSmallStackThread(void) {
+    pthread_attr_t attr;
+    int attrInitResult = pthread_attr_init(&attr);
+    if (attrInitResult != 0) {
+        NSLog(@"Failed to init stack overflow thread attributes: %d", attrInitResult);
+        (void)EAPMDemoTriggerStackOverflow(1);
+        return;
+    }
+
+    size_t stackSize = EAPMDemoStackOverflowThreadStackSize;
+    if (stackSize < PTHREAD_STACK_MIN) {
+        stackSize = PTHREAD_STACK_MIN;
+    }
+
+    int stackSizeResult = pthread_attr_setstacksize(&attr, stackSize);
+    int guardSizeResult = pthread_attr_setguardsize(&attr, EAPMDemoStackOverflowGuardSize);
+    pthread_t thread;
+    int createResult = 0;
+    if (stackSizeResult == 0 && guardSizeResult == 0) {
+        createResult = pthread_create(&thread, &attr, EAPMDemoTriggerStackOverflowThreadEntry, NULL);
+    }
+
+    pthread_attr_destroy(&attr);
+
+    if (stackSizeResult != 0 || guardSizeResult != 0 || createResult != 0) {
+        NSLog(@"Failed to create stack overflow thread. stack=%d guard=%d create=%d",
+              stackSizeResult,
+              guardSizeResult,
+              createResult);
+        (void)EAPMDemoTriggerStackOverflow(1);
+        return;
+    }
+
+    pthread_detach(thread);
 }
 
 typedef NS_ENUM(NSInteger, EAPMDemoCrashTriggerType) {
@@ -258,7 +305,7 @@ typedef NS_ENUM(NSInteger, EAPMDemoCrashTriggerType) {
         }
         case EAPMDemoCrashTriggerTypeStackOverflow: {
             [self presentCrashConfirmAlertWithTitle:@"Stack Overflow" confirmAction:^{
-                (void)EAPMDemoTriggerStackOverflow(1);
+                EAPMDemoTriggerStackOverflowOnSmallStackThread();
             }];
             break;
         }
